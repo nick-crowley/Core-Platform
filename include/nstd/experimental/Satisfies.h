@@ -18,6 +18,8 @@ namespace nstd
 #define IsSortable(className)               auto operator<=>(className const&) const = default
 #define IsCopyable(className)				IsCopyConstructible(className); IsCopyAssignable(className)
 #define IsMovable(className)				IsMoveConstructible(className); IsMoveAssignable(className)
+#define IsSemiRegular(className)            IsDefaultConstructible(className); IsCopyable(className); IsMovable(className)
+#define IsRegular(className)                IsSemiRegular(className); IsEqualityComparable(className)
 
 // Deleted named requirements
 #define NotDefaultConstructible(className)  className() = delete
@@ -42,16 +44,22 @@ namespace nstd
 #define IsSortable_noexcept(className)              auto operator<=>(className const&) const noexcept = default
 #define IsCopyable_noexcept(className)				IsCopyConstructible_noexcept(className); IsCopyAssignable_noexcept(className)
 #define IsMovable_noexcept(className)				IsMoveConstructible_noexcept(className); IsMoveAssignable_noexcept(className)
+#define IsSemiRegular_noexcept(className)           IsDefaultConstructible_noexcept(className); IsCopyable_noexcept(className); IsMovable_noexcept(className)
+#define IsRegular_noexcept(className)               IsSemiRegular_noexcept(className); IsEqualityComparable_noexcept(className)
 
 // constexpr support
 #define constexpr_IsCopyable(className)				constexpr IsCopyConstructible(className); constexpr IsCopyAssignable(className)
 #define constexpr_IsMovable(className)				constexpr IsMoveConstructible(className); constexpr IsMoveAssignable(className)
+#define constexpr_IsSemiRegular(className)			constexpr IsDefaultConstructible(className); constexpr_IsCopyable(className); constexpr_IsMovable(className)
+#define constexpr_IsRegular(className)				constexpr_IsSemiRegular(className); constexpr IsEqualityComparable(className)
 #define constexpr_NotCopyable(className)			constexpr NotCopyConstructible(className); constexpr NotCopyAssignable(className)
 #define constexpr_NotMovable(className)				constexpr NotMoveConstructible(className); constexpr NotMoveAssignable(className)
 
 // constexpr/noexcept support
 #define constexpr_IsCopyable_noexcept(className)	constexpr IsCopyConstructible_noexcept(className); constexpr IsCopyAssignable_noexcept(className)
 #define constexpr_IsMovable_noexcept(className)		constexpr IsMoveConstructible_noexcept(className); constexpr IsMoveAssignable_noexcept(className)
+#define constexpr_IsSemiRegular_noexcept(className) constexpr IsDefaultConstructible(className) noexcept; constexpr_IsCopyable_noexcept(className); constexpr_IsMovable_noexcept(className)
+#define constexpr_IsRegular_noexcept(className)     constexpr_IsSemiRegular_noexcept(className); constexpr IsEqualityComparable(className) noexcept
 
 #define _makeNamedRequirement(s,className,namedRequirement)      \
 	namedRequirement(className);
