@@ -10,12 +10,20 @@ namespace win
         std::optional<::HANDLE>
         waitForMultipleObjects(std::span<::HANDLE> handles, WaitStrategy strategy, std::optional<std::chrono::milliseconds> timeout);
         
-        template <meta::InputRangeOf<::HANDLE> HandleCollection>
+        template <meta::InputRangeOf<::HANDLE> HandleCollection> 
+            requires (!std::ranges::contiguous_range<HandleCollection>)
         std::optional<::HANDLE>
         waitForMultipleObjects(HandleCollection r, WaitStrategy strategy, std::optional<std::chrono::milliseconds> timeout)
         {
             std::vector<::HANDLE> handles{std::ranges::begin(r), std::ranges::end(r)};
             return waitForMultipleObjects(handles, strategy, timeout);
+        }
+        
+        template <meta::ContiguousRangeOf<::HANDLE> HandleCollection>
+        std::optional<::HANDLE>
+        waitForMultipleObjects(HandleCollection r, WaitStrategy strategy, std::optional<std::chrono::milliseconds> timeout)
+        {
+            return waitForMultipleObjects(std::span<::HANDLE>{r}, strategy, timeout);
         }
     }
     
