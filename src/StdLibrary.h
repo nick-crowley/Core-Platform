@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <atomic>
+#include <chrono>
 #include <concepts>
 #include <format>
 #include <functional>
@@ -10,6 +11,7 @@
 #include <new>
 #include <numeric>
 #include <optional>
+#include <ranges>
 #include <source_location>
 #include <stdexcept>
 #include <type_traits>

@@ -10,6 +10,9 @@ namespace meta
 	concept Character = is_any_of_v<T,char,wchar_t,char8_t,char16_t,char32_t>;
 
 	template <typename T>
+	concept Clock = std::chrono::is_clock_v<T>;
+
+	template <typename T>
 	concept Enumeration = std::is_enum_v<T>;
 
 	template <typename From, typename To>
@@ -21,6 +24,10 @@ namespace meta
 	template <typename T>
 	concept IntegralOrEnum = std::is_integral_v<T> || Enumeration<T>;
 	
+	template <typename Range, typename U>
+	concept InputRangeOf = std::ranges::input_range<Range> 
+	                    && std::is_same_v<std::ranges::range_value_t<Range>,U>;
+
 	template <typename T>
 	concept RealNumber = std::is_arithmetic_v<T> && !Character<T>;
 }
