@@ -8,3 +8,8 @@
 #include <Windows.h>
 
 #include <ntsecapi.h>
+
+namespace win
+{
+	using access_mask_t = ::ACCESS_MASK;
+}
