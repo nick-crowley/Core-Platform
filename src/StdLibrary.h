@@ -14,6 +14,7 @@
 #include <ranges>
 #include <source_location>
 #include <stdexcept>
+#include <thread>
 #include <type_traits>
 #include <utility>
 
