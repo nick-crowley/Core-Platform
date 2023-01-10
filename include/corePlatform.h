@@ -10,6 +10,7 @@
 #include "nstd/experimental/abstract.h"
 #include "nstd/experimental/implicit.h"
 #include "nstd/experimental/intern.h"
+#include "nstd/experimental/nameof.h"
 #include "nstd/experimental/satisfies.h"
 #include "nstd/experimental/lengthof.h"
 
