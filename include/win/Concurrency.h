@@ -12,7 +12,7 @@ namespace win
         
         template <meta::InputRangeOf<::HANDLE> HandleCollection>
         std::optional<::HANDLE>
-        inline waitForMultipleObjects(HandleCollection r, WaitStrategy strategy, std::optional<std::chrono::milliseconds> timeout)
+        waitForMultipleObjects(HandleCollection r, WaitStrategy strategy, std::optional<std::chrono::milliseconds> timeout)
         {
             std::vector<::HANDLE> handles{std::ranges::begin(r), std::ranges::end(r)};
             return waitForMultipleObjects(handles, strategy, timeout);
