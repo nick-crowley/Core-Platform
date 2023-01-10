@@ -13,7 +13,16 @@ namespace win
 		Boolean(bool expr) : value{expr}
 		{
 		}
+		
+		satisfies(Boolean,
+			NotDefaultConstructible,
+			constexpr_IsCopyable_noexcept,
+			constexpr_IsMovable_noexcept,
+			constexpr IsEqualityComparable,
+			constexpr IsSortable
+		);
 
+	public:
 		implicit operator 
 		BOOL() const 
 		{
