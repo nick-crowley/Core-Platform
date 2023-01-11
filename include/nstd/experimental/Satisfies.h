@@ -16,10 +16,10 @@ namespace nstd
 #define _EqualityComparableDecl(className)      bool operator==(className const&) const
 #define _SortableDecl(className)                auto operator<=>(className const&) const
 
-#define _MakeDefaultedConceptMacro(_declMacro)  BOOST_PP_COMMA() _declMacro BOOST_PP_COMMA() = default BOOST_PP_COMMA()
-#define _MakeDeletedConceptMacro(_declMacro)    BOOST_PP_COMMA() _declMacro BOOST_PP_COMMA() = delete BOOST_PP_COMMA()
+#define _MakeDefaultedConceptMacro(...)         BOOST_PP_COMMA() BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__) BOOST_PP_COMMA() = default BOOST_PP_COMMA()
+#define _MakeDeletedConceptMacro(...)           BOOST_PP_COMMA() BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__) BOOST_PP_COMMA() = delete BOOST_PP_COMMA()
 
-// Defaulted named requirements
+// Individual concepts (positive case)
 #define IsDefaultConstructible		_MakeDefaultedConceptMacro(_DefaultConstructibleDecl)
 #define IsDestructible		        _MakeDefaultedConceptMacro(_DestructibleDecl)
 #define IsCopyAssignable            _MakeDefaultedConceptMacro(_CopyAssignableDecl)
@@ -29,7 +29,7 @@ namespace nstd
 #define IsEqualityComparable        _MakeDefaultedConceptMacro(_EqualityComparableDecl)
 #define IsSortable                  _MakeDefaultedConceptMacro(_SortableDecl)
 
-// Deleted named requirements
+// Individual concepts (negative case)
 #define NotDefaultConstructible		_MakeDeletedConceptMacro(_DefaultConstructibleDecl)
 #define NotDestructible		        _MakeDeletedConceptMacro(_DestructibleDecl)
 #define NotCopyAssignable           _MakeDeletedConceptMacro(_CopyAssignableDecl)
@@ -39,9 +39,22 @@ namespace nstd
 #define NotEqualityComparable       _MakeDeletedConceptMacro(_EqualityComparableDecl)
 #define NotSortable                 _MakeDeletedConceptMacro(_SortableDecl)
 
-//! @brief	Re-order elements of 4-tuple: {prefix, concept, enabled, postfix} as 'prefix concept(className) postfix enabled'
-#define _expandConceptSubsequence(className,seq)      \
-	BOOST_PP_SEQ_ELEM(0,seq) BOOST_PP_SEQ_ELEM(1,seq)(className) BOOST_PP_SEQ_ELEM(3,seq) BOOST_PP_SEQ_ELEM(2,seq)
+// Composite concepts
+#define IsCopyable                  _MakeDefaultedConceptMacro(_CopyConstructibleDecl, _CopyAssignableDecl)
+#define IsMovable                   _MakeDefaultedConceptMacro(_MoveConstructibleDecl, _MoveAssignableDecl)
+#define IsSemiRegular               _MakeDefaultedConceptMacro(_DefaultConstructibleDecl, _CopyConstructibleDecl, _CopyAssignableDecl, _MoveConstructibleDecl, _MoveAssignableDecl)
+#define IsRegular                   _MakeDefaultedConceptMacro(_DefaultConstructibleDecl, _CopyConstructibleDecl, _CopyAssignableDecl, _MoveConstructibleDecl, _MoveAssignableDecl, _EqualityComparableDecl)
+
+//! @brief	Expand 4-tuple: {prefix, class-name, postfix, enabled} with concept-name 'prefix concept(class-name) postfix enabled'
+#define _expandConceptDeclaration(r,state,conceptDecl)      \
+	BOOST_PP_SEQ_ELEM(0,state) conceptDecl(BOOST_PP_SEQ_ELEM(1,state)) BOOST_PP_SEQ_ELEM(2,state) BOOST_PP_SEQ_ELEM(3,state);
+
+//! @brief	Define another 4-tuple state: {prefix, class-name, postfix, enabled}
+#define _makeDeclarationState(className,components)  (BOOST_PP_SEQ_ELEM(0,components))(className)(BOOST_PP_SEQ_ELEM(3,components))(BOOST_PP_SEQ_ELEM(2,components))
+
+//! @brief	Iterate over concept-decls within 4-tuple: {prefix, {concept-decls}, enabled, postfix}
+#define _expandConceptSubsequence(className,components)      \
+	BOOST_PP_SEQ_FOR_EACH(_expandConceptDeclaration, _makeDeclarationState(className,components), BOOST_PP_SEQ_ELEM(1,components))
 
 // Accessors for retrieving state components
 #define _getStateIdx(state)       BOOST_PP_SEQ_ELEM(0,state)
@@ -49,28 +62,28 @@ namespace nstd
 #define _getStateClassName(state) BOOST_PP_SEQ_ELEM(2,state)
 #define _getStateConcepts(state)  BOOST_PP_SEQ_ELEM(3,state)
 
-//! @brief	Define 4-tuple state: {idx, sizeof(concepts), class-name, {concepts}}
-#define _makeConceptState(name,seq)   (0)(BOOST_PP_SEQ_SIZE(seq))(name)(seq) 
+//! @brief	Define 4-tuple state: {idx, sizeof({parameters}), class-name, {parameters}}
+#define _makeConceptState(name,params)   (0)(BOOST_PP_SEQ_SIZE(params))(name)(params) 
 
-//! @brief	Define predicate: idx < sizeof(concepts)
+//! @brief	Define predicate: idx < sizeof({parameters})
 #define _whileIdxLessThanN(r,state)   BOOST_PP_LESS(_getStateIdx(state), _getStateN(state)) 
 
-//! @brief	Define stride of 4: {idx + 4, sizeof(concepts), class-name, {concepts}}
+//! @brief	Define stride of 4 with new state: {idx + 4, sizeof(parameters), class-name, {parameters}}
 #define _IdxPlusEqualsFour(r,state)	  (BOOST_PP_ADD(_getStateIdx(state),4))(_getStateN(state))(_getStateClassName(state))(_getStateConcepts(state))  
 
-//! @brief	Define loop body: fx("todo", subset(concepts,idx,4));
-#define _ExpandFourTupleAtIdx(r,state) _expandConceptSubsequence(_getStateClassName(state), BOOST_PP_SEQ_SUBSEQ(_getStateConcepts(state),_getStateIdx(state),4)); 
+//! @brief	Define loop body: fx(class-name, subset(parameters,idx,4));
+#define _ExpandFourTupleAtIdx(r,state) _expandConceptSubsequence(_getStateClassName(state), BOOST_PP_SEQ_SUBSEQ(_getStateConcepts(state),_getStateIdx(state),4))
 
-//! @brief	Consume input sequence as blocks of 4-tuples: {prefix, concept, enabled, postfix}
-#define _expandConceptSequence(className,seq) 	  \
+//! @brief	Consume {parameter, ...} sequence as series of 4-tuples: {prefix, {concepts-decls}, enabled, postfix}
+#define _expandConceptSequence(className,params)  \
 	BOOST_PP_FOR(								  \
-		_makeConceptState(className,seq),		  \
+		_makeConceptState(className,params),      \
 		_whileIdxLessThanN,						  \
 		_IdxPlusEqualsFour,						  \
 		_ExpandFourTupleAtIdx			          \
 	)
 
-//! @brief	Expands named requirements into defaulted/deleted method declarations
+//! @brief	Expands supported concepts into defaulted/deleted method declarations
 #define satisfies(className, ...)		\
 	__VA_OPT__(_expandConceptSequence(className,BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__)))
 
