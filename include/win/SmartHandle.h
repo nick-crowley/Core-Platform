@@ -72,9 +72,13 @@ namespace win
         }
 
         satisfies(SmartHandle,
-            constexpr_IsCopyable_noexcept,
-            constexpr_IsMovable_noexcept,
-            constexpr IsDestructible_noexcept
+            //FIXME: constexpr IsCopyable noexcept,
+            constexpr IsCopyAssignable noexcept,
+            constexpr IsCopyConstructible noexcept,
+            //FIXME: constexpr IsMovable noexcept,
+            constexpr IsMoveAssignable noexcept,
+            constexpr IsMoveConstructible noexcept,
+            constexpr IsDestructible noexcept
         );
         
     public:

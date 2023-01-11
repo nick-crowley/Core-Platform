@@ -9,7 +9,7 @@ namespace meta
 	struct adopt_t
 	{ 
 		satisfies(adopt_t,
-			constexpr IsDefaultConstructible_noexcept
+			constexpr IsDefaultConstructible noexcept
 		);
 	}
 	constexpr 
@@ -19,7 +19,7 @@ namespace meta
 	struct create_new_t
 	{ 
 		satisfies(create_new_t,
-			constexpr IsDefaultConstructible_noexcept
+			constexpr IsDefaultConstructible noexcept
 		);
 	}
 	constexpr 
@@ -29,7 +29,7 @@ namespace meta
 	struct hidden_t
 	{
 		satisfies(hidden_t,
-			constexpr IsDefaultConstructible_noexcept
+			constexpr IsDefaultConstructible noexcept
 		);
 	}
 	constexpr  
@@ -39,7 +39,7 @@ namespace meta
 	struct open_existing_t
 	{ 
 		satisfies(open_existing_t,
-			constexpr IsDefaultConstructible_noexcept
+			constexpr IsDefaultConstructible noexcept
 		);
 	}
 	constexpr 
@@ -49,7 +49,7 @@ namespace meta
     struct use_default_t 
     {
         satisfies(use_default_t,
-		    constexpr IsDefaultConstructible_noexcept
+		    constexpr IsDefaultConstructible noexcept
 	    );
     } 
     constexpr inline 

@@ -7,69 +7,71 @@
 namespace nstd
 {	
     
+#define _DefaultConstructibleDecl(className)    className()
+#define _DestructibleDecl(className)            ~className()
+#define _CopyAssignableDecl(className)          className& operator=(className const&)
+#define _CopyConstructibleDecl(className)       className(className const&)
+#define _MoveAssignableDecl(className)          className& operator=(className&&)
+#define _MoveConstructibleDecl(className)       className(className&&)
+#define _EqualityComparableDecl(className)      bool operator==(className const&) const
+#define _SortableDecl(className)                auto operator<=>(className const&) const
+
+#define _MakeDefaultedConceptMacro(_declMacro)  BOOST_PP_COMMA() _declMacro BOOST_PP_COMMA() = default BOOST_PP_COMMA()
+#define _MakeDeletedConceptMacro(_declMacro)    BOOST_PP_COMMA() _declMacro BOOST_PP_COMMA() = delete BOOST_PP_COMMA()
+
 // Defaulted named requirements
-#define IsDefaultConstructible(className)   className() = default
-#define IsDestructible(className)           ~className() = default
-#define IsCopyConstructible(className)      className(className const&) = default
-#define IsCopyAssignable(className)         className& operator=(className const&) = default
-#define IsMoveConstructible(className)      className(className&&) = default
-#define IsMoveAssignable(className)         className& operator=(className&&) = default
-#define IsEqualityComparable(className)     bool operator==(className const&) const = default
-#define IsSortable(className)               auto operator<=>(className const&) const = default
-#define IsCopyable(className)				IsCopyConstructible(className); IsCopyAssignable(className)
-#define IsMovable(className)				IsMoveConstructible(className); IsMoveAssignable(className)
-#define IsSemiRegular(className)            IsDefaultConstructible(className); IsCopyable(className); IsMovable(className)
-#define IsRegular(className)                IsSemiRegular(className); IsEqualityComparable(className)
+#define IsDefaultConstructible		_MakeDefaultedConceptMacro(_DefaultConstructibleDecl)
+#define IsDestructible		        _MakeDefaultedConceptMacro(_DestructibleDecl)
+#define IsCopyAssignable            _MakeDefaultedConceptMacro(_CopyAssignableDecl)
+#define IsCopyConstructible         _MakeDefaultedConceptMacro(_CopyConstructibleDecl)
+#define IsMoveAssignable            _MakeDefaultedConceptMacro(_MoveAssignableDecl)
+#define IsMoveConstructible         _MakeDefaultedConceptMacro(_MoveConstructibleDecl)
+#define IsEqualityComparable        _MakeDefaultedConceptMacro(_EqualityComparableDecl)
+#define IsSortable                  _MakeDefaultedConceptMacro(_SortableDecl)
 
 // Deleted named requirements
-#define NotDefaultConstructible(className)  className() = delete
-#define NotDestructible(className)          ~className() = delete
-#define NotCopyConstructible(className)     className(className const&) = delete
-#define NotCopyAssignable(className)        className& operator=(className const&) = delete
-#define NotMoveConstructible(className)     className(className&&) = delete
-#define NotMoveAssignable(className)        className& operator=(className&&) = delete
-#define NotEqualityComparable(className)    bool operator==(className const&) const = delete
-#define NotSortable(className)              auto operator<=>(className const&) const = delete
-#define NotCopyable(className)				NotCopyConstructible(className); NotCopyAssignable(className)
-#define NotMovable(className)				NotMoveConstructible(className); NotMoveAssignable(className)
+#define NotDefaultConstructible		_MakeDeletedConceptMacro(_DefaultConstructibleDecl)
+#define NotDestructible		        _MakeDeletedConceptMacro(_DestructibleDecl)
+#define NotCopyAssignable           _MakeDeletedConceptMacro(_CopyAssignableDecl)
+#define NotCopyConstructible        _MakeDeletedConceptMacro(_CopyConstructibleDecl)
+#define NotMoveAssignable           _MakeDeletedConceptMacro(_MoveAssignableDecl)
+#define NotMoveConstructible        _MakeDeletedConceptMacro(_MoveConstructibleDecl)
+#define NotEqualityComparable       _MakeDeletedConceptMacro(_EqualityComparableDecl)
+#define NotSortable                 _MakeDeletedConceptMacro(_SortableDecl)
 
-// noexcept support
-#define IsDefaultConstructible_noexcept(className)  className() noexcept = default
-#define IsDestructible_noexcept(className)          ~className() noexcept = default
-#define IsCopyConstructible_noexcept(className)     className(className const&) noexcept = default
-#define IsCopyAssignable_noexcept(className)        className& operator=(className const&) noexcept = default
-#define IsMoveConstructible_noexcept(className)     className(className&&) noexcept = default
-#define IsMoveAssignable_noexcept(className)        className& operator=(className&&) noexcept = default
-#define IsEqualityComparable_noexcept(className)    bool operator==(className const&) const noexcept = default
-#define IsSortable_noexcept(className)              auto operator<=>(className const&) const noexcept = default
-#define IsCopyable_noexcept(className)				IsCopyConstructible_noexcept(className); IsCopyAssignable_noexcept(className)
-#define IsMovable_noexcept(className)				IsMoveConstructible_noexcept(className); IsMoveAssignable_noexcept(className)
-#define IsSemiRegular_noexcept(className)           IsDefaultConstructible_noexcept(className); IsCopyable_noexcept(className); IsMovable_noexcept(className)
-#define IsRegular_noexcept(className)               IsSemiRegular_noexcept(className); IsEqualityComparable_noexcept(className)
+//! @brief	Re-order elements of 4-tuple: {prefix, concept(class-name), enabled, postfix}
+#define _expandConceptSubsequence(className,seq)      \
+	BOOST_PP_SEQ_ELEM(0,seq) BOOST_PP_SEQ_ELEM(1,seq)(className) BOOST_PP_SEQ_ELEM(3,seq) BOOST_PP_SEQ_ELEM(2,seq)
 
-// constexpr support
-#define constexpr_IsCopyable(className)				constexpr IsCopyConstructible(className); constexpr IsCopyAssignable(className)
-#define constexpr_IsMovable(className)				constexpr IsMoveConstructible(className); constexpr IsMoveAssignable(className)
-#define constexpr_IsSemiRegular(className)			constexpr IsDefaultConstructible(className); constexpr_IsCopyable(className); constexpr_IsMovable(className)
-#define constexpr_IsRegular(className)				constexpr_IsSemiRegular(className); constexpr IsEqualityComparable(className)
-#define constexpr_NotCopyable(className)			constexpr NotCopyConstructible(className); constexpr NotCopyAssignable(className)
-#define constexpr_NotMovable(className)				constexpr NotMoveConstructible(className); constexpr NotMoveAssignable(className)
+// Accessors for retrieving state components
+#define _getStateIdx(state)       BOOST_PP_SEQ_ELEM(0,state)
+#define _getStateN(state)         BOOST_PP_SEQ_ELEM(1,state)
+#define _getStateClassName(state) BOOST_PP_SEQ_ELEM(2,state)
+#define _getStateConcepts(state)  BOOST_PP_SEQ_ELEM(3,state)
 
-// constexpr/noexcept support
-#define constexpr_IsCopyable_noexcept(className)	constexpr IsCopyConstructible_noexcept(className); constexpr IsCopyAssignable_noexcept(className)
-#define constexpr_IsMovable_noexcept(className)		constexpr IsMoveConstructible_noexcept(className); constexpr IsMoveAssignable_noexcept(className)
-#define constexpr_IsSemiRegular_noexcept(className) constexpr IsDefaultConstructible(className) noexcept; constexpr_IsCopyable_noexcept(className); constexpr_IsMovable_noexcept(className)
-#define constexpr_IsRegular_noexcept(className)     constexpr_IsSemiRegular_noexcept(className); constexpr IsEqualityComparable(className) noexcept
+//! @brief	Define 4-tuple state: {idx, sizeof(concepts), class-name, {concepts}}
+#define _makeConceptState(name,seq)   (0)(BOOST_PP_SEQ_SIZE(seq))(name)(seq) 
 
-#define _makeNamedRequirement(s,className,namedRequirement)      \
-	namedRequirement(className);
+//! @brief	Define predicate: idx < sizeof(concepts)
+#define _whileIdxLessThanN(r,state)   BOOST_PP_LESS(_getStateIdx(state), _getStateN(state)) 
 
-#define _expandNamedRequirements(className,...)      \
-	BOOST_PP_SEQ_FOR_EACH(_makeNamedRequirement, className, BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__))
+//! @brief	Define stride of 4: {idx + 4, sizeof(concepts), class-name, {concepts}}
+#define _IdxPlusEqualsFour(r,state)	  (BOOST_PP_ADD(_getStateIdx(state),4))(_getStateN(state))(_getStateClassName(state))(_getStateConcepts(state))  
 
-//! @brief	Expands named-requirements into defaulted/deleted method declarations
+//! @brief	Define loop body: fx("todo", subset(concepts,idx,4));
+#define _ExpandFourTupleAtIdx(r,state) _expandConceptSubsequence(_getStateClassName(state), BOOST_PP_SEQ_SUBSEQ(_getStateConcepts(state),_getStateIdx(state),4)); 
+
+//! @brief	Consume input sequence as blocks of 4-tuples: {prefix, concept, enabled, postfix}
+#define _expandConceptSequence(className,seq) 	  \
+	BOOST_PP_FOR(								  \
+		_makeConceptState(className,seq),		  \
+		_whileIdxLessThanN,						  \
+		_IdxPlusEqualsFour,						  \
+		_ExpandFourTupleAtIdx			          \
+	)
+
+//! @brief	Expands named requirements into defaulted/deleted method declarations
 #define satisfies(className, ...)		\
-	__VA_OPT__(_expandNamedRequirements(className,__VA_ARGS__))
-
+	__VA_OPT__(_expandConceptSequence(className,BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__)))
 
 } // namespace nstd
