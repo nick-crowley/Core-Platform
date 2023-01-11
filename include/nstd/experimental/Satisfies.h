@@ -44,6 +44,8 @@ namespace nstd
 #define IsMovable                   _MakeDefaultedConceptMacro(_MoveConstructibleDecl, _MoveAssignableDecl)
 #define IsSemiRegular               _MakeDefaultedConceptMacro(_DefaultConstructibleDecl, _CopyConstructibleDecl, _CopyAssignableDecl, _MoveConstructibleDecl, _MoveAssignableDecl)
 #define IsRegular                   _MakeDefaultedConceptMacro(_DefaultConstructibleDecl, _CopyConstructibleDecl, _CopyAssignableDecl, _MoveConstructibleDecl, _MoveAssignableDecl, _EqualityComparableDecl)
+#define NotCopyable                 _MakeDeletedConceptMacro(_CopyConstructibleDecl, _CopyAssignableDecl)
+#define NotMovable                  _MakeDeletedConceptMacro(_MoveConstructibleDecl, _MoveAssignableDecl)
 
 //! @brief	Expand 4-tuple: {prefix, class-name, postfix, enabled} with concept-name 'prefix concept(class-name) postfix enabled'
 #define _expandConceptDeclaration(r,state,conceptDecl)      \
