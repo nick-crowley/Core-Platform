@@ -16,14 +16,10 @@ namespace win
 		
 		satisfies(Boolean,
 			NotDefaultConstructible,
-			//FIXME: constexpr IsCopyable noexcept,
-            constexpr IsCopyAssignable noexcept,
-            constexpr IsCopyConstructible noexcept,
-            //FIXME: constexpr IsMovable noexcept,
-            constexpr IsMoveAssignable noexcept,
-            constexpr IsMoveConstructible noexcept,
-			constexpr IsEqualityComparable,
-			constexpr IsSortable
+            constexpr IsCopyable noexcept,
+            constexpr IsMovable noexcept,
+			constexpr IsEqualityComparable noexcept,
+			constexpr IsSortable noexcept
 		);
 
 	public:

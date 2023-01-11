@@ -59,7 +59,7 @@ namespace win
     public:
         constexpr
         explicit
-        SmartHandle(RawHandle handle = Empty) 
+        SmartHandle(RawHandle handle) 
           : m_handle{new RawHandle{handle},Deleter}
         {
         }
@@ -72,13 +72,7 @@ namespace win
         }
 
         satisfies(SmartHandle,
-            //FIXME: constexpr IsCopyable noexcept,
-            constexpr IsCopyAssignable noexcept,
-            constexpr IsCopyConstructible noexcept,
-            //FIXME: constexpr IsMovable noexcept,
-            constexpr IsMoveAssignable noexcept,
-            constexpr IsMoveConstructible noexcept,
-            constexpr IsDestructible noexcept
+            constexpr IsRegular noexcept
         );
         
     public:
