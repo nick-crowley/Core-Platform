@@ -39,7 +39,7 @@ namespace nstd
 #define NotEqualityComparable       _MakeDeletedConceptMacro(_EqualityComparableDecl)
 #define NotSortable                 _MakeDeletedConceptMacro(_SortableDecl)
 
-//! @brief	Re-order elements of 4-tuple: {prefix, concept(class-name), enabled, postfix}
+//! @brief	Re-order elements of 4-tuple: {prefix, concept, enabled, postfix} as 'prefix concept(className) postfix enabled'
 #define _expandConceptSubsequence(className,seq)      \
 	BOOST_PP_SEQ_ELEM(0,seq) BOOST_PP_SEQ_ELEM(1,seq)(className) BOOST_PP_SEQ_ELEM(3,seq) BOOST_PP_SEQ_ELEM(2,seq)
 
