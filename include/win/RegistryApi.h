@@ -31,4 +31,7 @@ namespace win
 		void
 		virtual remove_value(SharedRegistryKey root, std::wstring_view path, std::wstring_view name) const;
 	};
+
+	std::shared_ptr<RegistryApi>
+	registry_api();
 }

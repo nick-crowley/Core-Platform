@@ -24,27 +24,27 @@ namespace win
 	public:
 		//! @brief	Open existing key
 		RegistryKey(meta::open_existing_t, SharedRegistryKey handle, REGSAM rights, 
-			std::shared_ptr<RegistryApi> api = std::make_shared<RegistryApi>());
+			std::shared_ptr<RegistryApi> api = registry_api());
 
 		//! @brief	Open existing key
 		RegistryKey(meta::open_existing_t, RegistryKey const& key, REGSAM rights, 
-			std::shared_ptr<RegistryApi> api = std::make_shared<RegistryApi>());
+			std::shared_ptr<RegistryApi> api = registry_api());
 
 		//! @brief	Open child of existing key
 		RegistryKey(meta::open_existing_t, SharedRegistryKey parent, std::wstring_view child, REGSAM rights, 
-			std::shared_ptr<RegistryApi> api = std::make_shared<RegistryApi>());
+			std::shared_ptr<RegistryApi> api = registry_api());
 
 		//! @brief	Open child of existing key
 		RegistryKey(meta::open_existing_t, RegistryKey const& parent, std::wstring_view child, REGSAM rights, 
-			std::shared_ptr<RegistryApi> api = std::make_shared<RegistryApi>());
+			std::shared_ptr<RegistryApi> api = registry_api());
 
 		//! @brief	Create child of existing key
 		RegistryKey(meta::create_new_t, SharedRegistryKey parent, std::wstring_view child, REGSAM rights, 
-			std::shared_ptr<RegistryApi> api = std::make_shared<RegistryApi>());
+			std::shared_ptr<RegistryApi> api = registry_api());
 		
 		//! @brief	Create child of existing key
 		RegistryKey(meta::create_new_t, RegistryKey const& parent, std::wstring_view child, REGSAM rights, 
-			std::shared_ptr<RegistryApi> api = std::make_shared<RegistryApi>());
+			std::shared_ptr<RegistryApi> api = registry_api());
 
 		RegistryKey 
 		createSubKey(std::wstring_view name) const;
