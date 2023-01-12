@@ -23,9 +23,9 @@ win::registryApi()
 }
 
 win::SharedRegistryKey
-win::RegistryApi::createKey(SharedRegistryKey root, std::wstring_view path, AccessRight rights, Lifetime l) const
+win::RegistryApi::createKey(SharedRegistryKey root, std::wstring_view path, AccessRight rights, Lifetime life) const
 {
-	auto const flags = l == NonVolatile ? REG_OPTION_NON_VOLATILE : REG_OPTION_VOLATILE;
+	auto const flags = life == NonVolatile ? REG_OPTION_NON_VOLATILE : REG_OPTION_VOLATILE;
 	auto [key, disposition] = regCreateKeyEx(*root, path.data(), Reserved<DWORD>, nullptr, flags, rights, Unsecured);
 	return SharedRegistryKey{key};
 }
@@ -65,11 +65,13 @@ win::RegistryApi::getValue(SharedRegistryKey root, std::wstring_view path, std::
 	}
 
 	auto const str = boost::reinterpret_pointer_cast<wchar_t[]>(std::move(value));
+	auto const nChars = size/sizeof(wchar_t);
 	if (type == REG_SZ)
-		return std::wstring{&str[0], &str[size/sizeof(wchar_t)]};
+		return std::wstring{&str[0], &str[nChars]};
 	
+	// REG_MULTI_SZ
 	return std::vector<std::wstring>{ 
-		ConstRegistryStringIterator{{&str[0], &str[size/sizeof(wchar_t)]}}, 
+		ConstRegistryStringIterator{{&str[0], &str[nChars]}}, 
 		ConstRegistryStringIterator{} 
 	};
 }
@@ -83,11 +85,11 @@ win::RegistryApi::setValue(SharedRegistryKey root, std::wstring_view path, std::
 	}
 	else if (auto* int32 = std::get_if<std::uint32_t>(&value))
 	{
-		regSetKeyValue(*root, path.data(), name.data(), REG_DWORD, int32, 4);
+		regSetKeyValue(*root, path.data(), name.data(), REG_DWORD, int32, sizeof(uint32_t));
 	}
 	else if (auto* int64 = std::get_if<std::uint64_t>(&value))
 	{
-		regSetKeyValue(*root, path.data(), name.data(), REG_QWORD, int64, 8);
+		regSetKeyValue(*root, path.data(), name.data(), REG_QWORD, int64, sizeof(uint64_t));
 	}
 	else if (auto* str = std::get_if<std::wstring>(&value))
 	{
@@ -99,9 +101,9 @@ win::RegistryApi::setValue(SharedRegistryKey root, std::wstring_view path, std::
 	}
 	else if (auto* multi = std::get_if<std::vector<std::wstring>>(&value))
 	{
-		auto constexpr static concat = [](std::wstring const& total, std::wstring const& e){ return total + e + L'\0'; };
+		auto constexpr static concatenate = [](std::wstring const& total, std::wstring const& e){ return total + e + L'\0'; };
 
-		std::wstring const flat = std::accumulate(multi->begin(), multi->end(), std::wstring{}, concat) + L'\0';
+		std::wstring const flat = std::accumulate(multi->begin(), multi->end(), std::wstring{}, concatenate) + L'\0';
 		regSetKeyValue(*root, path.data(), name.data(), REG_MULTI_SZ, flat.c_str(), DWord{flat.size()*sizeof(wchar_t)}); 
 	}
 }

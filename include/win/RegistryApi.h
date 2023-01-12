@@ -15,7 +15,7 @@ namespace win
 		virtual ~RegistryApi() = default;
 
 		SharedRegistryKey
-		virtual createKey(SharedRegistryKey root, std::wstring_view path, AccessRight rights, Lifetime l = NonVolatile) const;
+		virtual createKey(SharedRegistryKey root, std::wstring_view path, AccessRight rights, Lifetime life = NonVolatile) const;
 
 		SharedRegistryKey
 		virtual openKey(SharedRegistryKey root, std::wstring_view path, AccessRight rights) const;
