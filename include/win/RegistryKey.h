@@ -3,6 +3,7 @@
 #include "win/SmartHandle.h"
 #include "win/RegistryValue.h"
 #include "win/RegistryApi.h"
+#include "security/KeyRight.h"
 
 namespace win
 {
@@ -19,31 +20,31 @@ namespace win
 	{
 		std::shared_ptr<RegistryApi>  m_api;
 		SharedRegistryKey m_key;
-		REGSAM m_rights;
+		AccessRight m_rights;
 
 	public:
 		//! @brief	Open existing key
-		RegistryKey(meta::open_existing_t, SharedRegistryKey handle, REGSAM rights, 
+		RegistryKey(meta::open_existing_t, SharedRegistryKey handle, AccessRight rights, 
 			std::shared_ptr<RegistryApi> api = registry_api());
 
 		//! @brief	Open existing key
-		RegistryKey(meta::open_existing_t, RegistryKey const& key, REGSAM rights, 
+		RegistryKey(meta::open_existing_t, RegistryKey const& key, AccessRight rights, 
 			std::shared_ptr<RegistryApi> api = registry_api());
 
 		//! @brief	Open child of existing key
-		RegistryKey(meta::open_existing_t, SharedRegistryKey parent, std::wstring_view child, REGSAM rights, 
+		RegistryKey(meta::open_existing_t, SharedRegistryKey parent, std::wstring_view child, AccessRight rights, 
 			std::shared_ptr<RegistryApi> api = registry_api());
 
 		//! @brief	Open child of existing key
-		RegistryKey(meta::open_existing_t, RegistryKey const& parent, std::wstring_view child, REGSAM rights, 
+		RegistryKey(meta::open_existing_t, RegistryKey const& parent, std::wstring_view child, AccessRight rights, 
 			std::shared_ptr<RegistryApi> api = registry_api());
 
 		//! @brief	Create child of existing key
-		RegistryKey(meta::create_new_t, SharedRegistryKey parent, std::wstring_view child, REGSAM rights, 
+		RegistryKey(meta::create_new_t, SharedRegistryKey parent, std::wstring_view child, AccessRight rights, 
 			std::shared_ptr<RegistryApi> api = registry_api());
 		
 		//! @brief	Create child of existing key
-		RegistryKey(meta::create_new_t, RegistryKey const& parent, std::wstring_view child, REGSAM rights, 
+		RegistryKey(meta::create_new_t, RegistryKey const& parent, std::wstring_view child, AccessRight rights, 
 			std::shared_ptr<RegistryApi> api = registry_api());
 
 		RegistryKey 

@@ -2,6 +2,7 @@
 #include "corePlatform.h"
 #include "win/SmartHandle.h"
 #include "win/RegistryValue.h"
+#include "security/AccessRight.h"
 
 namespace win
 {
@@ -14,10 +15,10 @@ namespace win
 		virtual ~RegistryApi() = default;
 
 		SharedRegistryKey
-		virtual create_key(SharedRegistryKey root, std::wstring_view path, ::REGSAM rights, Lifetime l = NonVolatile) const;
+		virtual create_key(SharedRegistryKey root, std::wstring_view path, AccessRight rights, Lifetime l = NonVolatile) const;
 
 		SharedRegistryKey
-		virtual open_key(SharedRegistryKey root, std::wstring_view path, ::REGSAM rights) const;
+		virtual open_key(SharedRegistryKey root, std::wstring_view path, AccessRight rights) const;
 		
 		RegistryValue
 		virtual get_value(SharedRegistryKey root, std::wstring_view path, std::wstring_view name) const;

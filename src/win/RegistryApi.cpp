@@ -23,7 +23,7 @@ win::registry_api()
 }
 
 win::SharedRegistryKey
-win::RegistryApi::create_key(SharedRegistryKey root, std::wstring_view path, ::REGSAM rights, Lifetime l) const
+win::RegistryApi::create_key(SharedRegistryKey root, std::wstring_view path, AccessRight rights, Lifetime l) const
 {
 	auto const flags = l == NonVolatile ? REG_OPTION_NON_VOLATILE : REG_OPTION_VOLATILE;
 	auto [key, disposition] = regCreateKeyEx(*root, path.data(), Reserved<DWORD>, nullptr, flags, rights, Unsecured);
@@ -31,7 +31,7 @@ win::RegistryApi::create_key(SharedRegistryKey root, std::wstring_view path, ::R
 }
 
 win::SharedRegistryKey
-win::RegistryApi::open_key(SharedRegistryKey root, std::wstring_view path, ::REGSAM rights) const
+win::RegistryApi::open_key(SharedRegistryKey root, std::wstring_view path, AccessRight rights) const
 {
 	constexpr DWORD NotASymLink = NULL;
 	return SharedRegistryKey{regOpenKeyEx(*root, path.data(), NotASymLink, rights)};
