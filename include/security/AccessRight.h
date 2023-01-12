@@ -104,7 +104,8 @@ namespace win
 
 		// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 		satisfies(AccessRight,
-			IsRegular
+			IsRegular,
+			NotSortable
 		);
 
 		// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
