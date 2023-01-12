@@ -95,9 +95,15 @@ namespace win
         {
             return this->m_handle.get();
         }
+        
+        void 
+        reset() 
+        {
+            this->m_handle.reset();
+        }
 
         void 
-        reset(RawHandle handle = Empty) 
+        reset(RawHandle handle) 
         {
             this->m_handle.reset(new RawHandle{handle},Deleter);
         }
