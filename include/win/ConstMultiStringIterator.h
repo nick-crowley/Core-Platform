@@ -3,11 +3,11 @@
 
 namespace win
 {
-	class ConstRegistryStringIterator 
-		: public boost::iterator_facade<ConstRegistryStringIterator, std::wstring_view const, std::forward_iterator_tag>
+	class ConstMultiStringIterator 
+		: public boost::iterator_facade<ConstMultiStringIterator, std::wstring_view const, std::forward_iterator_tag>
 	{
 		friend class boost::iterator_core_access;
-		using type = ConstRegistryStringIterator;
+		using type = ConstMultiStringIterator;
 
 		std::wstring_view const
 		inline static npos;
@@ -17,12 +17,12 @@ namespace win
 		std::wstring_view  m_source;
 
 	public:
-		ConstRegistryStringIterator()
+		ConstMultiStringIterator()
 		  : m_source{npos}
 		{
 		}
 
-		ConstRegistryStringIterator(std::wstring_view src)
+		ConstMultiStringIterator(std::wstring_view src)
 		  : m_source{src}
 		{
 		}

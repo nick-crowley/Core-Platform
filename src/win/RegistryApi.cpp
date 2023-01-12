@@ -3,7 +3,7 @@
 #include "win/ApiHelpers.h"
 #include "win/DWord.h"
 #include "win/LResult.h"
-#include "win/ConstRegistryStringIterator.h"
+#include "win/ConstMultiStringIterator.h"
 
 namespace
 {
@@ -71,8 +71,8 @@ win::RegistryApi::getValue(SharedRegistryKey root, std::wstring_view path, std::
 	
 	// REG_MULTI_SZ
 	return std::vector<std::wstring>{ 
-		ConstRegistryStringIterator{{&str[0], &str[nChars]}}, 
-		ConstRegistryStringIterator{} 
+		ConstMultiStringIterator{{&str[0], &str[nChars]}}, 
+		ConstMultiStringIterator{} 
 	};
 }
 	
