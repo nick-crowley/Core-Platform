@@ -16,14 +16,14 @@ namespace
 }
 
 std::shared_ptr<win::RegistryApi>
-win::registry_api()
+win::registryApi()
 {
 	auto static api = std::make_shared<RegistryApi>();
 	return api;
 }
 
 win::SharedRegistryKey
-win::RegistryApi::create_key(SharedRegistryKey root, std::wstring_view path, AccessRight rights, Lifetime l) const
+win::RegistryApi::createKey(SharedRegistryKey root, std::wstring_view path, AccessRight rights, Lifetime l) const
 {
 	auto const flags = l == NonVolatile ? REG_OPTION_NON_VOLATILE : REG_OPTION_VOLATILE;
 	auto [key, disposition] = regCreateKeyEx(*root, path.data(), Reserved<DWORD>, nullptr, flags, rights, Unsecured);
@@ -31,7 +31,7 @@ win::RegistryApi::create_key(SharedRegistryKey root, std::wstring_view path, Acc
 }
 
 win::SharedRegistryKey
-win::RegistryApi::open_key(SharedRegistryKey root, std::wstring_view path, AccessRight rights) const
+win::RegistryApi::openKey(SharedRegistryKey root, std::wstring_view path, AccessRight rights) const
 {
 	constexpr DWORD NotASymLink = NULL;
 	return SharedRegistryKey{regOpenKeyEx(*root, path.data(), NotASymLink, rights)};
@@ -39,7 +39,7 @@ win::RegistryApi::open_key(SharedRegistryKey root, std::wstring_view path, Acces
 
 
 win::RegistryValue
-win::RegistryApi::get_value(SharedRegistryKey root, std::wstring_view path, std::wstring_view name) const
+win::RegistryApi::getValue(SharedRegistryKey root, std::wstring_view path, std::wstring_view name) const
 {
 	auto [type, data, size] = regQueryValueEx(*root, path.data(), Reserved<DWORD*>);
 	auto value = std::make_unique<std::byte[]>(size);
@@ -75,7 +75,7 @@ win::RegistryApi::get_value(SharedRegistryKey root, std::wstring_view path, std:
 }
 	
 void
-win::RegistryApi::set_value(SharedRegistryKey root, std::wstring_view path, std::wstring_view name, RegistryValue value) const
+win::RegistryApi::setValue(SharedRegistryKey root, std::wstring_view path, std::wstring_view name, RegistryValue value) const
 {
 	if (auto* bytes = std::get_if<std::vector<std::byte>>(&value))
 	{
@@ -107,14 +107,14 @@ win::RegistryApi::set_value(SharedRegistryKey root, std::wstring_view path, std:
 }
 
 void
-win::RegistryApi::remove_key(SharedRegistryKey root, std::wstring_view name) const
+win::RegistryApi::removeKey(SharedRegistryKey root, std::wstring_view name) const
 {
 	constexpr DWORD NotUsingWowFlag = NULL;
 	regDeleteKeyEx(*root, name.data(), NotUsingWowFlag, Reserved<DWORD>);
 }
 		
 void
-win::RegistryApi::remove_value(SharedRegistryKey root, std::wstring_view path, std::wstring_view name) const
+win::RegistryApi::removeValue(SharedRegistryKey root, std::wstring_view path, std::wstring_view name) const
 {
 	regDeleteKeyValue(*root, path.data(), name.data());
 }

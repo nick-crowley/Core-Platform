@@ -14,7 +14,7 @@ RegistryKey::RegistryKey(meta::open_existing_t, RegistryKey const& key, AccessRi
 
 RegistryKey::RegistryKey(meta::open_existing_t, SharedRegistryKey parent, std::wstring_view child, AccessRight rights, 
 	std::shared_ptr<RegistryApi> api)
-	: m_api{ThrowIfEmpty(api)}, m_key{api->open_key(parent, child, rights)}, m_rights{rights}
+	: m_api{ThrowIfEmpty(api)}, m_key{api->openKey(parent, child, rights)}, m_rights{rights}
 {
 }
 
@@ -26,7 +26,7 @@ RegistryKey::RegistryKey(meta::open_existing_t, RegistryKey const& key, std::wst
 
 RegistryKey::RegistryKey(meta::create_new_t, SharedRegistryKey parent, std::wstring_view child, AccessRight rights, 
 	std::shared_ptr<RegistryApi> api)
-	: m_api{ThrowIfEmpty(api)}, m_key{api->create_key(parent, child, rights)}, m_rights{rights}
+	: m_api{ThrowIfEmpty(api)}, m_key{api->createKey(parent, child, rights)}, m_rights{rights}
 {
 }
 
@@ -41,7 +41,7 @@ RegistryKey::createSubKey(std::wstring_view name) const
 {
 	return RegistryKey{
 		meta::open_existing, 
-		this->m_api->create_key(this->m_key, ThrowIfEmpty(name), this->m_rights), 
+		this->m_api->createKey(this->m_key, ThrowIfEmpty(name), this->m_rights), 
 		this->m_rights, 
 		this->m_api 
 	};
@@ -50,29 +50,29 @@ RegistryKey::createSubKey(std::wstring_view name) const
 void 
 RegistryKey::deleteSubKey(std::wstring_view name) const
 {
-	this->m_api->remove_key(this->m_key, ThrowIfEmpty(name));
+	this->m_api->removeKey(this->m_key, ThrowIfEmpty(name));
 }
 
 win::RegistryValue 
 RegistryKey::getValue() const
 {
-	return m_api->get_value(this->m_key, {}, {});
+	return m_api->getValue(this->m_key, {}, {});
 }
 
 win::RegistryValue 
 RegistryKey::getValue(std::wstring_view name) const
 {
-	return m_api->get_value(this->m_key, {}, ThrowIfEmpty(name));
+	return m_api->getValue(this->m_key, {}, ThrowIfEmpty(name));
 }
 
 void 
 RegistryKey::setValue(RegistryValue&& v) const
 {
-	return m_api->set_value(this->m_key, {}, {}, v);
+	return m_api->setValue(this->m_key, {}, {}, v);
 }
 
 void 
 RegistryKey::setValue(std::wstring_view name, RegistryValue&& v) const
 {
-	return m_api->set_value(this->m_key, {}, ThrowIfEmpty(name), v);
+	return m_api->setValue(this->m_key, {}, ThrowIfEmpty(name), v);
 }
