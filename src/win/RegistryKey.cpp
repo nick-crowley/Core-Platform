@@ -1,38 +1,38 @@
 #include "win/RegistryKey.h"
 using win::RegistryKey;
 
-RegistryKey::RegistryKey(meta::open_existing_t, SharedRegistryKey handle, AccessRight rights, std::shared_ptr<RegistryApi> api)
+RegistryKey::RegistryKey(meta::open_existing_t, SharedRegistryKey handle, AccessRight rights, SharedRegistryApi api)
   : m_api{ThrowIfEmpty(api)}, 
     m_key{handle}, 
     m_rights{rights}
 {
 }
 
-RegistryKey::RegistryKey(meta::open_existing_t, RegistryKey const& key, AccessRight rights, std::shared_ptr<RegistryApi> api)
+RegistryKey::RegistryKey(meta::open_existing_t, RegistryKey const& key, AccessRight rights, SharedRegistryApi api)
   : RegistryKey{meta::open_existing, key.m_key, rights, api}
 {
 }
 
-RegistryKey::RegistryKey(meta::open_existing_t, SharedRegistryKey parent, std::wstring_view child, AccessRight rights, std::shared_ptr<RegistryApi> api)
+RegistryKey::RegistryKey(meta::open_existing_t, SharedRegistryKey parent, std::wstring_view child, AccessRight rights, SharedRegistryApi api)
   : m_api{ThrowIfEmpty(api)}, 
     m_key{api->openKey(parent, child, rights)}, 
     m_rights{rights}
 {
 }
 
-RegistryKey::RegistryKey(meta::open_existing_t, RegistryKey const& key, std::wstring_view child, AccessRight rights, std::shared_ptr<RegistryApi> api)
+RegistryKey::RegistryKey(meta::open_existing_t, RegistryKey const& key, std::wstring_view child, AccessRight rights, SharedRegistryApi api)
   : RegistryKey{meta::open_existing, key.m_key, child, rights, api}
 {
 }
 
-RegistryKey::RegistryKey(meta::create_new_t, SharedRegistryKey parent, std::wstring_view child, AccessRight rights, std::shared_ptr<RegistryApi> api)
+RegistryKey::RegistryKey(meta::create_new_t, SharedRegistryKey parent, std::wstring_view child, AccessRight rights, SharedRegistryApi api)
   : m_api{ThrowIfEmpty(api)}, 
     m_key{api->createKey(parent, child, rights)}, 
     m_rights{rights}
 {
 }
 
-RegistryKey::RegistryKey(meta::create_new_t, RegistryKey const& parent, std::wstring_view child, AccessRight rights, std::shared_ptr<RegistryApi> api)
+RegistryKey::RegistryKey(meta::create_new_t, RegistryKey const& parent, std::wstring_view child, AccessRight rights, SharedRegistryApi api)
 	: RegistryKey{meta::create_new, parent.m_key, child, rights, api}
 {
 }

@@ -15,7 +15,7 @@ namespace
 	auto constexpr regSetKeyValue = win::function(::RegSetKeyValueW);
 }
 
-std::shared_ptr<win::RegistryApi>
+win::SharedRegistryApi
 win::registryApi()
 {
 	auto static api = std::make_shared<RegistryApi>();

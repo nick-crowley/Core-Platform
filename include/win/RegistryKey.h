@@ -18,28 +18,28 @@ namespace win
 
 	class RegistryKey
 	{
-		std::shared_ptr<RegistryApi>  m_api;
+		SharedRegistryApi m_api;
 		SharedRegistryKey m_key;
 		AccessRight m_rights;
 
 	public:
 		//! @brief	Open existing key
-		RegistryKey(meta::open_existing_t, SharedRegistryKey handle, AccessRight rights, std::shared_ptr<RegistryApi> api = registryApi());
+		RegistryKey(meta::open_existing_t, SharedRegistryKey handle, AccessRight rights, SharedRegistryApi api = registryApi());
 
 		//! @brief	Open existing key
-		RegistryKey(meta::open_existing_t, RegistryKey const& key, AccessRight rights, std::shared_ptr<RegistryApi> api = registryApi());
+		RegistryKey(meta::open_existing_t, RegistryKey const& key, AccessRight rights, SharedRegistryApi api = registryApi());
 
 		//! @brief	Open child of existing key
-		RegistryKey(meta::open_existing_t, SharedRegistryKey parent, std::wstring_view child, AccessRight rights, std::shared_ptr<RegistryApi> api = registryApi());
+		RegistryKey(meta::open_existing_t, SharedRegistryKey parent, std::wstring_view child, AccessRight rights, SharedRegistryApi api = registryApi());
 
 		//! @brief	Open child of existing key
-		RegistryKey(meta::open_existing_t, RegistryKey const& parent, std::wstring_view child, AccessRight rights, std::shared_ptr<RegistryApi> api = registryApi());
+		RegistryKey(meta::open_existing_t, RegistryKey const& parent, std::wstring_view child, AccessRight rights, SharedRegistryApi api = registryApi());
 
 		//! @brief	Create child of existing key
-		RegistryKey(meta::create_new_t, SharedRegistryKey parent, std::wstring_view child, AccessRight rights, std::shared_ptr<RegistryApi> api = registryApi());
+		RegistryKey(meta::create_new_t, SharedRegistryKey parent, std::wstring_view child, AccessRight rights, SharedRegistryApi api = registryApi());
 		
 		//! @brief	Create child of existing key
-		RegistryKey(meta::create_new_t, RegistryKey const& parent, std::wstring_view child, AccessRight rights, std::shared_ptr<RegistryApi> api = registryApi());
+		RegistryKey(meta::create_new_t, RegistryKey const& parent, std::wstring_view child, AccessRight rights, SharedRegistryApi api = registryApi());
 
 		RegistryKey 
 		createSubKey(std::wstring_view name) const;
