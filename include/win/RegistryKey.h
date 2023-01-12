@@ -19,16 +19,44 @@ namespace win
 	class RegistryKey
 	{
 	public:
-		class RegistryValueProxy
+		class ConstRegistryValueProxy
 		{
+		protected:
 			RegistryKey const* m_key;
 			std::wstring_view m_valueName;
 
 		public:
 			explicit
-			RegistryValueProxy(RegistryKey const& key);
+			ConstRegistryValueProxy(RegistryKey const& key, meta::use_default_t);
 
-			RegistryValueProxy(RegistryKey const& key, std::wstring_view name);
+			ConstRegistryValueProxy(RegistryKey const& key, std::wstring_view name);
+
+			satisfies(ConstRegistryValueProxy,
+				NotCopyable,
+				NotMoveAssignable,
+				IsMoveConstructible noexcept,
+				NotEqualityComparable,
+				NotSortable
+			);
+			
+		public:
+			implicit operator
+			RegistryValue() const;
+		};
+		
+		class RegistryValueProxy : public ConstRegistryValueProxy
+		{
+			using base = ConstRegistryValueProxy;
+
+		public:
+			explicit
+			RegistryValueProxy(RegistryKey& key, meta::use_default_t)
+			  : base{key,use_default}
+			{}
+
+			RegistryValueProxy(RegistryKey& key, std::wstring_view name)
+			  : base{key,name}
+			{}
 
 			satisfies(RegistryValueProxy,
 				NotCopyable,
@@ -40,10 +68,6 @@ namespace win
 			
 			RegistryValueProxy&
 			operator=(RegistryValue value);
-
-		public:
-			implicit operator
-			RegistryValue() const;
 
 		public:
 			void
@@ -91,11 +115,15 @@ namespace win
 		RegistryKey
 		subkey(std::wstring_view child, std::optional<AccessRight> rights = std::nullopt) const;
 
-		RegistryValueProxy
-		operator[](meta::use_default_t) const;
-
-		RegistryValueProxy
-		operator[](std::wstring_view name) const;
+		template <typename Self, meta::AnyOf<std::wstring_view,meta::use_default_t> OptionalName>
+		auto
+		operator[](this Self&& self, OptionalName name)
+		{
+			if constexpr (std::is_const_v<Self>)
+				return ConstRegistryValueProxy{*this, name};
+			else
+				return RegistryValueProxy{*this, name};
+		}
 
 	public:
 		void
