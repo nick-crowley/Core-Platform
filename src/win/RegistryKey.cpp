@@ -29,9 +29,9 @@ RegistryKey::subkey(std::wstring_view child, std::optional<AccessRight> rights) 
 }
 
 void
-RegistryKey::remove()
+RegistryKey::removeKey(std::wstring_view child)
 {
-	this->m_api->removeKey(this->m_handle, {/*no-child*/});
+	this->m_api->removeKey(this->m_handle, ThrowIfEmpty(child));
 }
 
 win::RegistryKey

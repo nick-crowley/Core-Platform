@@ -127,7 +127,7 @@ namespace win
 
 	public:
 		void
-		remove();
+		removeKey(std::wstring_view child);
 
 		RegistryKey
 		subkey(meta::create_new_t, std::wstring_view child, std::optional<AccessRight> rights = std::nullopt);
