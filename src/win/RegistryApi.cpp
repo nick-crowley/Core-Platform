@@ -43,7 +43,7 @@ win::RegistryApi::get_value(SharedRegistryKey root, std::wstring_view path, std:
 {
 	auto [type, data, size] = regQueryValueEx(*root, path.data(), Reserved<DWORD*>);
 	auto value = std::make_unique<std::byte[]>(size);
-	LResult result = ::RegQueryValueExW(*root, path.data(), Reserved<DWORD*>, nullptr, (BYTE*)value.get(), &size);
+	ThrowingLResult result = ::RegQueryValueExW(*root, path.data(), Reserved<DWORD*>, nullptr, (BYTE*)value.get(), &size);
 	
 	switch (type)
 	{
