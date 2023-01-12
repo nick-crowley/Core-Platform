@@ -98,9 +98,9 @@ namespace win
 		{}
 		
 		//! @brief 	Prevent unwanted implicit conversions
-		template <meta::ConvertibleToAccessMask T>
+		template <meta::ConvertibleToAccessMask Unwanted>
 		implicit 
-		AccessRight(T&&) = delete;
+		AccessRight(Unwanted&&) = delete;
 
 		// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 		satisfies(AccessRight,
@@ -126,9 +126,9 @@ namespace win
 		}
 	
 		//! @brief 	Prevent unwanted implicit conversions
-		template <meta::ConvertibleFromAccessMask T>
+		template <meta::ConvertibleFromAccessMask Unwanted>
 		implicit operator
-		T() const = delete;
+		Unwanted() const = delete;
 
 		AccessRight
 		operator~() const {
