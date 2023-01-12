@@ -1,79 +1,83 @@
 #include "win/RegistryKey.h"
 using win::RegistryKey;
 
-RegistryKey::RegistryKey(meta::open_existing_t, SharedRegistryKey handle, AccessRight rights, SharedRegistryApi api)
+RegistryKey::RegistryValueProxy::RegistryValueProxy(RegistryKey const& key)
+  : m_key{&key}
+{
+}
+
+RegistryKey::RegistryValueProxy::RegistryValueProxy(RegistryKey const& key, std::wstring_view name)
+  : m_key{&key},
+	m_valueName{name}
+{
+}
+
+RegistryKey::RegistryValueProxy&
+RegistryKey::RegistryValueProxy::operator=(RegistryValue value)
+{
+	this->m_key->m_api->setValue(this->m_key->m_handle, {/*no-child*/}, this->m_valueName, value);
+	return *this;
+}
+
+RegistryKey::RegistryValueProxy::operator
+win::RegistryValue() const
+{
+	return this->m_key->m_api->getValue(this->m_key->m_handle, {/*no-child*/}, this->m_valueName);
+}
+
+void
+RegistryKey::RegistryValueProxy::remove()
+{
+	this->m_key->m_api->removeValue(this->m_key->m_handle, {/*no-child*/}, this->m_valueName);
+}
+
+RegistryKey::RegistryKey(SharedRegistryKey handle, AccessRight rights, SharedRegistryApi api)
   : m_api{ThrowIfEmpty(api)}, 
-    m_key{handle}, 
+    m_handle{handle}, 
     m_rights{rights}
 {
 }
 
-RegistryKey::RegistryKey(meta::open_existing_t, RegistryKey const& key, AccessRight rights, SharedRegistryApi api)
-  : RegistryKey{meta::open_existing, key.m_key, rights, api}
-{
-}
-
-RegistryKey::RegistryKey(meta::open_existing_t, SharedRegistryKey parent, std::wstring_view child, AccessRight rights, SharedRegistryApi api)
-  : m_api{ThrowIfEmpty(api)}, 
-    m_key{api->openKey(parent, child, rights)}, 
+RegistryKey::RegistryKey(SharedRegistryKey parent, std::wstring_view child, AccessRight rights, SharedRegistryApi api)
+  : m_api{api}, 
+    m_handle{ThrowIfEmpty(api)->openKey(parent, child, rights)}, 
     m_rights{rights}
-{
-}
-
-RegistryKey::RegistryKey(meta::open_existing_t, RegistryKey const& key, std::wstring_view child, AccessRight rights, SharedRegistryApi api)
-  : RegistryKey{meta::open_existing, key.m_key, child, rights, api}
 {
 }
 
 RegistryKey::RegistryKey(meta::create_new_t, SharedRegistryKey parent, std::wstring_view child, AccessRight rights, SharedRegistryApi api)
-  : m_api{ThrowIfEmpty(api)}, 
-    m_key{api->createKey(parent, child, rights)}, 
+  : m_api{api}, 
+    m_handle{ThrowIfEmpty(api)->createKey(parent, child, rights)}, 
     m_rights{rights}
 {
 }
 
-RegistryKey::RegistryKey(meta::create_new_t, RegistryKey const& parent, std::wstring_view child, AccessRight rights, SharedRegistryApi api)
-	: RegistryKey{meta::create_new, parent.m_key, child, rights, api}
+win::RegistryKey
+RegistryKey::subkey(std::wstring_view child, std::optional<AccessRight> rights) const
 {
+	return RegistryKey{this->m_handle, child, rights ? *rights : this->m_rights};
 }
 
-RegistryKey 
-RegistryKey::createSubKey(std::wstring_view name) const
+RegistryKey::RegistryValueProxy
+RegistryKey::operator[](meta::use_default_t) const
 {
-	return RegistryKey{
-		meta::open_existing, 
-		this->m_api->createKey(this->m_key, ThrowIfEmpty(name), this->m_rights), 
-		this->m_rights, 
-		this->m_api 
-	};
+	return RegistryValueProxy{*this};
 }
 
-void 
-RegistryKey::deleteSubKey(std::wstring_view name) const
+RegistryKey::RegistryValueProxy
+RegistryKey::operator[](std::wstring_view name) const
 {
-	this->m_api->removeKey(this->m_key, ThrowIfEmpty(name));
+	return RegistryValueProxy{*this, ThrowIfEmpty(name)};
 }
 
-win::RegistryValue 
-RegistryKey::getValue() const
+void
+RegistryKey::remove()
 {
-	return m_api->getValue(this->m_key, {}, {});
+	this->m_api->removeKey(this->m_handle, {/*no-child*/});
 }
 
-win::RegistryValue 
-RegistryKey::getValue(std::wstring_view name) const
+win::RegistryKey
+RegistryKey::subkey(meta::create_new_t, std::wstring_view child, std::optional<AccessRight> rights)
 {
-	return m_api->getValue(this->m_key, {}, ThrowIfEmpty(name));
-}
-
-void 
-RegistryKey::setValue(RegistryValue&& v) const
-{
-	return m_api->setValue(this->m_key, {}, {}, v);
-}
-
-void 
-RegistryKey::setValue(std::wstring_view name, RegistryValue&& v) const
-{
-	return m_api->setValue(this->m_key, {}, ThrowIfEmpty(name), v);
+	return RegistryKey{create_new, this->m_handle, child, rights ? *rights : this->m_rights};
 }

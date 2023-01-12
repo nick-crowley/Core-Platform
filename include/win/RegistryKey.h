@@ -18,45 +18,90 @@ namespace win
 
 	class RegistryKey
 	{
+	public:
+		class RegistryValueProxy
+		{
+			RegistryKey const* m_key;
+			std::wstring_view m_valueName;
+
+		public:
+			explicit
+			RegistryValueProxy(RegistryKey const& key);
+
+			RegistryValueProxy(RegistryKey const& key, std::wstring_view name);
+
+			satisfies(RegistryValueProxy,
+				NotCopyable,
+				NotMoveAssignable,
+				IsMoveConstructible noexcept,
+				NotEqualityComparable,
+				NotSortable
+			);
+			
+			RegistryValueProxy&
+			operator=(RegistryValue value);
+
+		public:
+			implicit operator
+			RegistryValue() const;
+
+		public:
+			void
+			remove();
+		};
+
+	private:
 		SharedRegistryApi m_api;
-		SharedRegistryKey m_key;
+		SharedRegistryKey m_handle;
 		AccessRight m_rights;
 
 	public:
-		//! @brief	Open existing key
-		RegistryKey(meta::open_existing_t, SharedRegistryKey handle, AccessRight rights, SharedRegistryApi api = registryApi());
+		//! @brief	Open existing key (identified by handle)
+		RegistryKey(SharedRegistryKey handle, AccessRight rights, SharedRegistryApi api = registryApi());
 
-		//! @brief	Open existing key
-		RegistryKey(meta::open_existing_t, RegistryKey const& key, AccessRight rights, SharedRegistryApi api = registryApi());
-
-		//! @brief	Open child of existing key
-		RegistryKey(meta::open_existing_t, SharedRegistryKey parent, std::wstring_view child, AccessRight rights, SharedRegistryApi api = registryApi());
-
-		//! @brief	Open child of existing key
-		RegistryKey(meta::open_existing_t, RegistryKey const& parent, std::wstring_view child, AccessRight rights, SharedRegistryApi api = registryApi());
-
-		//! @brief	Create child of existing key
+		//! @brief	Open child of existing key  (identified by handle)
+		RegistryKey(SharedRegistryKey parent, std::wstring_view child, AccessRight rights, SharedRegistryApi api = registryApi());
+		
+		//! @brief	Create child of key (identified by handle)
 		RegistryKey(meta::create_new_t, SharedRegistryKey parent, std::wstring_view child, AccessRight rights, SharedRegistryApi api = registryApi());
 		
-		//! @brief	Create child of existing key
-		RegistryKey(meta::create_new_t, RegistryKey const& parent, std::wstring_view child, AccessRight rights, SharedRegistryApi api = registryApi());
+		//! @brief	Open existing key
+		RegistryKey(RegistryKey const& key, AccessRight rights, SharedRegistryApi api = registryApi())
+		  : RegistryKey{key.m_handle, rights, api}
+		{}
 
-		RegistryKey 
-		createSubKey(std::wstring_view name) const;
+		//! @brief	Open child of existing key
+		RegistryKey(RegistryKey const& parent, std::wstring_view child, AccessRight rights, SharedRegistryApi api = registryApi())
+		  : RegistryKey{parent.m_handle, child, rights, api}
+		{}
 
-		void 
-		deleteSubKey(std::wstring_view name) const;
+		//! @brief	Create child of key
+		RegistryKey(meta::create_new_t, RegistryKey const& parent, std::wstring_view child, AccessRight rights, SharedRegistryApi api = registryApi())
+		  : RegistryKey{meta::create_new, parent.m_handle, child, rights, api}
+		{}
 		
-		RegistryValue 
-		getValue() const;
+		satisfies(RegistryKey,
+			IsCopyable,
+			IsMovable,
+			NotEqualityComparable,
+			NotSortable
+		);
+			
+	public:
+		RegistryKey
+		subkey(std::wstring_view child, std::optional<AccessRight> rights = std::nullopt) const;
 
-		RegistryValue 
-		getValue(std::wstring_view name) const;
+		RegistryValueProxy
+		operator[](meta::use_default_t) const;
 
-		void 
-		setValue(RegistryValue&& v) const;
-		
-		void 
-		setValue(std::wstring_view name, RegistryValue&& v) const;
+		RegistryValueProxy
+		operator[](std::wstring_view name) const;
+
+	public:
+		void
+		remove();
+
+		RegistryKey
+		subkey(meta::create_new_t, std::wstring_view child, std::optional<AccessRight> rights = std::nullopt);
 	};
 }
