@@ -115,14 +115,24 @@ namespace win
 		RegistryKey
 		subkey(std::wstring_view child, std::optional<AccessRight> rights = std::nullopt) const;
 
-		template <typename Self, meta::AnyOf<std::wstring_view,meta::use_default_t> OptionalName>
+		template <typename Self>
 		auto
-		operator[](this Self&& self, OptionalName name)
+		operator[](this Self&& self, meta::use_default_t)
 		{
 			if constexpr (std::is_const_v<Self>)
-				return ConstRegistryValueProxy{*this, name};
+				return ConstRegistryValueProxy{self, use_default};
 			else
-				return RegistryValueProxy{*this, name};
+				return RegistryValueProxy{self, use_default};
+		}
+		
+		template <typename Self>
+		auto
+		operator[](this Self&& self, std::wstring_view name)
+		{
+			if constexpr (std::is_const_v<Self>)
+				return ConstRegistryValueProxy{self, name};
+			else
+				return RegistryValueProxy{self, name};
 		}
 
 	public:
