@@ -6,8 +6,11 @@
 
 namespace meta
 {
+	template <typename T, typename... Types>
+	concept AnyOf = is_any_of_v<T,Types...>;
+
 	template <typename T>
-	concept Character = is_any_of_v<T,char,wchar_t,char8_t,char16_t,char32_t>;
+	concept Character = AnyOf<T,char,wchar_t,char8_t,char16_t,char32_t>;
 
 	template <typename T>
 	concept Clock = std::chrono::is_clock_v<T>;
