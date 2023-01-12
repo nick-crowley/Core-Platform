@@ -25,7 +25,7 @@ RegistryKey::RegistryKey(meta::create_new_t, SharedRegistryKey parent, std::wstr
 win::RegistryKey
 RegistryKey::subkey(std::wstring_view child, std::optional<AccessRight> rights) const
 {
-	return RegistryKey{this->m_handle, child, rights ? *rights : this->m_rights};
+	return RegistryKey{this->m_handle, ThrowIfEmpty(child), rights ? *rights : this->m_rights};
 }
 
 void
@@ -37,5 +37,5 @@ RegistryKey::removeKey(std::wstring_view child)
 win::RegistryKey
 RegistryKey::subkey(meta::create_new_t, std::wstring_view child, std::optional<AccessRight> rights)
 {
-	return RegistryKey{create_new, this->m_handle, child, rights ? *rights : this->m_rights};
+	return RegistryKey{create_new, this->m_handle, ThrowIfEmpty(child), rights ? *rights : this->m_rights};
 }
