@@ -4,6 +4,7 @@
 #include <atomic>
 #include <chrono>
 #include <concepts>
+#include <compare>
 #include <format>
 #include <functional>
 #include <iterator>
