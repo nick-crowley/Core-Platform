@@ -4,7 +4,7 @@
 #endif
 #include "nstd/experimental/Satisfies.h"
 
-namespace meta
+namespace core::meta
 {
 	struct adopt_t
 	{ 
@@ -56,23 +56,26 @@ namespace meta
     use_default;
 }
 
-//using adopt_t = meta::adopt_t;
-//using create_new_t = meta::create_new_t;
-//using hidden_t = meta::hidden_t;
-//using open_existing_t = meta::open_existing_t;
-//using use_default_t = meta::use_default_t;
+namespace core
+{
+	//using adopt_t = meta::adopt_t;
+	//using create_new_t = meta::create_new_t;
+	//using hidden_t = meta::hidden_t;
+	//using open_existing_t = meta::open_existing_t;
+	//using use_default_t = meta::use_default_t;
 
-auto constexpr 
-inline adopt = meta::adopt;
+	auto constexpr 
+	inline adopt = meta::adopt;
 
-auto constexpr 
-inline create_new = meta::create_new;
+	auto constexpr 
+	inline create_new = meta::create_new;
 
-auto constexpr 
-inline hidden = meta::hidden;
+	auto constexpr 
+	inline hidden = meta::hidden;
 
-auto constexpr 
-inline open_existing = meta::open_existing;
+	auto constexpr 
+	inline open_existing = meta::open_existing;
 
-auto constexpr 
-inline use_default = meta::use_default;
+	auto constexpr 
+	inline use_default = meta::use_default;
+}

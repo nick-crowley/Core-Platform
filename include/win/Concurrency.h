@@ -1,7 +1,7 @@
 #pragma once
 #include "corePlatform.h"
 
-namespace win
+namespace core::win
 {	
     namespace detail
     {
@@ -93,4 +93,4 @@ namespace win
     {
         return waitUntilAll(std::ranges::single_view{handle}, deadline);
     }
-} // namespace win
+} // namespace core::win

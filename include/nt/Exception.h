@@ -1,7 +1,7 @@
 #pragma once
 #include "corePlatform.h"
 
-namespace nt
+namespace core::nt
 {
 	[[noreturn]] 
 	void 

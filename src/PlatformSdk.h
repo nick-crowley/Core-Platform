@@ -9,7 +9,7 @@
 
 #include <ntsecapi.h>
 
-namespace win
+namespace core::win
 {
 	using access_mask_t = ::ACCESS_MASK;
 }

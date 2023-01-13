@@ -3,7 +3,7 @@
 #include "core/CallAdapter.h"
 #include "win/LResult.h"
 
-namespace win
+namespace core::win
 {
 	template <unsigned NumResults = 0, typename ReturnType, typename... Parameters>
 	auto constexpr 
@@ -40,4 +40,4 @@ namespace win
 			std::move(callable)
 		);
 	}
-}  // namespace win
+}  // namespace core::win

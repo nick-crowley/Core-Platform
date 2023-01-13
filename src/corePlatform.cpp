@@ -2,6 +2,7 @@
 #include "win/DWord.h"
 #include "nt/Exception.h"
 #include "win/Exception.h"
+using namespace core;
 
 std::string 
 formatMessage(int err)

@@ -1,4 +1,5 @@
 #include "win/Concurrency.h"
+using namespace core;
 
 std::optional<::HANDLE>
 win::detail::waitForMultipleObjects(std::span<::HANDLE> handles, WaitStrategy strategy, std::optional<std::chrono::milliseconds> timeout)

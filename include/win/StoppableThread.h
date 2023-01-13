@@ -2,7 +2,7 @@
 #include "corePlatform.h"
 #include "ManualResetEvent.h"
 
-namespace win
+namespace core::win
 {
 	//! @brief	Custom stop-token
 	using ThreadStopToken = ManualResetEvent;

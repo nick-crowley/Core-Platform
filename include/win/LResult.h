@@ -2,7 +2,7 @@
 #include "corePlatform.h"
 #include "win/Exception.h"
 
-namespace win
+namespace core::win
 {
 	class LResult
 	{

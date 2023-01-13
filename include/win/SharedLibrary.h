@@ -4,7 +4,7 @@
 #include "win/Exception.h"
 #include "meta/TypeTraits.h"
 
-namespace win
+namespace core::win
 {
 	class SharedLibrary
 	{

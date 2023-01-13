@@ -2,7 +2,7 @@
 #include "corePlatform.h"
 #include "nt/Exception.h"
 
-namespace nt
+namespace core::nt
 {
 	class NtStatus
 	{

@@ -1,7 +1,7 @@
 #pragma once
 #include "corePlatform.h"
 
-namespace win
+namespace core::win
 {
 	using RegistryValue = std::variant<
 		std::wstring_view,

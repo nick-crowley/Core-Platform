@@ -438,7 +438,7 @@ namespace nstd {
     using propagate_const = std::experimental::fundamentals_v2::propagate_const<T>;
 }
 
-namespace meta {
+namespace core::meta {
 	// Import @c propagate_const<T> into 'meta' namespace
 	template <typename T>
 	using propagate_const = std::experimental::fundamentals_v2::propagate_const<T>;

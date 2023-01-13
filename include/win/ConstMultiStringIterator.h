@@ -1,7 +1,7 @@
 #pragma once
 #include "corePlatform.h"
 
-namespace win
+namespace core::win
 {
 	class ConstMultiStringIterator 
 		: public boost::iterator_facade<ConstMultiStringIterator, std::wstring_view const, std::forward_iterator_tag>

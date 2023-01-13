@@ -55,7 +55,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-namespace meta 
+namespace core::meta 
 {
 	template <typename T>
 	concept AccessRight = meta::is_any_of_v<T, win::CommonRight, /*win::FileRight,*/ 
@@ -72,7 +72,7 @@ namespace meta
 	
 }
 
-namespace win
+namespace core::win
 {
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 	* @brief	Proxy for access-right enumeration(s)
@@ -161,11 +161,11 @@ namespace win
 		}
 	};
 
-}      // namespace win
+}      // namespace core::win
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-namespace win 
+namespace core::win 
 {
 	template <meta::AccessRight AnyRight>
 	AccessRight
@@ -180,7 +180,7 @@ namespace win
 	{
 		return rhs & lhs;
 	}
-}      // namespace win
+}      // namespace core::win
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

@@ -4,6 +4,7 @@
 #include "win/DWord.h"
 #include "win/LResult.h"
 #include "win/ConstMultiStringIterator.h"
+using namespace core;
 
 namespace
 {

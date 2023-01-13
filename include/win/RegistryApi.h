@@ -4,7 +4,7 @@
 #include "win/RegistryValue.h"
 #include "security/AccessRight.h"
 
-namespace win
+namespace core::win
 {
 	class RegistryApi
 	{

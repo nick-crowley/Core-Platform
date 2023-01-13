@@ -4,7 +4,7 @@
 #endif
 #include "meta/TypeTraits.h"
 
-namespace meta
+namespace core::meta
 {
 	template <typename T, typename... Types>
 	concept AnyOf = is_any_of_v<T,Types...>;

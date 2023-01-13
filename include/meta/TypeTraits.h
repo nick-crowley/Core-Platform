@@ -4,7 +4,7 @@
 #endif
 #include "../src/StdLibrary.h"
 
-namespace meta 
+namespace core::meta 
 {
     template <typename F>
 	struct add_function_pointer : std::type_identity<F> {};

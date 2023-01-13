@@ -5,7 +5,7 @@
 #include "win/ApiHelpers.h"
 #include "win/Concurrency.h"
 
-namespace win
+namespace core::win
 {
 	class ManualResetEvent 
 	{

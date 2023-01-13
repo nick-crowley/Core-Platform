@@ -2,7 +2,7 @@
 #include "StoppableThread.h"
 #include "ManualResetEvent.h"
 
-namespace win
+namespace core::win
 {
 	class ThreadCollection
 	{

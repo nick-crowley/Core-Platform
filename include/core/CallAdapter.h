@@ -1,7 +1,7 @@
 #pragma once
 #include "corePlatform.h"
 
-namespace detail
+namespace core::detail
 {
 	template <typename ReturnType, typename ParamTuple, size_t... Idx>
 	struct FunctionSignature

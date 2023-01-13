@@ -5,7 +5,7 @@
 #include "win/RegistryApi.h"
 #include "security/KeyRight.h"
 
-namespace win
+namespace core::win
 {
 	SharedRegistryKey const 
 	inline ClassesRoot {HKEY_CLASSES_ROOT};

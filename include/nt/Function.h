@@ -4,7 +4,7 @@
 #include "nt/Exception.h"
 #include "nt/NtStatus.h"
 
-namespace nt
+namespace core::nt
 {
 	template <unsigned NumResults = 0, typename... Parameters>
 	auto constexpr 
@@ -24,4 +24,4 @@ namespace nt
 			std::move(callable)
 		);
 	}
-}  // namespace nt
+}  // namespace core::nt

@@ -1,7 +1,7 @@
 #pragma once
 #include "corePlatform.h"
 
-namespace win
+namespace core::win
 {
     namespace detail
     {   
@@ -142,4 +142,4 @@ namespace win
     //! @brief  Smart-handle released using ::FreeLibrary()
     using SharedModule = SmartHandle<::HMODULE, detail::FreeLibraryPolicy>;
 
-} // namespace win
+} // namespace core::win

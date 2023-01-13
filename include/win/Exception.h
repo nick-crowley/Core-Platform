@@ -5,7 +5,7 @@
 #include "../src/PlatformSdk.h"
 #include "../src/StdLibrary.h"
 
-namespace win
+namespace core::win
 {
 	[[noreturn]] 
 	void 

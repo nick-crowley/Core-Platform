@@ -1,7 +1,7 @@
 #pragma once
 #include "corePlatform.h"
 
-namespace win
+namespace core::win
 {
 	template <typename Value>
 	constexpr Value Reserved = {};

@@ -6,7 +6,7 @@
 #include "meta/Concepts.h"
 #include "nstd/experimental/implicit.h"
 
-namespace win
+namespace core::win
 {
 	template <meta::ExplicitlyConvertible<::DWORD> ValueType> 
 	class DWord
