@@ -8,6 +8,8 @@
 #include <Windows.h>
 
 #include <ntsecapi.h>
+#include <sddl.h>			// SID functions
+#include <Aclapi.h>         // ACL functions
 
 namespace core::win
 {
