@@ -30,6 +30,6 @@ namespace nstd
 
 	//! @brief	Execute a block of code on normal/abnormal exit (non-standard)
 	//! @param	...		[optional] Lambda capture-mode
-#	define finally(...)		\
+#	define final_act(...)		\
 		::nstd::FinalAction const BOOST_PP_CAT(_finalAct,__COUNTER__) = [__VA_ARGS__]()
 }
