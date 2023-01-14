@@ -55,6 +55,11 @@ namespace core::meta
 #endif
 
 	template <typename F>
-	using remove_function_pointer_t = typename remove_function_pointer<F>::type;
-    
+	using remove_function_pointer_t = typename remove_function_pointer<F>::type;    
+
+	
+	//! @brief	Aliases the type with the opposite const-qualitification to 'T'
+	template <typename T>
+	using toggle_const_t = std::conditional_t<std::is_const_v<T>, std::remove_cv_t<T>, std::add_const_t<T>>;
+
 }
