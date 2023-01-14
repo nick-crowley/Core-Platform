@@ -4,6 +4,7 @@
 #endif
 #include "../src/StdLibrary.h"
 
+// clang-format off
 namespace core::meta 
 {
     template <typename F>
@@ -32,6 +33,39 @@ namespace core::meta
 
     template <typename T, typename... U>
     constexpr bool is_any_of_v = (std::is_same_v<T,U> || ...);
+
+
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief	Type-trait which clones the CV-qualification of another type
+	* @details	Produces the type @e [cv-qual] @c To from the type @e [cv-qual] @c From
+	* @typedef	mirror_cv
+	*
+	* @tparam	From	Type whose cv-qualification should be cloned
+	* @tparam	To		Any type
+	*/
+	template <typename From, typename To>
+	struct mirror_cv : std::type_identity<To> {};
+
+	// const From => const To
+	template <typename From, typename To>
+	struct mirror_cv<const From,To> : std::type_identity<const To> {};
+
+	// volatile From => volatile To
+	template <typename From, typename To>
+	struct mirror_cv<volatile From,To> : std::type_identity<volatile To> {};
+
+	// const-volatile From => const-volatile To
+	template <typename From, typename To>
+	struct mirror_cv<const volatile From,To> : std::type_identity<const volatile To> {};
+
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @typedef	mirror_cv_t 
+	* 
+	* @tparam	From	Type whose cv-qualification should be cloned
+	* @tparam	To		Any type
+	*/
+	template <typename From, typename To>
+	using mirror_cv_t = typename mirror_cv<From,To>::type;
 
 
 	template <typename F>
@@ -63,3 +97,4 @@ namespace core::meta
 	using toggle_const_t = std::conditional_t<std::is_const_v<T>, std::remove_cv_t<T>, std::add_const_t<T>>;
 
 }
+// clang-format on
