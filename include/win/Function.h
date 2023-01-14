@@ -15,7 +15,7 @@ namespace core::win
 			return static_cast<ReturnType>(r);
 		};
 
-		return ::detail::makeCallAdapter<
+		return core::detail::makeCallAdapter<
 			NumResults, sizeof...(Parameters), decltype(callable), Parameters...
 		>(
 			std::move(callable)
@@ -34,7 +34,7 @@ namespace core::win
 				return r;
 		};
 
-		return ::detail::makeCallAdapter<
+		return core::detail::makeCallAdapter<
 			NumResults, sizeof...(Parameters), decltype(callable), Parameters...
 		>(
 			std::move(callable)
