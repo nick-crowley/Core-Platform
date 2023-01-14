@@ -15,6 +15,7 @@
 #include "nstd/experimental/lengthof.h"
 #include "nstd/experimental/finally.h"
 
+#include "meta/SizeOf.h"
 #include "meta/TagTypes.h"
 #include "meta/TypeTraits.h"
 #include "meta/Concepts.h"
