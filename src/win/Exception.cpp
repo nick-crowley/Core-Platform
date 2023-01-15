@@ -1,6 +1,5 @@
 #include "library/core.Platform.h"
 #include "win/DWord.h"
-#include "nt/Exception.h"
 #include "win/Exception.h"
 using namespace core;
 
@@ -13,12 +12,6 @@ formatMessage(int err)
 	);
 	msg.erase(msg.find_last_not_of("\r\n\t "));
 	return msg;
-}
-
-void 
-nt::throw_exception(::NTSTATUS r)
-{
-	throw std::runtime_error{formatMessage(::LsaNtStatusToWinError(r))};
 }
 
 void 

@@ -1,5 +1,6 @@
-#include "corePlatform.cpp"
+#include "nt/Exception.cpp"
 #include "win/Concurrency.cpp"
 #include "win/RegistryApi.cpp"
 #include "win/RegistryKey.cpp"
 #include "win/RegistryValueProxy.cpp"
+#include "win/Exception.cpp"
