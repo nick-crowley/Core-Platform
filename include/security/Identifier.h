@@ -83,7 +83,7 @@ namespace core::security::detail
 		implicit
 		SidWrapper(MaybeConstSid* sid)
 		  : base{sid},
-			Revision(ThrowIfEmpty(sid)->Revision),
+			Revision(ThrowIfNull(sid)->Revision),
 			SubAuthorityCount(sid->SubAuthorityCount),
 			IdentifierAuthority(sid->IdentifierAuthority),
 			SubAuthority(sid->SubAuthority)

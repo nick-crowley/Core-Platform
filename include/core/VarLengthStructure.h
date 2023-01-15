@@ -89,7 +89,7 @@ namespace core
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 	protected:
 		VarLengthStructure(value_type* instance) 
-			: m_object{ThrowIfEmpty(instance)}
+			: m_object{ThrowIfNull(instance)}
 		{}
 
 		VarLengthStructure(std::span<std::byte> bytes)
@@ -171,7 +171,7 @@ namespace core
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 	protected:
 		VarLengthStructure(value_type* instance)
-			: m_object{ThrowIfEmpty(instance)}
+			: m_object{ThrowIfNull(instance)}
 		{}
 	
 		VarLengthStructure(std::span<std::byte const> bytes)

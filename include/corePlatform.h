@@ -24,3 +24,4 @@
 #include "win/DWord.h"
 #include "win/Exception.h"
 #include "core/ThrowIfEmpty.h"
+#include "core/ThrowIfNull.h"
