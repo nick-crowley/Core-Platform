@@ -3,9 +3,9 @@
 #	define CorePlatform_h_included
 #endif
 
-#include "../src/PlatformSdk.h"
-#include "../src/StdLibrary.h"
-#include "../src/libBoost.h"
+#include "../../src/PlatformSdk.h"
+#include "../../src/StdLibrary.h"
+#include "../../src/libBoost.h"
 
 #include "nstd/experimental/abstract.h"
 #include "nstd/experimental/implicit.h"
