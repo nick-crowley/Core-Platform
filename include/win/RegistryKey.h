@@ -1,5 +1,5 @@
 #pragma once
-#include "corePlatform.h"
+#include "library/core.Platform.h"
 #include "win/SmartHandle.h"
 #include "win/RegistryValue.h"
 #include "win/RegistryApi.h"

@@ -28,7 +28,7 @@
 #define utility_VarLengthStruct_h_included
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "corePlatform.h"      //
+#include "library/core.Platform.h"      //
 #include "nstd/experimental/PropagateConst.h"
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Dependency Management o=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

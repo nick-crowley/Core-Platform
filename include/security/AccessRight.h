@@ -28,7 +28,7 @@
 #define security_AccessRight_h_included
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "corePlatform.h"
+#include "library/core.Platform.h"
 #include "security/CommonRight.h"
 #include "security/CustomRight.h"
 #include "security/GenericRight.h"

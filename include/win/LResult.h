@@ -1,5 +1,5 @@
 #pragma once
-#include "corePlatform.h"
+#include "library/core.Platform.h"
 #include "win/Exception.h"
 
 namespace core::win

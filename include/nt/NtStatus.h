@@ -1,5 +1,5 @@
 #pragma once
-#include "corePlatform.h"
+#include "library/core.Platform.h"
 #include "nt/Exception.h"
 
 namespace core::nt
