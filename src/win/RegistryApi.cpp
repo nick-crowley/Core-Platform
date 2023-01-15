@@ -67,14 +67,12 @@ win::RegistryApi::getValue(SharedRegistryKey root, std::wstring_view path, std::
 
 	auto const str = boost::reinterpret_pointer_cast<wchar_t[]>(std::move(value));
 	auto const nChars = size/sizeof(wchar_t);
-	if (type == REG_SZ)
-		return std::wstring{&str[0], &str[nChars]};
+	auto const first = ConstMultiStringIterator{{&str[0], &str[nChars]}};
 	
-	// REG_MULTI_SZ
-	return std::vector<std::wstring>{ 
-		ConstMultiStringIterator{{&str[0], &str[nChars]}}, 
-		ConstMultiStringIterator{} 
-	};
+	if (type == REG_SZ)
+		return std::wstring{*first};
+	else
+		return std::vector<std::wstring>{first, ConstMultiStringIterator{}};
 }
 	
 void
