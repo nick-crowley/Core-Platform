@@ -25,3 +25,4 @@
 #include "win/Exception.h"
 #include "core/ThrowIfEmpty.h"
 #include "core/ThrowIfNull.h"
+#include "core/ThrowIfZero.h"
