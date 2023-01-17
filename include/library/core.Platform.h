@@ -14,6 +14,7 @@
 #include "nstd/experimental/satisfies.h"
 #include "nstd/experimental/lengthof.h"
 #include "nstd/experimental/finally.h"
+#include "nstd/FormatString.h"
 #include "nstd/SourceLocation.h"
 
 #include "meta/SizeOf.h"
