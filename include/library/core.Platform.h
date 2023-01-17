@@ -29,4 +29,5 @@
 #include "core/ThrowIfNull.h"
 #include "core/ThrowIfZero.h"
 
+#include "nt/NtStatus.h"
 #include "win/DWord.h"
