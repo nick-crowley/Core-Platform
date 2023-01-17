@@ -2,7 +2,7 @@
 #ifndef CorePlatform_h_included
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
-#include "meta/TypeTraits.h"
+#include "core/Exceptions.h"
 
 namespace core 
 {
@@ -60,7 +60,7 @@ namespace core
 		using core::empty;
 
 		if (empty(value))
-			throw std::invalid_argument{std::format("{}(..) Empty '{}' argument", loc.function_name(), argName)};
+			throw invalid_argument{"{}(..) Empty '{}' argument", loc.function_name(), argName};
 
 		return std::forward<T>(value);
 	}
