@@ -4,7 +4,7 @@
 #endif
 #include "../../src/StdLibrary.h"
 
-namespace core::nstd
+namespace nstd
 {
 	//! @brief	Clone of @c std::source_location which satisfies C++20 non-type template argument requirements
 	struct SourceLocation

@@ -4,7 +4,7 @@
 #endif
 #include "../../src/StdLibrary.h"
 
-namespace core::nstd
+namespace nstd
 {
 	template <typename... Args>
 	using format_string = std::_Fmt_string<Args...>;
