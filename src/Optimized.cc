@@ -1,6 +1,6 @@
 #include "nt/NtStatus.cpp"
 #include "win/Concurrency.cpp"
+#include "win/LResult.cpp"
 #include "win/RegistryApi.cpp"
 #include "win/RegistryKey.cpp"
 #include "win/RegistryValueProxy.cpp"
-#include "win/Exception.cpp"

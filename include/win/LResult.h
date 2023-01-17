@@ -1,6 +1,15 @@
 #pragma once
-#include "library/core.Platform.h"
-#include "win/Exception.h"
+#ifndef CorePlatform_h_included
+#	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
+#endif
+#include "nstd/experimental/implicit.h"
+#include "win/SystemError.h"
+
+namespace core::win::detail
+{
+	std::string 
+	formatMessage(::LRESULT err);
+}
 
 namespace core::win
 {
@@ -14,17 +23,29 @@ namespace core::win
 		{
 		}
 		
-		[[noreturn]]
-		void 
-		throw_always(std::string msg) {
-			throw_exception(this->m_value, msg);
+	public:
+		std::string
+		str() const {
+			return detail::formatMessage(this->m_value);
 		}
-	
-		[[noreturn]]
+		
 		void 
-		throw_if_failed(std::string msg) {
-			if (!*this)
-				throw_exception(this->m_value, msg);
+		throw_always [[noreturn]]() const {
+			throw system_error{this->m_value};
+		}
+		
+		template <typename... Params>
+		void 
+		throw_always [[noreturn]](std::string_view msg, Params&&... args) const {
+			throw system_error{this->m_value, 
+			                   std::vformat(msg,std::make_format_args(args...)) + ". " + this->str()};
+		}
+		
+		template <typename... Params>
+		void 
+		throw_if_failed [[noreturn]](std::string_view msg, Params&&... args) const {
+			throw system_error{this->m_value, 
+			                   std::vformat(msg,std::make_format_args(args...)) + ". " + this->str()};
 		}
 
 		explicit operator
@@ -40,7 +61,8 @@ namespace core::win
 		
 	struct LastError : public LResult 
 	{
-		LastError(std::source_location loc = std::source_location::current()) : LResult{::GetLastError(), loc} 
+		LastError(std::source_location loc = std::source_location::current()) 
+			: LResult{::GetLastError(), loc} 
 		{}
 	};
 
@@ -49,13 +71,17 @@ namespace core::win
 		::LRESULT m_value;
 	public:
 		implicit
-		ThrowingLResult(::LRESULT value, std::source_location loc = std::source_location::current()) 
-		  : m_value{value}
-		{
-			if (!*this)
-				throw_exception(value);
+		ThrowingLResult(::LRESULT value, std::source_location loc = std::source_location::current()) {
+			if (value != ERROR_SUCCESS)
+				throw system_error{value};
 		}
-		
+
+	public:
+		std::string
+		str() const {
+			return detail::formatMessage(this->m_value);
+		}
+
 		explicit operator
 		bool() const {
 			return this->m_value == ERROR_SUCCESS;
