@@ -2,7 +2,7 @@
 #ifndef CorePlatform_h_included
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
-#include <format>
+#include "../../src/StdLibrary.h"
 
 namespace core::nstd
 {

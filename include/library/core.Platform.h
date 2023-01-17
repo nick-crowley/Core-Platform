@@ -23,9 +23,10 @@
 #include "meta/Concepts.h"
 #include "meta/Tuple.h"
 
-#include "win/DWord.h"
-#include "win/Exception.h"
+#include "core/Exceptions.h"
 #include "core/ThrowIfEmpty.h"
 #include "core/ThrowIfNot.h"
 #include "core/ThrowIfNull.h"
 #include "core/ThrowIfZero.h"
+
+#include "win/DWord.h"
