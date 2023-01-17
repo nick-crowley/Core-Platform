@@ -21,5 +21,5 @@ win::detail::waitForMultipleObjects(std::span<::HANDLE> handles, WaitStrategy st
         return handles[result-WAIT_ABANDONED_0];
     }
     else 
-        throw_exception(result, "Wait failed");
+        throw system_error{result, "Wait on {} handles failed", handles.size()};
 }

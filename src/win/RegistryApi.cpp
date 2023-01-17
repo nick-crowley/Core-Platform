@@ -49,7 +49,7 @@ win::RegistryApi::getValue(SharedRegistryKey root, std::wstring_view path, std::
 	switch (type)
 	{
 	default:
-		win::throw_exception(ERROR_UNSUPPORTED_TYPE);
+		throw system_error{ERROR_UNSUPPORTED_TYPE};
 
 	case REG_BINARY:
 		return std::vector<std::byte>{&value[0], &value[size]};

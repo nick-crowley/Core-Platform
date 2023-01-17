@@ -29,7 +29,7 @@ namespace core::win
 		auto const callable = [fx](Parameters... args) -> BOOL
 		{
 			if (BOOL r = (*fx)(std::forward<Parameters>(args)...); r == FALSE)
-				throw_exception(::GetLastError());
+				LastError{}.throw_always();
 			else
 				return r;
 		};

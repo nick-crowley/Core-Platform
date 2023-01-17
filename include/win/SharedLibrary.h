@@ -1,7 +1,6 @@
 #pragma once
 #include "library/core.Platform.h"
 #include "win/SmartHandle.h"
-#include "win/Exception.h"
 #include "meta/TypeTraits.h"
 
 namespace core::win
@@ -15,7 +14,7 @@ namespace core::win
 		  : m_module{::LoadLibraryW(ThrowIfEmpty(path).data())}
 		{
 			if (!this->m_module)
-				throw_exception(::GetLastError());
+				LastError{}.throw_always();
 		}
 
 		template <typename Signature, size_t NumResultParameters = 0>
@@ -24,7 +23,7 @@ namespace core::win
 		{
 			using proc_signature_t = meta::add_function_pointer_t<Signature>;
 			if (auto* const pfx = reinterpret_cast<proc_signature_t>(::GetProcAddress(*this->m_module, name.data())); !pfx)
-				throw_exception(::GetLastError());
+				LastError{}.throw_always();
 			else
 				return pfx;
 		}

@@ -2,9 +2,9 @@
 #ifndef CorePlatform_h_included
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
-#include "../src/PlatformSdk.h"
-#include "meta/Concepts.h"
 #include "nstd/experimental/implicit.h"
+#include "meta/Concepts.h"
+#include "../src/PlatformSdk.h"
 
 namespace core::win
 {

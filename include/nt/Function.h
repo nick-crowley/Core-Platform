@@ -1,7 +1,6 @@
 #pragma once
 #include "library/core.Platform.h"
 #include "core/CallAdapter.h"
-#include "nt/Exception.h"
 #include "nt/NtStatus.h"
 
 namespace core::nt
@@ -13,7 +12,7 @@ namespace core::nt
 		auto const callable = [fx](Parameters... args) -> NTSTATUS 
 		{
 			if (NtStatus r = (*fx)(std::forward<Parameters>(args)...); !r)
-				throw_exception(r);
+				r.throw_always();
 			else
 				return r;
 		};
