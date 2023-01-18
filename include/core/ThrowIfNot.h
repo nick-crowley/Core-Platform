@@ -13,5 +13,5 @@ namespace core
 			throw runtime_error{"{}(..) '{}' invariant violated", loc.function_name(), exprName};
 	}
 }
-#define ThrowIf(expr)     ThrowIfImpl(expr, #expr)
+#define ThrowIf(expr)     ThrowIfImpl(expr, #expr)				//FIXME: Change ThrowIf() and ThrowIfNot() into argument-validation routines; add separate ones for invariants
 #define ThrowIfNot(expr)  ThrowIfImpl(!(expr), "!(" #expr ")")
