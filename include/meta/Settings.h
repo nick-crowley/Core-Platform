@@ -6,11 +6,17 @@
 
 namespace core::meta
 {
-	//! @brief	Arbitrary compile-time meta-data
+	template <typename Name>
+	struct DataType : std::type_identity_t<undefined_t> {};
+	
+	template <typename Name>
+	using DataType_t = typename DataType<Name>::type;
+
+	//! @brief	Storage for arbitrary compile-time data
 	template <typename Name, typename... Params>
-	undefined_t constexpr
-	inline Settings;
+	DataType_t<Name> constexpr
+	inline Settings = {};
 	
 	//! @brief	Initializer for compile-time meta-data (non-standard)
-#	define constdata	template <> constexpr inline	
+#	define constdata	template <> constexpr inline
 }
