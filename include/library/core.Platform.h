@@ -19,6 +19,7 @@
 
 #include "meta/SizeOf.h"
 #include "meta/TagTypes.h"
+#include "meta/Settings.h"
 #include "meta/TypeTraits.h"
 #include "meta/Concepts.h"
 #include "meta/Tuple.h"

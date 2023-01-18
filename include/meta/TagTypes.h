@@ -45,6 +45,16 @@ namespace core::meta
 	constexpr 
 	inline open_existing;
 
+	
+	struct undefined_t
+	{ 
+		satisfies(undefined_t,
+			constexpr IsDefaultConstructible noexcept
+		);
+	}
+	constexpr 
+	inline undefined;
+	
 
     struct use_default_t 
     {
@@ -62,6 +72,7 @@ namespace core
 	//using create_new_t = meta::create_new_t;
 	//using hidden_t = meta::hidden_t;
 	//using open_existing_t = meta::open_existing_t;
+	//using undefined_t = meta::undefined_t;
 	//using use_default_t = meta::use_default_t;
 
 	auto constexpr 
@@ -75,6 +86,9 @@ namespace core
 
 	auto constexpr 
 	inline open_existing = meta::open_existing;
+	
+	auto constexpr 
+	inline undefined = meta::undefined;
 
 	auto constexpr 
 	inline use_default = meta::use_default;
