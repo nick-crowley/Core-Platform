@@ -30,6 +30,7 @@
 #include "core/ThrowIfNull.h"
 #include "core/ThrowIfZero.h"
 
+#include "core/BitwiseEnum.h"
 #include "nt/NtStatus.h"
 #include "win/LResult.h"
 #include "win/DWord.h"
