@@ -31,6 +31,8 @@
 #include "core/ThrowIfZero.h"
 
 #include "core/BitwiseEnum.h"
+#include "core/EnumBitset.h"
+
 #include "nt/NtStatus.h"
 #include "win/LResult.h"
 #include "win/DWord.h"
