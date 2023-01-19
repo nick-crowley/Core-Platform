@@ -5,7 +5,16 @@
 namespace core::win
 {
 	//! @brief	Custom stop-token
-	using ThreadStopToken = ManualResetEvent;
+	class ThreadStopToken : public ManualResetEvent
+	{
+	public:
+		ThreadStopToken() : ManualResetEvent{false}
+		{}
+
+	public:
+		void 
+		reset() = delete;
+	};
 
 	//! @brief	Thread supporting custom stop-tokens
 	class StoppableThread : public std::thread
