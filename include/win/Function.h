@@ -15,11 +15,10 @@ namespace core::win
 			return static_cast<ReturnType>(r);
 		};
 
-		return core::detail::makeCallAdapter<
-			NumResults, sizeof...(Parameters), decltype(callable), Parameters...
-		>(
-			std::move(callable)
-		);
+		return core::detail::makeCallAdapter<NumResults, 
+		                                     sizeof...(Parameters), 
+		                                     decltype(callable), 
+		                                     Parameters...>(std::move(callable));
 	}
 	
 	template <unsigned NumResults = 0, typename... Parameters>
@@ -34,10 +33,9 @@ namespace core::win
 				return r;
 		};
 
-		return core::detail::makeCallAdapter<
-			NumResults, sizeof...(Parameters), decltype(callable), Parameters...
-		>(
-			std::move(callable)
-		);
+		return core::detail::makeCallAdapter<NumResults, 
+		                                     sizeof...(Parameters), 
+		                                     decltype(callable), 
+		                                     Parameters...>(std::move(callable));
 	}
 }  // namespace core::win

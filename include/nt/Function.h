@@ -17,10 +17,9 @@ namespace core::nt
 				return r;
 		};
 
-		return ::detail::makeCallAdapter<
-			NumResults, sizeof...(Parameters), decltype(callable), Parameters...
-		>(
-			std::move(callable)
-		);
+		return ::detail::makeCallAdapter<NumResults, 
+		                                 sizeof...(Parameters), 
+		                                 decltype(callable), 
+		                                 Parameters...>(std::move(callable));
 	}
 }  // namespace core::nt
