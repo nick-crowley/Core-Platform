@@ -35,11 +35,9 @@ namespace core::win
     } 
 
     //! @brief  Smart-handle with shared-ownership semantics
-    template <
-        typename RawHandle, 
-        auto Releaser = detail::CloseHandlePolicy, 
-        RawHandle Empty = detail::NullHandle<RawHandle>::value
-    >
+    template <typename RawHandle, 
+              auto Releaser = detail::CloseHandlePolicy, 
+              RawHandle Empty = detail::NullHandle<RawHandle>::value>
     class SmartHandle
     {
         using type = SmartHandle<RawHandle,Releaser,Empty>;
