@@ -6,63 +6,22 @@
 
 namespace core::meta
 {
-	struct adopt_t
-	{ 
-		satisfies(adopt_t,
-			constexpr IsDefaultConstructible noexcept
-		);
-	}
-	constexpr 
+	struct adopt_t {} constexpr 
 	inline adopt;
 	
-
-	struct create_new_t
-	{ 
-		satisfies(create_new_t,
-			constexpr IsDefaultConstructible noexcept
-		);
-	}
-	constexpr 
+	struct create_new_t {} constexpr 
 	inline create_new;
 
-
-	struct hidden_t
-	{
-		satisfies(hidden_t,
-			constexpr IsDefaultConstructible noexcept
-		);
-	}
-	constexpr  
+	struct hidden_t {} constexpr  
 	inline hidden;
 
-
-	struct open_existing_t
-	{ 
-		satisfies(open_existing_t,
-			constexpr IsDefaultConstructible noexcept
-		);
-	}
-	constexpr 
+	struct open_existing_t {} constexpr 
 	inline open_existing;
 
-	
-	struct undefined_t
-	{ 
-		satisfies(undefined_t,
-			constexpr IsDefaultConstructible noexcept
-		);
-	}
-	constexpr 
+	struct undefined_t {} constexpr 
 	inline undefined;
 	
-
-    struct use_default_t 
-    {
-        satisfies(use_default_t,
-		    constexpr IsDefaultConstructible noexcept
-	    );
-    } 
-    constexpr inline 
+    struct use_default_t {} constexpr inline 
     use_default;
 }
 
