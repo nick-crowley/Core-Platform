@@ -6,14 +6,14 @@
 
 namespace core::meta
 {
-	template <typename Name>
+	template <auto Name>
 	struct DataType : std::type_identity_t<undefined_t> {};
 	
-	template <typename Name>
+	template <auto Name>
 	using DataType_t = typename DataType<Name>::type;
 
 	//! @brief	Storage for arbitrary compile-time data
-	template <typename Name, typename... Params>
+	template <auto Name, typename... Params>
 	DataType_t<Name> constexpr
 	inline Settings = {};
 	

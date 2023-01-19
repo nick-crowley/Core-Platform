@@ -9,6 +9,12 @@ namespace core::meta
 	struct adopt_t {} constexpr 
 	inline adopt;
 	
+	struct bitwise_enum_t {} constexpr 
+	inline bitwise_enum;
+	
+	struct compatible_enum_t {} constexpr 
+	inline compatible_enum;
+
 	struct create_new_t {} constexpr 
 	inline create_new;
 
@@ -36,6 +42,12 @@ namespace core
 
 	auto constexpr 
 	inline adopt = meta::adopt;
+	
+	auto constexpr 
+	inline bitwise_enum = meta::bitwise_enum;
+
+	auto constexpr 
+	inline compatible_enum = meta::compatible_enum;
 
 	auto constexpr 
 	inline create_new = meta::create_new;

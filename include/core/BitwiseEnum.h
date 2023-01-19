@@ -7,14 +7,11 @@
 
 namespace core::meta 
 {	
-	struct bitwise_enum_t {} constexpr 
-	inline bitwise_enum;
-
 	template <>
-	struct DataType<bitwise_enum_t> : std::type_identity<bool> {};
+	struct DataType<bitwise_enum> : std::type_identity<bool> {};
 
 	template <typename E>
-	concept BitwiseEnumeration = Enumeration<E> && Settings<bitwise_enum_t,E>;
+	concept BitwiseEnumeration = Enumeration<E> && Settings<bitwise_enum,E>;
 }
 
 template <core::meta::BitwiseEnumeration E>
@@ -51,19 +48,16 @@ operator~(E lhs) {
 
 namespace core::meta 
 {
-	struct compatible_enum_t {} constexpr 
-	inline compatible_enum;
-
 	template <>
-	struct DataType<compatible_enum_t> : std::type_identity<bool> {};
+	struct DataType<compatible_enum> : std::type_identity<bool> {};
 
 	template <typename E1, typename E2>
 	concept CompatibleEnumeration = Enumeration<E1> 
 	                             && Enumeration<E2> 
-	                             && Settings<compatible_enum_t,E1,E2>;
+	                             && Settings<compatible_enum,E1,E2>;
 
 	template <typename E>
-	bool constexpr inline Settings<compatible_enum_t, E, E> = true;
+	bool constexpr inline Settings<compatible_enum, E, E> = true;
 }
 
 template <core::meta::BitwiseEnumeration E1, core::meta::BitwiseEnumeration E2>
