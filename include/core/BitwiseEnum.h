@@ -60,8 +60,7 @@ namespace core::meta
 	bool constexpr inline Settings<compatible_enum, E, E> = true;
 }
 
-template <core::meta::BitwiseEnumeration E1, core::meta::BitwiseEnumeration E2>
-	requires core::meta::CompatibleEnumeration<E1,E2> //(!std::same_as<std::remove_cvref_t<E1>,std::remove_cvref_t<E2>>)
+template <core::meta::BitwiseEnumeration E1, core::meta::CompatibleEnumeration<E1> E2>
 E1 constexpr
 operator&(E1 lhs, E2 rhs) { 
 	return static_cast<E1>(
@@ -69,8 +68,7 @@ operator&(E1 lhs, E2 rhs) {
 	);
 };
 
-template <core::meta::BitwiseEnumeration E1, core::meta::BitwiseEnumeration E2>
-	requires core::meta::CompatibleEnumeration<E1,E2>
+template <core::meta::BitwiseEnumeration E1, core::meta::CompatibleEnumeration<E1> E2>
 E1 constexpr
 operator|(E1 lhs, E2 rhs) { 
 	return static_cast<E1>(
@@ -78,8 +76,7 @@ operator|(E1 lhs, E2 rhs) {
 	);
 };
 
-template <core::meta::BitwiseEnumeration E1, core::meta::BitwiseEnumeration E2>
-	requires core::meta::CompatibleEnumeration<E1,E2>
+template <core::meta::BitwiseEnumeration E1, core::meta::CompatibleEnumeration<E1> E2>
 E1 constexpr
 operator^(E1 lhs, E2 rhs) { 
 	return static_cast<E1>(
