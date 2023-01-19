@@ -20,24 +20,13 @@ namespace core::win
             ::FreeLibrary(handle);
         };
         
-        template <typename RawHandle>
-        using NullHandle = std::integral_constant<RawHandle,nullptr>;
-        
-        /*template <typename RawHandle>
-        RawHandle constexpr
-        inline NullHandle = nullptr;*/
-
         using InvalidHandle = std::integral_constant<::HANDLE,INVALID_HANDLE_VALUE>;
-
-        /*::HANDLE constexpr
-        inline InvalidHandle = INVALID_HANDLE_VALUE;*/
-
     } 
 
     //! @brief  Smart-handle with shared-ownership semantics
     template <typename RawHandle, 
               auto Releaser = detail::CloseHandlePolicy, 
-              RawHandle Empty = detail::NullHandle<RawHandle>::value>
+              auto Empty = nullptr>
     class SmartHandle
     {
         using type = SmartHandle<RawHandle,Releaser,Empty>;
