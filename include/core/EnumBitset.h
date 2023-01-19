@@ -91,13 +91,13 @@ public:
 		
 	template <core::meta::CompatibleEnumeration<E> E2>
 	bool constexpr
-	inline operator==(E2 const& rhs) noexcept {
+	operator==(E2 const& rhs) noexcept {
 		return this->value() == std::underlying_type_t<E2>(rhs);
 	}
 
 	template <core::meta::CompatibleEnumeration<E> E2>
 	bool constexpr
-	inline operator!=(E2 const& rhs) noexcept {
+	operator!=(E2 const& rhs) noexcept {
 		return this->value() != std::underlying_type_t<E2>(rhs);
 	}
 
@@ -126,30 +126,30 @@ public:
 
 template <core::meta::Enumeration E1, core::meta::CompatibleEnumeration<E1> E2>
 EnumBitset<E1> constexpr
-inline operator|(E1 lhs, EnumBitset<E2> rhs) noexcept {
+operator|(E1 lhs, EnumBitset<E2> rhs) noexcept {
 	return EnumBitset<E1>{lhs} | rhs;
 }
 
 template <core::meta::Enumeration E1, core::meta::CompatibleEnumeration<E1> E2>
 EnumBitset<E1> constexpr
-inline operator&(E1 lhs, EnumBitset<E2> rhs) noexcept {
+operator&(E1 lhs, EnumBitset<E2> rhs) noexcept {
 	return EnumBitset<E1>{lhs} & rhs;
 }
 
 template <core::meta::Enumeration E1, core::meta::CompatibleEnumeration<E1> E2>
 EnumBitset<E1> constexpr
-inline operator^(E1 lhs, EnumBitset<E2> rhs) noexcept {
+operator^(E1 lhs, EnumBitset<E2> rhs) noexcept {
 	return EnumBitset<E1>{lhs} ^ rhs;
 }
 	
 template <core::meta::Enumeration E1, core::meta::CompatibleEnumeration<E1> E2>
 bool constexpr
-inline operator==(E1 lhs, EnumBitset<E2> rhs) noexcept {
+operator==(E1 lhs, EnumBitset<E2> rhs) noexcept {
 	return EnumBitset<E1>{lhs} == rhs;
 }
 
 template <core::meta::Enumeration E1, core::meta::CompatibleEnumeration<E1> E2>
 bool constexpr
-inline operator!=(E1 lhs, EnumBitset<E2> rhs) noexcept {
+operator!=(E1 lhs, EnumBitset<E2> rhs) noexcept {
 	return EnumBitset<E1>{lhs} != rhs;
 }
