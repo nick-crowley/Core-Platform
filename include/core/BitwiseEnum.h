@@ -56,7 +56,7 @@ namespace core::meta
 	                             && Enumeration<E2> 
 	                             && Settings<compatible_enum,E1,E2>;
 
-	template <typename E>
+	template <Enumeration E>
 	bool constexpr inline Settings<compatible_enum, E, E> = true;
 }
 
