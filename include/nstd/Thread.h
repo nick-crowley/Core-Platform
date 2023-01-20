@@ -23,8 +23,7 @@ namespace nstd
 
 	public:
 		//! @brief	Construct from function of signature `T (stop_token)`
-		template <typename UnaryFunction> 
-			requires std::is_invocable_v<UnaryFunction,stop_token>
+		template <std::invocable<stop_token> UnaryFunction>
 		explicit 
 		thread(stop_token canx, UnaryFunction&& fx)
 			: base(std::move(fx), std::move(canx))
