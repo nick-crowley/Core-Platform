@@ -5,7 +5,9 @@
 #include <chrono>
 #include <concepts>
 #include <compare>
+#include <exception>
 #include <format>
+#include <future>
 #include <functional>
 #include <iterator>
 #include <memory>
