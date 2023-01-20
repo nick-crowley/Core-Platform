@@ -131,8 +131,8 @@ namespace core::detail
 	makeCallAdapter1(CallableTarget fx, std::index_sequence<Idx...>) noexcept
 	{
 		using all_params_t = std::tuple<Parameters...>;
-		using result_param_t = meta::tuple_back_t<all_params_t>;
-		using remaining_params_t = meta::tuple_first_n_t<NumParams-1,all_params_t>;
+		using result_param_t = nstd::tuple_back_t<all_params_t>;
+		using remaining_params_t = nstd::tuple_first_n_t<NumParams-1,all_params_t>;
 			
 		return CallAdapter1{
 			std::move(fx),
@@ -147,13 +147,13 @@ namespace core::detail
 	makeCallAdapterN(CallableTarget fx, std::index_sequence<Idx...>) noexcept
 	{
 		using all_params_t = std::tuple<Parameters...>;
-		using result_params_t = meta::tuple_last_n_t<NumResults,all_params_t>;
-		using remaining_params_t = meta::tuple_first_n_t<NumParams-NumResults,all_params_t>;
+		using result_params_t = nstd::tuple_last_n_t<NumResults,all_params_t>;
+		using remaining_params_t = nstd::tuple_first_n_t<NumParams-NumResults,all_params_t>;
 		
 		return CallAdapterN{
 			std::move(fx), 
 			FunctionSignature<
-				meta::tuple_transform_t<result_params_t,std::remove_pointer_t>,remaining_params_t,Idx...
+				nstd::tuple_transform_t<result_params_t,std::remove_pointer_t>,remaining_params_t,Idx...
 			>{}
 		};
 	}

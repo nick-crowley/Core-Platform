@@ -5,7 +5,7 @@
 #include "../src/StdLibrary.h"
 #include "../src/libBoost.h"
 
-namespace core::meta
+namespace nstd
 {
 	// tuple_first_n
 	template <size_t N, typename Tuple>
@@ -109,7 +109,7 @@ namespace core::meta
 	using tuple_push_front_t = typename tuple_push_front<Tuple,Item>::type;
 }
 
-namespace core::meta::testing 
+namespace nstd::testing 
 {
 	// struct UT0 {}, ..., struct UTn {};
 #define make_tuple_test_fakes(dummy, n, unused)														\
