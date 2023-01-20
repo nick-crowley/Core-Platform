@@ -17,7 +17,7 @@ namespace nstd
 	};
 
 	//! @brief	Thread supporting custom stop-tokens
-	class thread : public std::thread
+	class thread : protected std::thread
 	{
 		using base = std::thread;
 
@@ -39,6 +39,15 @@ namespace nstd
 		);
 
 	public:
+		using base::joinable;
+		using base::get_id;
+
+	public:
+		using base::detach;
+		using base::join;
+		using base::native_handle;
+		using base::swap;
+		
 		bool 
 		wait(std::chrono::milliseconds timeout)
 		{
