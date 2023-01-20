@@ -15,6 +15,7 @@
 #include "nstd/experimental/satisfies.h"
 #include "nstd/experimental/lengthof.h"
 #include "nstd/experimental/finally.h"
+#include "nstd/Bitset.h"
 #include "nstd/FormatString.h"
 #include "nstd/SourceLocation.h"
 #include "nstd/Tuple.h"
@@ -32,7 +33,6 @@
 #include "core/ThrowIfZero.h"
 
 #include "core/BitwiseEnum.h"
-#include "core/EnumBitset.h"
 
 #include "nt/NtStatus.h"
 #include "win/LResult.h"
