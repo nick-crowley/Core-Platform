@@ -43,3 +43,9 @@
 #include <cstddef>
 
 #include <gsl/gsl>
+
+namespace core {
+	namespace ranges = std::ranges;
+	namespace views = std::ranges::views;
+	namespace chrono = std::chrono;
+}
