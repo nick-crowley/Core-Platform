@@ -1,7 +1,7 @@
 #pragma once
 #include "library/core.Platform.h"
 #include "win/Concurrency.h"
-#include "win/StoppableThread.h"
+#include "nstd/Thread.h"
 #include "win/SmartHandle.h"
 
 namespace nstd 
@@ -76,26 +76,26 @@ namespace nstd
 	template <typename T>
 	class future;
 
-	template <std::invocable<core::win::ThreadStopToken> Function>
-	future<std::invoke_result_t<Function,core::win::ThreadStopToken>>
-	async(core::win::ThreadStopToken canx, Function&& fx);
+	template <std::invocable<stop_token> Function>
+	future<std::invoke_result_t<Function,stop_token>>
+	async(stop_token canx, Function&& fx);
 
 	template <typename T>
 	class future 
 	{
-		template <std::invocable<core::win::ThreadStopToken> F>
-		future<std::invoke_result_t<F,core::win::ThreadStopToken>>
-		friend async(core::win::ThreadStopToken, F&&);
+		template <std::invocable<stop_token> F>
+		future<std::invoke_result_t<F,stop_token>>
+		friend async(stop_token, F&&);
 
 		using value_type = T;
 		using state_type = detail::shared_state<value_type>;
 		
 	private:
-		std::shared_ptr<state_type>        m_state;
-		mutable core::win::StoppableThread m_thread;
+		std::shared_ptr<state_type>  m_state;
+		mutable thread               m_thread;
 
 	private:
-		future(std::shared_ptr<state_type> state, core::win::StoppableThread thread)
+		future(std::shared_ptr<state_type> state, thread thread)
 		  : m_state{std::move(state)}, 
 		    m_thread{std::move(thread)}
 		{}
@@ -151,15 +151,15 @@ namespace nstd
 	};
 
 	
-	template <std::invocable<core::win::ThreadStopToken> Function>
-	future<std::invoke_result_t<Function,core::win::ThreadStopToken>>
-	async(core::win::ThreadStopToken canx, Function&& fx)
+	template <std::invocable<stop_token> Function>
+	future<std::invoke_result_t<Function,stop_token>>
+	async(stop_token canx, Function&& fx)
 	{
-		using result_t = std::invoke_result_t<Function,core::win::ThreadStopToken>;
+		using result_t = std::invoke_result_t<Function,core::win::stop_token>;
 		auto state = std::make_shared<detail::shared_state<result_t>>();
 
 		auto const
-		wrapper = [state,fx](core::win::ThreadStopToken canx) {
+		wrapper = [state,fx](core::win::stop_token canx) {
 			try {
 				state->set_value_at_thread_exit(fx(canx));
 			}
@@ -170,7 +170,7 @@ namespace nstd
 
 		return future<result_t>{
 			state,
-			core::win::StoppableThread{std::move(canx), std::move(wrapper)}
+			thread{std::move(canx), std::move(wrapper)}
 		};
 	}
 }

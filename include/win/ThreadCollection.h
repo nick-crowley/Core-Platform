@@ -1,18 +1,18 @@
 #pragma once
-#include "StoppableThread.h"
-#include "ManualResetEvent.h"
+#include "nstd/Thread.h"
+#include "win/ManualResetEvent.h"
 
 namespace core::win
 {
 	class ThreadCollection
 	{
 	private:
-		ThreadStopToken               m_stopToken;
-		std::vector<StoppableThread>  m_workers;
+		stop_token               m_stopToken;
+		std::vector<nstd::thread>  m_workers;
 
 	public:
 		explicit
-		ThreadCollection(ThreadStopToken canx)
+		ThreadCollection(stop_token canx)
 		  : m_stopToken{std::move(canx)}
 		{
 		}
@@ -25,7 +25,7 @@ namespace core::win
 		);
 
 	public:
-		ThreadStopToken
+		stop_token
 		getStopToken() const
 		{
 			return this->m_stopToken;
@@ -42,13 +42,13 @@ namespace core::win
 		waitForAll(std::chrono::milliseconds timeout)
 		{	
 			auto constexpr 
-			static selectHandle = [](StoppableThread& t) { return t.native_handle(); };
+			static selectHandle = [](nstd::thread& t) { return t.native_handle(); };
 
 			win::waitForAll(this->m_workers | std::views::transform(selectHandle), timeout);
 		}
 
 		ThreadCollection& 
-		operator+=(StoppableThread&& t) noexcept
+		operator+=(nstd::thread&& t) noexcept
 		{
 			this->m_workers.push_back(std::move(t));
 			return *this;

@@ -2,13 +2,13 @@
 #include "library/core.Platform.h"
 #include "ManualResetEvent.h"
 
-namespace core::win
+namespace nstd
 {
 	//! @brief	Custom stop-token
-	class ThreadStopToken : public ManualResetEvent
+	class stop_token : public core::win::ManualResetEvent
 	{
 	public:
-		ThreadStopToken() : ManualResetEvent{false}
+		stop_token() : core::win::ManualResetEvent{false}
 		{}
 
 	public:
@@ -17,21 +17,21 @@ namespace core::win
 	};
 
 	//! @brief	Thread supporting custom stop-tokens
-	class StoppableThread : public std::thread
+	class thread : public std::thread
 	{
 		using base = std::thread;
 
 	public:
-		//! @brief	Construct from function of signature `T (ThreadStopToken)`
+		//! @brief	Construct from function of signature `T (stop_token)`
 		template <typename UnaryFunction> 
-			requires std::is_invocable_v<UnaryFunction,ThreadStopToken>
+			requires std::is_invocable_v<UnaryFunction,stop_token>
 		explicit 
-		StoppableThread(ThreadStopToken canx, UnaryFunction&& fx)
+		thread(stop_token canx, UnaryFunction&& fx)
 			: base(std::move(fx), std::move(canx))
 		{
 		}
 		
-		satisfies(StoppableThread,
+		satisfies(thread,
 			NotDefaultConstructible,
 			NotCopyable,
 			IsMovable,
@@ -51,7 +51,7 @@ namespace core::win
 				return true;
 			}
 			else
-				return win::waitFor(this->native_handle(), timeout);
+				return core::win::waitFor(this->native_handle(), timeout);
 		}
 	};
 }
