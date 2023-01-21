@@ -17,7 +17,7 @@ namespace core::win
 		  : m_handle{::CreateEventW(Unsecured, TRUE, Boolean{initialState}, nullptr)}
 		{
 			if (!this->m_handle)
-				LastError{}.throw_always();
+				LastError{}.throwAlways();
 		}
 
 		satisfies(ManualResetEvent,

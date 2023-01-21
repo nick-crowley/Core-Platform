@@ -128,5 +128,8 @@ namespace core::win
 
     //! @brief  Smart-handle released using ::FreeLibrary()
     using SharedModule = SmartHandle<::HMODULE, detail::FreeLibraryPolicy>;
-
+    
+    //! @brief  Smart-handle released using ::CloseHandle()
+    using SharedThread = SharedHandle;
+    
 } // namespace core::win

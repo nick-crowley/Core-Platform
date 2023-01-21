@@ -30,20 +30,20 @@ namespace core::win
 		}
 		
 		void 
-		throw_always [[noreturn]]() const {
+		throwAlways [[noreturn]]() const {
 			throw system_error{this->m_value};
 		}
 		
 		template <typename... Params>
 		void 
-		throw_always [[noreturn]](std::string_view msg, Params&&... args) const {
+		throwAlways [[noreturn]](std::string_view msg, Params&&... args) const {
 			throw system_error{this->m_value, 
 			                   std::vformat(msg,std::make_format_args(args...)) + ". " + this->str()};
 		}
 		
 		template <typename... Params>
 		void 
-		throw_if_failed [[noreturn]](std::string_view msg, Params&&... args) const {
+		throwIfError [[noreturn]](std::string_view msg, Params&&... args) const {
 			throw system_error{this->m_value, 
 			                   std::vformat(msg,std::make_format_args(args...)) + ". " + this->str()};
 		}

@@ -14,7 +14,7 @@ namespace core::win
 		  : m_module{::LoadLibraryW(ThrowIfEmpty(path).data())}
 		{
 			if (!this->m_module)
-				LastError{}.throw_always();
+				LastError{}.throwAlways();
 		}
 
 		template <typename Signature, size_t NumResultParameters = 0>
@@ -23,7 +23,7 @@ namespace core::win
 		{
 			using proc_signature_t = meta::add_function_pointer_t<Signature>;
 			if (auto* const pfx = reinterpret_cast<proc_signature_t>(::GetProcAddress(*this->m_module, name.data())); !pfx)
-				LastError{}.throw_always();
+				LastError{}.throwAlways();
 			else
 				return pfx;
 		}

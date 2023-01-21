@@ -12,7 +12,7 @@ namespace core::nt
 		auto const callable = [fx](Parameters... args) -> NTSTATUS 
 		{
 			if (NtStatus r = (*fx)(std::forward<Parameters>(args)...); !r)
-				r.throw_always();
+				r.throwAlways();
 			else
 				return r;
 		};
