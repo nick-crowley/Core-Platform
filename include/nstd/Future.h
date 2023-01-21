@@ -155,11 +155,11 @@ namespace nstd
 	future<std::invoke_result_t<Function,stop_token>>
 	async(stop_token canx, Function&& fx)
 	{
-		using result_t = std::invoke_result_t<Function,core::win::stop_token>;
+		using result_t = std::invoke_result_t<Function,nstd::stop_token>;
 		auto state = std::make_shared<detail::shared_state<result_t>>();
 
 		auto const
-		wrapper = [state,fx](core::win::stop_token canx) {
+		wrapper = [state,fx](nstd::stop_token canx) {
 			try {
 				state->set_value_at_thread_exit(fx(canx));
 			}
