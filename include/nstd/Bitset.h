@@ -112,14 +112,14 @@ namespace nstd
 		}
 		
 		template <core::meta::CompatibleEnumeration<E> E2>
-		type constexpr 
+		reference constexpr 
 		operator&=(E2 const& r) noexcept {
 			this->Value = static_cast<value_type>(this->value() & std::underlying_type_t<E2>(r));
 			return *this;
 		}
 			
 		template <core::meta::CompatibleEnumeration<E> E2>
-		type constexpr 
+		reference constexpr 
 		operator^=(E2 const& r) noexcept {
 			this->Value = static_cast<value_type>(this->value() ^ std::underlying_type_t<E2>(r));
 			return *this;
