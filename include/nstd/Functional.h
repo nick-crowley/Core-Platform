@@ -1,8 +1,24 @@
 #pragma once
 #include "library/core.Platform.h"
+#include "nstd/experimental/Lambda.h"
 
 namespace nstd
 {
+	template <typename Result>
+	auto constexpr 
+	inline cast_to = lambda(arg, reinterpret_cast<Result>(arg));
+	
+
+	template <typename Result>
+	auto constexpr 
+	inline change_cv = lambda(arg, const_cast<Result>(arg));
+
+
+	template <typename Result>
+	auto constexpr 
+	inline convert_to = lambda(arg, static_cast<Result>(arg));
+
+
 	template <typename Signature>
 	class function 
 	{
