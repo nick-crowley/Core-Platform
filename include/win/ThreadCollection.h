@@ -7,12 +7,12 @@ namespace core::win
 	class ThreadCollection
 	{
 	private:
-		stop_token               m_stopToken;
+		nstd::stop_token           m_stopToken;
 		std::vector<nstd::thread>  m_workers;
 
 	public:
 		explicit
-		ThreadCollection(stop_token canx)
+		ThreadCollection(nstd::stop_token canx)
 		  : m_stopToken{std::move(canx)}
 		{
 		}
@@ -25,7 +25,7 @@ namespace core::win
 		);
 
 	public:
-		stop_token
+		nstd::stop_token
 		getStopToken() const
 		{
 			return this->m_stopToken;
