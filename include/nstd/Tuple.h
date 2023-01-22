@@ -58,11 +58,11 @@ namespace nstd
 
 
 	// tuple_transform
-	template <typename Tuple, template <typename> typename UnaryFunction>
+	template <typename Tuple, template <typename> typename UnaryMetaFunction>
 	struct tuple_transform : std::type_identity<void> {};
 
-	template <typename Tuple, template <typename> typename UnaryFunction>
-	using tuple_transform_t = typename tuple_transform<Tuple,UnaryFunction>::type;
+	template <typename Tuple, template <typename> typename UnaryMetaFunction>
+	using tuple_transform_t = typename tuple_transform<Tuple,UnaryMetaFunction>::type;
 
 	// template <typename T0, ... , typename Tn, template <typename> typename UnaryMetaFunction>
 	// struct tuple_transform<std::tuple<T0,...,Tn>, UnaryMetaFunction> 
