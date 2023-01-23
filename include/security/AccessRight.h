@@ -56,9 +56,8 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::meta 
 {
-	// FIXME: Simplify concept AccessRight using concept AnyOf
 	template <typename T>
-	concept AccessRight = meta::is_any_of_v<T, win::CommonRight, /*win::FileRight,*/ 
+	concept AccessRight = AnyOf<T, win::CommonRight, /*win::FileRight,*/ 
 	                      win::GenericRight, win::KeyRight, win::StandardRight, 
 	                      /*win::SystemRight,*/ /*win::ProcessRight,*/ /*win::TokenRight,*/ 
 	                      win::access_mask_t>;
