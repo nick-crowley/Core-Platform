@@ -31,6 +31,7 @@
 #include "core/ThrowIfNot.h"
 #include "core/ThrowIfNull.h"
 #include "core/ThrowIfZero.h"
+#include "core/Invariant.h"
 
 #include "core/BitwiseEnum.h"
 
