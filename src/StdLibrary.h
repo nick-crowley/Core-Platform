@@ -5,6 +5,7 @@
 #include <chrono>
 #include <concepts>
 #include <compare>
+#include <coroutine>
 #include <exception>
 #include <format>
 #include <future>
