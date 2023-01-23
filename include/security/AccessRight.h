@@ -84,6 +84,7 @@ namespace core::win
 	{
 		// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 		using type = AccessRight;
+		using reference = type&;
 
 		// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
@@ -93,6 +94,7 @@ namespace core::win
 	public:
 		//! @brief	Construct from any supported access-right
 		template <meta::AccessRight AnyRight>
+		constexpr
 		implicit
 		AccessRight(AnyRight r)
 			: m_rights(static_cast<access_mask_t>(r))
@@ -100,12 +102,13 @@ namespace core::win
 		
 		//! @brief 	Prevent unwanted implicit conversions
 		template <meta::ConvertibleToAccessMask Unwanted>
+		constexpr
 		implicit 
 		AccessRight(Unwanted&&) = delete;
 
 		// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 		satisfies(AccessRight,
-			IsRegular,
+			constexpr IsRegular,
 			NotSortable
 		);
 
@@ -114,6 +117,7 @@ namespace core::win
 		// o~-~=~-~=~-~=~-~=~-~=~-~=~-~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		//! @brief 	Provide an implicit conversion to @c ::DWORD
+		constexpr
 		implicit operator 
 		access_mask_t() const
 		{
@@ -122,6 +126,7 @@ namespace core::win
 	
 		//! @brief 	Provide an implicit conversion to @c CommonRight
 		template <meta::AccessRight AnyRight>
+		constexpr
 		implicit operator 
 		AnyRight() const {
 			return static_cast<AnyRight>(this->m_rights);
@@ -129,33 +134,34 @@ namespace core::win
 	
 		//! @brief 	Prevent unwanted implicit conversions
 		template <meta::ConvertibleFromAccessMask Unwanted>
+		constexpr
 		implicit operator
 		Unwanted() const = delete;
 
-		AccessRight
+		AccessRight constexpr
 		operator~() const {
 			return { static_cast<CustomRight>(~this->m_rights) };
 		}
 	
-		AccessRight
+		AccessRight constexpr
 		operator|(AccessRight const& rhs) const {
 			return { static_cast<CustomRight>(this->m_rights | rhs.m_rights) };
 		}
 	
-		AccessRight
+		AccessRight constexpr
 		operator&(AccessRight const& rhs) const {
 			return { static_cast<CustomRight>(this->m_rights & rhs.m_rights) };
 		}
 
 		// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		type&
+		reference constexpr
 		operator|=(AccessRight const& rhs) {
 			this->m_rights |= rhs.m_rights;
 			return *this;
 		}
 	
-		type&
+		reference constexpr
 		operator&=(AccessRight const& rhs) {
 			this->m_rights &= rhs.m_rights;
 			return *this;
@@ -169,14 +175,14 @@ namespace core::win
 namespace core::win 
 {
 	template <meta::AccessRight AnyRight>
-	AccessRight
+	AccessRight constexpr
 	operator|(AnyRight const& lhs, AccessRight const& rhs)
 	{
 		return rhs | lhs;
 	}
 
 	template <meta::AccessRight AnyRight>
-	AccessRight
+	AccessRight constexpr
 	operator&(AnyRight const& lhs, AccessRight const& rhs)
 	{
 		return rhs & lhs;
