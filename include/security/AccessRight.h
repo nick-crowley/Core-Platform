@@ -30,7 +30,6 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Platform.h"
 #include "security/CommonRight.h"
-#include "security/CustomRight.h"
 #include "security/GenericRight.h"
 #include "security/KeyRight.h"
 #include "security/StandardRight.h"
@@ -62,14 +61,14 @@ namespace core::meta
 	concept AccessRight = meta::is_any_of_v<T, win::CommonRight, /*win::FileRight,*/ 
 	                      win::GenericRight, win::KeyRight, win::StandardRight, 
 	                      /*win::SystemRight,*/ /*win::ProcessRight,*/ /*win::TokenRight,*/ 
-	                      win::CustomRight>;
+	                      win::access_mask_t>;
 
 	
 	template <typename T>
-	concept ConvertibleToAccessMask = std::is_arithmetic_v<T> && !std::is_same_v<T,::ACCESS_MASK>;
+	concept ConvertibleToAccessMask = std::is_arithmetic_v<T> && !std::is_same_v<T,win::access_mask_t>;
 		
 	template <typename T>
-	concept ConvertibleFromAccessMask = std::is_arithmetic_v<T> && !is_any_of_v<T,bool,::ACCESS_MASK>;
+	concept ConvertibleFromAccessMask = std::is_arithmetic_v<T> && !is_any_of_v<T,bool,win::access_mask_t>;
 	
 }
 
@@ -140,17 +139,17 @@ namespace core::win
 
 		AccessRight constexpr
 		operator~() const {
-			return { static_cast<CustomRight>(~this->m_rights) };
+			return { static_cast<access_mask_t>(~this->m_rights) };
 		}
 	
 		AccessRight constexpr
 		operator|(AccessRight const& rhs) const {
-			return { static_cast<CustomRight>(this->m_rights | rhs.m_rights) };
+			return { static_cast<access_mask_t>(this->m_rights | rhs.m_rights) };
 		}
 	
 		AccessRight constexpr
 		operator&(AccessRight const& rhs) const {
-			return { static_cast<CustomRight>(this->m_rights & rhs.m_rights) };
+			return { static_cast<access_mask_t>(this->m_rights & rhs.m_rights) };
 		}
 
 		// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
