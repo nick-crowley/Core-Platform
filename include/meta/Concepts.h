@@ -35,6 +35,9 @@ namespace core::meta
 	concept InputRangeOf = ranges::input_range<Range> 
 	                    && std::is_same_v<ranges::range_value_t<Range>,U>;
 
+	template <typename T, typename Return, typename... Params>
+	concept Invocable_r = std::is_invocable_r_v<Return,T,Params...>;
+
 	template <typename T>
 	concept RealNumber = std::is_arithmetic_v<T> && !Character<T>;
 }
