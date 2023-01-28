@@ -46,8 +46,12 @@ namespace nstd
 		using base::detach;
 		using base::join;
 		using base::native_handle;
-		using base::swap;
 		
+		void
+		swap(thread& r) noexcept {
+			base::swap(r);
+		}
+
 		bool 
 		wait(std::chrono::milliseconds timeout)
 		{

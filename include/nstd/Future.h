@@ -87,6 +87,7 @@ namespace nstd
 		future<std::invoke_result_t<F,stop_token>>
 		friend async(stop_token, F&&);
 
+		using type = future<T>;
 		using value_type = T;
 		using state_type = detail::shared_state<value_type>;
 		
@@ -103,11 +104,20 @@ namespace nstd
 	public:
 		satisfies(future, 
 			IsDefaultConstructible,
-			IsMovable,
 			NotCopyable,
 			NotEqualityComparable,
 			NotSortable
 		);
+		
+		future(type&& r) noexcept {
+			r.swap(*this);
+		}
+
+		type&
+		operator=(type&& r) noexcept {
+			r.swap(*this);
+			return *this;
+		}
 
 		~future() {
 			if (this->m_thread.joinable())
@@ -153,6 +163,12 @@ namespace nstd
 		handle() {
 			Invariant(this->m_state);
 			return this->m_thread.native_handle();
+		}
+
+		void
+		swap(type& r) noexcept {
+			this->m_thread.swap(r.m_thread);
+			this->m_state.swap(r.m_state);
 		}
 	};
 
