@@ -31,7 +31,7 @@ namespace nstd
 		}
 		
 		satisfies(thread,
-			NotDefaultConstructible,
+			IsDefaultConstructible,
 			NotCopyable,
 			IsMovable,
 			NotEqualityComparable,
@@ -58,6 +58,8 @@ namespace nstd
 
 				return true;
 			}
+			else if (this->get_id() == std::thread::id{})
+				return true;
 			else
 				return core::win::waitFor(this->native_handle(), timeout);
 		}
