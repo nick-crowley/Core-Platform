@@ -102,6 +102,7 @@ namespace nstd
 		
 	public:
 		satisfies(future, 
+			IsDefaultConstructible,
 			IsMovable,
 			NotCopyable,
 			NotEqualityComparable,
@@ -116,17 +117,19 @@ namespace nstd
 	public:
 		bool constexpr
 		valid() const {
-			return this->m_state->valid();
+			return this->m_state && this->m_state->valid();
 		}
 
 		void
 		wait() const {
+			Invariant(this->m_state);
 			core::win::waitFor(this->m_thread.native_handle());
 		}
 		
 		template <typename R, typename P>
 		std::future_status
 		wait_for(std::chrono::duration<R,P> timeout) const {
+			Invariant(this->m_state);
 			return core::win::waitFor(this->m_thread.native_handle(), timeout) 
 				? std::future_status::ready : std::future_status::timeout;
 		}
@@ -134,6 +137,7 @@ namespace nstd
 		template <core::meta::Clock Clock>
 		std::future_status
 		wait_until(std::chrono::time_point<Clock> deadline) const {
+			Invariant(this->m_state);
 			return core::win::waitUntil(this->m_thread.native_handle(), deadline) 
 				? std::future_status::ready : std::future_status::timeout;
 		}
@@ -141,11 +145,13 @@ namespace nstd
 	public:
 		value_type
 		get() {
+			Invariant(this->m_state);
 			return this->m_state->get_value();
 		}
 
 		::HANDLE
 		handle() {
+			Invariant(this->m_state);
 			return this->m_thread.native_handle();
 		}
 	};
