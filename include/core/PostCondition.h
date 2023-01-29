@@ -50,3 +50,4 @@ namespace nstd::detail
 //! @remarks	Does nothing when exiting due to an exception being thrown
 //! @remarks	Does nothing when executed during stack unwinding
 #define PostCondition(condExpr)		_on_exit_sentry { if (!(condExpr)) throw ::nstd::postcondition_violated{#condExpr}; }
+#define PostCondition(condExpr)		_on_exit_sentry() { if (!(condExpr)) throw ::nstd::postcondition_violated{#condExpr}; }
