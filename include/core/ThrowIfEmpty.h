@@ -50,7 +50,7 @@ namespace core::meta
 	};
 }
 
-namespace core
+namespace core::detail
 {
 	template <meta::EmptyCompatible T> 
 	decltype(auto) 
@@ -65,4 +65,5 @@ namespace core
 		return std::forward<T>(value);
 	}
 }
-#define ThrowIfEmpty(arg)  ThrowIfEmptyImpl(arg, #arg)
+
+#define ThrowIfEmpty(arg)  ::core::detail::ThrowIfEmptyImpl(arg, #arg)

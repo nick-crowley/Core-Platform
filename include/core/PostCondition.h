@@ -36,20 +36,17 @@ namespace nstd::detail
 			NotCopyable,
 			NotMovable);
 	};
-
-	//! @brief	Execute a block of code on normal/abnormal exit (non-standard)
-	//! @param	...		[optional] Lambda capture-mode
-#	define _on_exit_sentry(...)		\
-		::nstd::detail::NormalExitSentry const BOOST_PP_CAT(_onExitSentry,__COUNTER__) = [__VA_ARGS__]()
 }
 
-namespace nstd
-{
-	//! @brief	Throws if expression is untrue when function exits normally
-	//! 
-	//! @param	condExpr	Boolean expression
-	//! 
-	//! @remarks	Does nothing when exiting due to an exception being thrown
-	//! @remarks	Does nothing when evaluated during stack unwinding
-#	define PostCondition(condExpr)		_on_exit_sentry { if (!(condExpr)) throw ::nstd::postcondition_violated{#condExpr}; }
-}
+//! @brief	Execute a block of code on normal/abnormal exit (non-standard)
+//! @param	...		[optional] Lambda capture-mode
+#define _on_exit_sentry(...)		\
+	::nstd::detail::NormalExitSentry const BOOST_PP_CAT(_onExitSentry,__COUNTER__) = [__VA_ARGS__]()
+
+//! @brief	Throws if expression is untrue when function exits normally
+//! 
+//! @param	condExpr	Boolean expression
+//! 
+//! @remarks	Does nothing when exiting due to an exception being thrown
+//! @remarks	Does nothing when executed during stack unwinding
+#define PostCondition(condExpr)		_on_exit_sentry { if (!(condExpr)) throw ::nstd::postcondition_violated{#condExpr}; }

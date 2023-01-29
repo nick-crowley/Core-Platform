@@ -4,7 +4,7 @@
 #endif
 #include "core/Exceptions.h"
 
-namespace core
+namespace core::detail
 {
 	void
 	inline ThrowIfImpl(bool cond, gsl::czstring argName, gsl::czstring invariant, std::source_location loc = std::source_location::current())
@@ -12,7 +12,7 @@ namespace core
 		if (cond)
 			throw runtime_error{"{}(..) Invalid '{}' argument: {}", loc.function_name(), argName, invariant};
 	}
-
-#	define ThrowIf(arg,expr)     ThrowIfImpl(expr, #arg, #expr)
-#	define ThrowIfNot(arg,expr)  ThrowIfImpl(!(expr), #arg, "!(" #expr ")")
 }
+
+#define ThrowIf(arg,expr)     ::core::detail::ThrowIfImpl(expr, #arg, #expr)
+#define ThrowIfNot(arg,expr)  ::core::detail::ThrowIfImpl(!(expr), #arg, "!(" #expr ")")

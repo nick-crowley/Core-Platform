@@ -4,7 +4,7 @@
 #endif
 #include "core/Exceptions.h"
 
-namespace core
+namespace core::detail
 {
 	template <std::equality_comparable_with<std::nullptr_t> T> 
 	decltype(auto) 
@@ -16,4 +16,5 @@ namespace core
 		return std::forward<T>(value);
 	}
 }
-#define ThrowIfNull(arg)  ThrowIfNullImpl(arg, #arg)
+
+#define ThrowIfNull(arg)  ::core::detail::ThrowIfNullImpl(arg, #arg)

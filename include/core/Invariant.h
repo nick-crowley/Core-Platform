@@ -11,9 +11,9 @@ namespace nstd
 			: core::runtime_error{"'{}' is false", expression}
 		{}
 	};
-
-	//! @brief	Throws immediately if expression is untrue
-	//! 
-	//! @param	invarExpr	Boolean expression
-#	define Invariant(invarExpr)		if (!(invarExpr)) throw ::nstd::invariant_violated{#invarExpr};
 }
+
+//! @brief	Throws immediately if expression is untrue
+//! 
+//! @param	invarExpr	Boolean expression
+#define Invariant(invarExpr)		if (!(invarExpr)) throw ::nstd::invariant_violated{#invarExpr};
