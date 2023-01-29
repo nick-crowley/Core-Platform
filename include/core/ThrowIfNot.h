@@ -14,5 +14,14 @@ namespace core::detail
 	}
 }
 
+//! @brief	Throws if expression @c expr evaluates to @c true
+//! 
+//! @param	arg		Argument
+//! @param	expr	Boolean expression
 #define ThrowIf(arg,expr)     ::core::detail::ThrowIfImpl(expr, #arg, #expr)
+
+//! @brief	Throws if expression @c expr evaluates to @c false
+//! 
+//! @param	arg		Argument
+//! @param	expr	Boolean expression
 #define ThrowIfNot(arg,expr)  ::core::detail::ThrowIfImpl(!(expr), #arg, "!(" #expr ")")

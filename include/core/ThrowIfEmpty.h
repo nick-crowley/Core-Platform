@@ -66,4 +66,7 @@ namespace core::detail
 	}
 }
 
+//! @brief	Throws if expression <tt>empty(arg)</tt> evaluates to @c true
+//! 
+//! @param	arg		Argument
 #define ThrowIfEmpty(arg)  ::core::detail::ThrowIfEmptyImpl(arg, #arg)

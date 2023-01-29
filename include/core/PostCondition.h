@@ -43,11 +43,12 @@ namespace nstd::detail
 #define _on_exit_sentry(...)		\
 	::nstd::detail::NormalExitSentry const BOOST_PP_CAT(_onExitSentry,__COUNTER__) = [__VA_ARGS__]()
 
-//! @brief	Throws if expression is untrue when function exits normally
+//! @brief	Throws if expression @c condExpr evaluates to @c false when function exits normally
 //! 
 //! @param	condExpr	Boolean expression
 //! 
 //! @remarks	Does nothing when exiting due to an exception being thrown
 //! @remarks	Does nothing when executed during stack unwinding
-#define PostCondition(condExpr)		_on_exit_sentry { if (!(condExpr)) throw ::nstd::postcondition_violated{#condExpr}; }
+//! 
+//! @throws	std::runtime_error		[upon exit] Condition did not evaluate to @c true
 #define PostCondition(condExpr)		_on_exit_sentry() { if (!(condExpr)) throw ::nstd::postcondition_violated{#condExpr}; }

@@ -13,7 +13,9 @@ namespace nstd
 	};
 }
 
-//! @brief	Throws immediately if expression is untrue
+//! @brief	Throws immediately if expression @c invarExpr evaluates to @c false
 //! 
 //! @param	invarExpr	Boolean expression
+//! 
+//! @throws	std::runtime_error		Invariant violated
 #define Invariant(invarExpr)		if (!(invarExpr)) throw ::nstd::invariant_violated{#invarExpr};

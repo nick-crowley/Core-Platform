@@ -17,4 +17,7 @@ namespace core::detail
 	}
 }
 
+//! @brief	Throws if expression <tt>arg == nullptr</tt> evaluates to @c true
+//! 
+//! @param	arg		Argument
 #define ThrowIfNull(arg)  ::core::detail::ThrowIfNullImpl(arg, #arg)

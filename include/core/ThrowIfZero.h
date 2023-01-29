@@ -17,4 +17,7 @@ namespace core::detail
 	}
 }
 
+//! @brief	Throws if expression <tt>arg == 0</tt> evaluates to @c true
+//! 
+//! @param	arg		Argument
 #define ThrowIfZero(arg)  ::core::detail::ThrowIfZeroImpl(arg, #arg)
