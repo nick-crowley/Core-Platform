@@ -150,6 +150,7 @@ namespace core
         LoggingSentry& 
         onEntry(std::exception const& e) 
         {
+            this->prefix();
             this->m_output << "+-> THROWN: " << e.what() << std::endl;
             return *this;
         }
