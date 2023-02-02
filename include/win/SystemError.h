@@ -6,6 +6,12 @@
 #include "nstd/SourceLocation.h"
 #include "../../src/PlatformSdk.h"
 
+namespace core::win::detail
+{
+	std::string 
+	formatMessage(::LRESULT err);
+}
+
 namespace core::win
 {
 	struct system_error : public std::system_error
@@ -14,7 +20,7 @@ namespace core::win
 		
 		explicit
 		system_error(::LRESULT code)
-			: base{static_cast<int>(code), std::system_category()}
+			: base{static_cast<int>(code), std::system_category(), detail::formatMessage(code)}
 		{
 		}
 
@@ -22,7 +28,7 @@ namespace core::win
 		system_error(::LRESULT code, std::string_view msg, Params&&... args)
 		  : base{static_cast<int>(code), 
 		         std::system_category(), 
-		         std::vformat(msg,std::make_format_args(args...))}
+		         std::vformat(msg,std::make_format_args(args...)) + " (" + detail::formatMessage(code) + ")"}
 		{
 		}
 	};
