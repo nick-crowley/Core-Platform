@@ -1,5 +1,7 @@
 #pragma once
 #include <boost/preprocessor/arithmetic/add.hpp>
+#include <boost/preprocessor/list/enum.hpp>
+#include <boost/preprocessor/list/transform.hpp>
 #include <boost/preprocessor/repetition.hpp>
 #include <boost/preprocessor/seq/enum.hpp>
 #include <boost/preprocessor/seq/for_each.hpp>
@@ -7,6 +9,7 @@
 #include <boost/preprocessor/seq/reverse.hpp>
 #include <boost/preprocessor/seq/subseq.hpp>
 #include <boost/preprocessor/seq/transform.hpp>
+#include <boost/preprocessor/variadic/to_list.hpp>
 #include <boost/preprocessor/variadic/to_seq.hpp>
 #include <boost/preprocessor/comparison/less.hpp>
 #include <boost/iterator/iterator_facade.hpp>
