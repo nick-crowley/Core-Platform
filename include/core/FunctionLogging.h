@@ -106,6 +106,9 @@ namespace core
 
         enum OutputStyle { Adorned, Bare };
 
+        int 
+        inline static thread_local s_callDepth = -1;
+
     private:
         std::function<void(LoggingSentry&)> m_onExit;
         std::wostream& m_output;
@@ -116,6 +119,7 @@ namespace core
         LoggingSentry(std::wostream& output) 
             : m_output{output}, m_uncaught{std::uncaught_exceptions()}
         {
+            ++s_callDepth;
         }
 
         ~LoggingSentry()
@@ -123,6 +127,7 @@ namespace core
             if (this->m_onExit)
                 if (this->m_uncaught == std::uncaught_exceptions())
                     this->m_onExit(*this);
+            --s_callDepth;
         }
         
         satisfies(LoggingSentry,
@@ -191,7 +196,12 @@ namespace core
         {
             auto t = std::time(nullptr);
             auto tm = *std::localtime(&t);
-            this->m_output << std::put_time(&tm, L"[%H:%M:%S] P-") << ::GetCurrentProcessId() << " T-" << ::GetCurrentThreadId() << " : ";
+            this->m_output << std::put_time(&tm, L"[%H:%M:%S]")
+                           << " P-" << ::GetCurrentProcessId() 
+                           << " T-" << ::GetCurrentThreadId() 
+                           << " : ";
+            for (int i = 0; i < s_callDepth; ++i)
+                this->m_output << "  ";
         }
 
         template <OutputStyle Style, typename T>
