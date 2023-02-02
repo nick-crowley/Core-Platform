@@ -8,6 +8,7 @@ win::detail::formatMessage(::LRESULT err)
 	msg.resize(
 		::FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, nullptr, err, NULL, msg.data(), win::DWord{msg.capacity()}, nullptr)
 	);
-	msg.erase(msg.find_last_not_of("\r\n\t "));
+	if (auto lastChar = msg.find_last_not_of("\r\n\t "); lastChar != std::string::npos)
+		msg.erase(++lastChar);
 	return msg;
 }
