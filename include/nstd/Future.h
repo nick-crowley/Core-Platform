@@ -2,7 +2,7 @@
 #include "library/core.Platform.h"
 #include "win/Concurrency.h"
 #include "nstd/Thread.h"
-#include "win/SmartHandle.h"
+#include "core/SmartHandle.h"
 
 namespace nstd 
 {

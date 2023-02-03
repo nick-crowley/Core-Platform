@@ -1,6 +1,6 @@
 #pragma once
 #include "library/core.Platform.h"
-#include "win/SmartHandle.h"
+#include "core/SmartHandle.h"
 #include "win/RegistryValue.h"
 #include "win/RegistryApi.h"
 #include "security/KeyRight.h"

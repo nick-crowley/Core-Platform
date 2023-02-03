@@ -1,6 +1,6 @@
 #pragma once
 #include "library/core.Platform.h"
-#include "win/SmartHandle.h"
+#include "core/SmartHandle.h"
 #include "meta/TypeTraits.h"
 
 namespace core::win
