@@ -1,20 +1,20 @@
 #pragma once
 #include "library/core.Platform.h"
 
-namespace core::meta 
-{
-    template <typename T>
-    concept SmartHandleTraits = requires {
-        T::release(T::empty);
-    };
-}
-
-namespace core::win
+namespace core
 {
     namespace detail
     {   
         template <std::semiregular RawHandle>
         struct HandleTraits;
+    }
+    
+    namespace meta 
+    {
+        template <typename T>
+        concept SmartHandleTraits = requires {
+            T::release(T::empty);
+        };
     }
     
     //! @brief  Smart-handle with shared-ownership semantics
@@ -173,36 +173,42 @@ namespace core::win
             this->m_object.swap(r.m_handle);
         }
     };
-    
+}
+
+namespace core::detail
+{
+    template <>
+    struct HandleTraits<::HANDLE> {
+        ::HANDLE constexpr
+        inline static empty = nullptr;
+
+        auto constexpr
+        inline static release = &::CloseHandle;
+    };
+        
+    template <>
+    struct HandleTraits<::HKEY> {
+        ::HKEY constexpr
+        inline static empty = nullptr;
+
+        auto constexpr
+        inline static release = &::RegCloseKey;
+    };
+        
+    template <>
+    struct HandleTraits<::HMODULE> {
+        ::HMODULE constexpr
+        inline static empty = nullptr;
+
+        auto constexpr
+        inline static release = &::FreeLibrary;
+    };
+}
+
+namespace core::win
+{
     namespace detail 
     {
-        template <>
-        struct HandleTraits<::HANDLE> {
-            ::HANDLE constexpr
-            inline static empty = nullptr;
-
-            auto constexpr
-            inline static release = &::CloseHandle;
-        };
-        
-        template <>
-        struct HandleTraits<::HKEY> {
-            ::HKEY constexpr
-            inline static empty = nullptr;
-
-            auto constexpr
-            inline static release = &::RegCloseKey;
-        };
-        
-        template <>
-        struct HandleTraits<::HMODULE> {
-            ::HMODULE constexpr
-            inline static empty = nullptr;
-
-            auto constexpr
-            inline static release = &::FreeLibrary;
-        };
-        
         struct FileHandleTraits {
             ::HANDLE constexpr
             inline static empty = INVALID_HANDLE_VALUE;
