@@ -9,6 +9,7 @@ namespace nstd
     
 #define _DefaultConstructibleDecl(className)    className()
 #define _DestructibleDecl(className)            ~className()
+#define _PolymorphicDecl(className)             virtual ~className()
 #define _CopyAssignableDecl(className)          className& operator=(className const&)
 #define _CopyConstructibleDecl(className)       className(className const&)
 #define _MoveAssignableDecl(className)          className& operator=(className&&)
@@ -22,6 +23,7 @@ namespace nstd
 // Individual concepts (positive case)
 #define IsDefaultConstructible		_MakeDefaultedConceptMacro(_DefaultConstructibleDecl)
 #define IsDestructible		        _MakeDefaultedConceptMacro(_DestructibleDecl)
+#define IsPolymorphic		        _MakeDefaultedConceptMacro(_PolymorphicDecl)
 #define IsCopyAssignable            _MakeDefaultedConceptMacro(_CopyAssignableDecl)
 #define IsCopyConstructible         _MakeDefaultedConceptMacro(_CopyConstructibleDecl)
 #define IsMoveAssignable            _MakeDefaultedConceptMacro(_MoveAssignableDecl)
