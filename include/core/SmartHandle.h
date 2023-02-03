@@ -170,7 +170,7 @@ namespace core
 
         void 
         swap(type& r) noexcept {
-            this->m_object.swap(r.m_handle);
+            this->m_object.swap(r.m_object);
         }
     };
 }
