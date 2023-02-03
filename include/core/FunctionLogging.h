@@ -95,8 +95,8 @@ inline to_wstring(DWORD const* value)
 
 namespace core
 {
-    std::wofstream 
-    extern g_logFile;
+    std::add_lvalue_reference_t<std::wostream>
+    extern clog;
 
     struct LoggingSentry
     {
@@ -249,7 +249,7 @@ namespace core
     BOOST_PP_LIST_ENUM(BOOST_PP_LIST_TRANSFORM(_makeLoggingArgument, ~, BOOST_PP_VARIADIC_TO_LIST(__VA_ARGS__)))
 
 #define logFunction(...)                                                                                                    \
-    ::core::LoggingSentry loggingSentry{g_logFile};                                                                         \
+    ::core::LoggingSentry loggingSentry{clog};                                                                         \
     loggingSentry.onEntry(                                                                                                  \
         __FUNCTION__                                                                                                        \
         __VA_OPT__(, _makeLoggingArgumentList(__VA_ARGS__))                                                                 \
@@ -263,5 +263,5 @@ namespace core
     })
 
 #define logException(e)                                                                                                     \
-    ::core::LoggingSentry loggingSentry{g_logFile};                                                                         \
+    ::core::LoggingSentry loggingSentry{clog};                                                                         \
     loggingSentry.onEntry(e)
