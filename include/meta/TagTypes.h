@@ -27,8 +27,8 @@ namespace core::meta
 	struct undefined_t {} constexpr 
 	inline undefined;
 	
-    struct use_default_t {} constexpr inline 
-    use_default;
+    struct use_default_t {} constexpr 
+    inline use_default;
 }
 
 namespace core
