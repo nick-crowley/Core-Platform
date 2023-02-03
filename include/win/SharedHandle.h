@@ -50,7 +50,7 @@ namespace core::win
     //! @brief  Shared @c ::HANDLE released using @c ::CloseHandle()
     using SharedEvent = SharedHandle;
     
-    //! @brief  Smart-handle released using ::CloseHandle()
+    //! @brief  Shared @c ::HANDLE released using @c ::CloseHandle() and @c INVALID_HANDLE_VALUE sentinel value
     using SharedFile = SmartHandle<::HANDLE, detail::FileHandleTraits>;
     
     //! @brief  Shared @c ::HKEY released using @c ::RegCloseKey()
