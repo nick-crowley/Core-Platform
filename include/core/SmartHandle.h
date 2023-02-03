@@ -159,7 +159,7 @@ namespace core
         
         template <std::invocable<RawHandle> ReleaseDelegate = decltype(Traits::release)>
         void 
-        reset(RawHandle handle, ReleaseDelegate&& release = Traits::release) {
+        reset(RawHandle handle, ReleaseDelegate release = Traits::release) {
             type{handle,release}.swap(*this);
         }
         
