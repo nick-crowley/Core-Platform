@@ -29,6 +29,9 @@ namespace core::meta
 	
     struct use_default_t {} constexpr 
     inline use_default;
+	
+	struct weakref_t {} constexpr 
+	inline weakref;
 }
 
 namespace core
@@ -63,4 +66,7 @@ namespace core
 
 	auto constexpr 
 	inline use_default = meta::use_default;
+	
+	auto constexpr 
+	inline weakref = meta::weakref;
 }
