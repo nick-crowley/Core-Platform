@@ -38,14 +38,14 @@ namespace core::win
 		void 
 		throwAlways [[noreturn]](std::string_view msg, Params&&... args) const {
 			throw system_error{this->m_value, 
-			                   std::vformat(msg,std::make_format_args(args...)) + ". " + this->str()};
+			                   std::vformat(msg,std::make_format_args(args...))};
 		}
 		
 		template <typename... Params>
 		void 
 		throwIfError [[noreturn]](std::string_view msg, Params&&... args) const {
 			throw system_error{this->m_value, 
-			                   std::vformat(msg,std::make_format_args(args...)) + ". " + this->str()};
+			                   std::vformat(msg,std::make_format_args(args...))};
 		}
 
 		explicit operator
