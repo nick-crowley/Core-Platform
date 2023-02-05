@@ -33,14 +33,15 @@ namespace core::nt
 		void 
 		throwAlways [[noreturn]]() const {
 			// BUG: this will result in the wrong error category
-			throw win::system_error{this->m_value};
+			throw std::system_error{this->m_value, std::system_category(), this->str()};
 		}
 		
 		template <typename... Params> 
 		void 
 		throwAlways [[noreturn]](std::string_view msg, Params&&... args) const {
 			// BUG: this will result in the wrong error category
-			throw win::system_error{this->m_value, 
+			throw std::system_error{this->m_value, 
+			                        std::system_category(),
 			                        std::vformat(msg,std::make_format_args(args...)) + ". " + this->str()};
 		}
 		
@@ -48,7 +49,8 @@ namespace core::nt
 		void 
 		throwIfError [[noreturn]](std::string_view msg, Params&&... args) const {
 			// BUG: this will result in the wrong error category
-			throw win::system_error{this->m_value, 
+			throw std::system_error{this->m_value, 
+			                        std::system_category(),
 			                        std::vformat(msg,std::make_format_args(args...)) + ". " + this->str()};
 		}
 
