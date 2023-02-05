@@ -20,6 +20,9 @@ namespace core::meta
 
 	struct hidden_t {} constexpr  
 	inline hidden;
+	
+	struct noformat_t {} constexpr 
+	inline noformat;
 
 	struct open_existing_t {} constexpr 
 	inline open_existing;
@@ -57,6 +60,9 @@ namespace core
 
 	auto constexpr 
 	inline hidden = meta::hidden;
+	
+	auto constexpr 
+	inline noformat = meta::noformat;
 
 	auto constexpr 
 	inline open_existing = meta::open_existing;
