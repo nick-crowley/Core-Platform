@@ -18,6 +18,9 @@ namespace core::meta
 	template <typename Range, typename U>
 	concept ContiguousRangeOf = ranges::contiguous_range<Range> 
 	                         && std::is_same_v<ranges::range_value_t<Range>,U>;
+	
+	template <typename T, typename... Types>
+	concept ConvertibleTo = (std::convertible_to<T,Types> || ...);
 
 	template <typename T>
 	concept Enumeration = std::is_enum_v<T>;

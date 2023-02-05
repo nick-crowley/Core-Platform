@@ -82,22 +82,16 @@ namespace core
 		std::variant<std::string,std::wstring>  Text;
 
 	public:
-		template <meta::AnyOf<std::string_view,std::wstring_view> StringView>
+		template <meta::ConvertibleTo<std::string_view,std::wstring_view> StringView>
 		explicit
 		LogEntry(meta::noformat_t, StringView msg)
 		  : Text{msg}
 		{}
-
-		template <typename... Params>
-		explicit
-		LogEntry(std::string_view msg, Params&&... args)
-		  : Text{std::vformat(msg,std::make_format_args(args...))}
-		{}
 		
-		template <typename... Params>
+		template <meta::ConvertibleTo<std::string_view,std::wstring_view> StringView, typename... Params>
 		explicit
-		LogEntry(std::wstring_view wideMsg, Params&&... args)
-		  : Text{std::vformat(wideMsg,std::make_format_args(args...))}
+		LogEntry(StringView msg, Params&&... args)
+		  : Text{std::vformat(msg,std::make_format_args(args...))}
 		{}
 	};
 
