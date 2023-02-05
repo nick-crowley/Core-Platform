@@ -35,6 +35,7 @@
 #include "core/PostCondition.h"
 
 #include "core/BitwiseEnum.h"
+#include "core/ToString.h"
 
 #include "nt/NtStatus.h"
 #include "win/LResult.h"
