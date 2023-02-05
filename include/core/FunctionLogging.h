@@ -4,12 +4,12 @@
 namespace core::detail
 {
     std::wstring 
-    inline to_wstring(char const* s) { 
+    inline to_wstring(gsl::czstring s) { 
         return {s, s+strlen(s)}; 
     }
     
     std::wstring 
-    inline to_wstring(wchar_t const* s) { 
+    inline to_wstring(gsl::cwzstring s) { 
         return {s, s+wcslen(s)}; 
     }
 
@@ -38,14 +38,13 @@ namespace core::detail
     }
 
     // BUG: std::decay_t<T> so if T is char[N]
-    // BUG: Include non-const character arrays
     template <typename T>
-    constexpr bool is_stringish_v = 
+    constexpr bool is_stringish_v = meta::is_any_of_v<T,gsl::zstring,gsl::wzstring,
+                                                        gsl::czstring,gsl::cwzstring,
 #ifdef __ATLSTR_H__
-        meta::is_any_of_v<T,char*,wchar_t*,char const*,wchar_t const*,std::string,std::wstring,ATL::CString>;
-#else
-        meta::is_any_of_v<T,char*,wchar_t*,char const*,wchar_t const*,std::string,std::wstring>;
+                                                        ATL::CString
 #endif
+                                                        std::string,std::wstring>;
 }
 
 namespace core::meta
@@ -102,7 +101,7 @@ namespace core
     {
     private:
         template <typename T>
-        using argument_t = std::pair<T,char const*>;
+        using argument_t = std::pair<T,gsl::czstring>;
 
         enum OutputStyle { Adorned, Bare };
 
@@ -141,7 +140,7 @@ namespace core
     public:
         template <typename... Parameters>
         LoggingSentry& 
-        onEntry(char const* function, const argument_t<Parameters>&... args) 
+        onEntry(gsl::czstring function, const argument_t<Parameters>&... args) 
         {
             this->print(function, args...);
             return *this;
@@ -164,7 +163,7 @@ namespace core
 
         template <typename... Parameters>
         void 
-        print(char const* ident, argument_t<Parameters> const&... args) 
+        print(gsl::czstring ident, argument_t<Parameters> const&... args) 
         {
             this->prefix();
 
@@ -249,7 +248,7 @@ namespace core
     BOOST_PP_LIST_ENUM(BOOST_PP_LIST_TRANSFORM(_makeLoggingArgument, ~, BOOST_PP_VARIADIC_TO_LIST(__VA_ARGS__)))
 
 #define logFunction(...)                                                                                                    \
-    ::core::LoggingSentry loggingSentry{clog};                                                                         \
+    ::core::LoggingSentry loggingSentry{clog};                                                                              \
     loggingSentry.onEntry(                                                                                                  \
         __FUNCTION__                                                                                                        \
         __VA_OPT__(, _makeLoggingArgumentList(__VA_ARGS__))                                                                 \
@@ -263,5 +262,5 @@ namespace core
     })
 
 #define logException(e)                                                                                                     \
-    ::core::LoggingSentry loggingSentry{clog};                                                                         \
+    ::core::LoggingSentry loggingSentry{clog};                                                                              \
     loggingSentry.onEntry(e)
