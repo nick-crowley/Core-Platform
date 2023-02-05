@@ -15,3 +15,7 @@ namespace core::win
 {
 	using access_mask_t = ::ACCESS_MASK;
 }
+
+#ifdef __ATLSTR_H__
+#	define HAS_ATL_STRING
+#endif

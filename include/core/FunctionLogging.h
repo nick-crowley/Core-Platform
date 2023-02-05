@@ -23,7 +23,7 @@ namespace core::detail
         return ws; 
     }
 
-#ifdef __ATLSTR_H__
+#ifdef HAS_ATL_STRING
     std::wstring 
     inline to_wstring(ATL::CString const& s) { 
         return s.GetString(); 
@@ -41,7 +41,7 @@ namespace core::detail
     template <typename T>
     constexpr bool is_stringish_v = meta::is_any_of_v<T,gsl::zstring,gsl::wzstring,
                                                         gsl::czstring,gsl::cwzstring,
-#ifdef __ATLSTR_H__
+#ifdef HAS_ATL_STRING
                                                         ATL::CString
 #endif
                                                         std::string,std::wstring>;
