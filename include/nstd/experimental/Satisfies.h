@@ -19,11 +19,13 @@ namespace nstd
 
 #define _MakeDefaultedConceptMacro(...)         BOOST_PP_COMMA() BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__) BOOST_PP_COMMA() = default BOOST_PP_COMMA()
 #define _MakeDeletedConceptMacro(...)           BOOST_PP_COMMA() BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__) BOOST_PP_COMMA() = delete BOOST_PP_COMMA()
+#define _MakePureConceptMacro(decl)             BOOST_PP_COMMA() (virtual decl) BOOST_PP_COMMA() = 0 BOOST_PP_COMMA()
 
 // Individual concepts (positive case)
 #define IsDefaultConstructible		_MakeDefaultedConceptMacro(_DefaultConstructibleDecl)
 #define IsDestructible		        _MakeDefaultedConceptMacro(_DestructibleDecl)
 #define IsPolymorphic		        _MakeDefaultedConceptMacro(_PolymorphicDecl)
+#define IsAbstract		            _MakePureConceptMacro(_DestructibleDecl)
 #define IsCopyAssignable            _MakeDefaultedConceptMacro(_CopyAssignableDecl)
 #define IsCopyConstructible         _MakeDefaultedConceptMacro(_CopyConstructibleDecl)
 #define IsMoveAssignable            _MakeDefaultedConceptMacro(_MoveAssignableDecl)
