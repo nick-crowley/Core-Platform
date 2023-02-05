@@ -1,42 +1,10 @@
 #pragma once
 #include "library/core.Platform.h"
+#include "core/LogStream.h"
+#include "core/ToString.h"
 
 namespace core::detail
 {
-    std::wstring 
-    inline to_wstring(gsl::czstring s) { 
-        return {s, s+strlen(s)}; 
-    }
-    
-    std::wstring 
-    inline to_wstring(gsl::cwzstring s) { 
-        return {s, s+wcslen(s)}; 
-    }
-
-    std::wstring 
-    inline to_wstring(std::string const& s) { 
-        return {s.begin(), s.end()}; 
-    }
-
-    std::wstring 
-    inline to_wstring(std::wstring const& ws) { 
-        return ws; 
-    }
-
-#ifdef HAS_ATL_STRING
-    std::wstring 
-    inline to_wstring(ATL::CString const& s) { 
-        return s.GetString(); 
-}
-#endif
-
-    template <typename Enum> 
-        requires std::is_enum_v<Enum>
-    std::wstring 
-    inline to_wstring(Enum&& e) { 
-        return L"todo"; 
-    }
-
     // BUG: std::decay_t<T> so if T is char[N]
     template <typename T>
     constexpr bool is_stringish_v = meta::is_any_of_v<T,gsl::zstring,gsl::wzstring,
@@ -47,75 +15,34 @@ namespace core::detail
                                                         std::string,std::wstring>;
 }
 
-namespace core::meta
-{
-    template <typename T> 
-    concept WStringCompatible = requires(T&& value) 
-    { 
-	    to_wstring(value); 
-    };
-}
-
-template <typename T>
-std::wstring 
-to_wstring(T** value)
-{
-    if constexpr (core::meta::is_any_of_v<std::remove_const_t<T>,char,wchar_t>)
-        return !value ? L"nullptr" : L'\'' + to_wstring(*value) + L'\'';
-    else if constexpr (core::meta::WStringCompatible<T*> || core::meta::WStringCompatible<T>)
-        return !value ? L"nullptr" : L'*' + to_wstring(*value);
-    else
-        return !value ? L"nullptr" : L"0x" + std::to_wstring(reinterpret_cast<uintptr_t>(value));
-}
-
-template <typename T>
-std::wstring 
-to_wstring(T* value) requires (!std::is_integral_v<T>)
-{
-    if constexpr (core::meta::WStringCompatible<T>)
-        return !value ? L"nullptr" : L'*' + to_wstring(*value);
-    else
-        return !value ? L"nullptr" : L"0x" + std::to_wstring(reinterpret_cast<uintptr_t>(value));
-}
-
-std::wstring 
-inline to_wstring(BOOL const* value)
-{
-    return !value ? L"nullptr" 
-        : (*value ? L"TRUE" : L"FALSE");
-}
-
-std::wstring 
-inline to_wstring(DWORD const* value)
-{
-    return !value ? L"nullptr" 
-        : ((LONG)*value < 0 ? std::to_wstring((LONG)*value) : std::to_wstring(*value));
-}
-
 namespace core
 {
-    std::add_lvalue_reference_t<std::wostream>
-    extern clog;
-
     struct LoggingSentry
     {
     private:
         template <typename T>
-        using argument_t = std::pair<T,gsl::czstring>;
+        using NameValuePair = std::pair<gsl::czstring,T>;
+
+        using LoggingDelegate = std::function<void(LoggingSentry&)>;
 
         enum OutputStyle { Adorned, Bare };
 
+    private:
         int 
         inline static thread_local s_callDepth = -1;
 
+        char constexpr
+        inline static s_padding[] = "           ";
+
     private:
-        std::function<void(LoggingSentry&)> m_onExit;
-        std::wostream& m_output;
-        int m_uncaught;
+        std::stringstream m_assembly;
+        LoggingDelegate   m_onExit;
+        LogStream&        m_output;
+        int               m_uncaught;
 
     public:
         explicit
-        LoggingSentry(std::wostream& output) 
+        LoggingSentry(LogStream& output) 
             : m_output{output}, m_uncaught{std::uncaught_exceptions()}
         {
             ++s_callDepth;
@@ -137,10 +64,16 @@ namespace core
             NotSortable
         );
         
+    private:
+        std::string_view
+        static padding() {
+            return {s_padding, s_padding+std::clamp(s_callDepth,0,10)};
+        }
+
     public:
-        template <typename... Parameters>
+        template <typename... Values>
         LoggingSentry& 
-        onEntry(gsl::czstring function, const argument_t<Parameters>&... args) 
+        onEntry(gsl::czstring function, const NameValuePair<Values>&... args) 
         {
             this->print(function, args...);
             return *this;
@@ -149,100 +82,84 @@ namespace core
         LoggingSentry& 
         onEntry(std::exception const& e) 
         {
-            this->prefix();
-            this->m_output << "+-> THROWN: " << e.what() << std::endl;
+            this->m_output << Failure{"{}+-> THROWN: {}", this->padding(), e.what()};
             return *this;
         }
     
-        template <typename LoggingDelegate>
-        void 
-        onExit(LoggingDelegate&& fx)
+        template <std::invocable<LoggingSentry&> Delegate>
+        std::void_t<LoggingSentry&>
+        onExit(Delegate&& fx)
         {
             this->m_onExit = fx;
         }
 
-        template <typename... Parameters>
+        template <typename... Values>
         void 
-        print(gsl::czstring ident, argument_t<Parameters> const&... args) 
+        print(gsl::czstring func, NameValuePair<Values> const&... args) 
         {
-            this->prefix();
+            this->write<Bare>(this->padding());
+            this->write<Bare>(func);
+            this->write<Bare>("(");
 
-            this->write<Bare>(ident);
-            this->write<Bare>(L"(");
+            if constexpr (sizeof...(Values) > 0) 
+                this->writeArgs(args...);
 
-            if constexpr (sizeof...(Parameters) > 0) 
-                this->write(args...);
-
-            this->write<Bare>(L")");
-
-            this->m_output << std::endl;
+            this->write<Bare>(")");
+            this->m_output << Verbose{noformat,this->m_assembly.str()};
         }
     
-        template <typename... Parameters>
+        template <typename... Values>
         void 
-        print(argument_t<Parameters> const&... args) 
+        print(NameValuePair<Values> const&... args) 
         {
-            if constexpr (sizeof...(Parameters) > 0) {
-                this->prefix();
-                this->write<Bare>(L"+-> ");
-                this->write(args...);
-                this->m_output << std::endl;
+            if constexpr (sizeof...(Values) > 0) {
+                this->write<Bare>(this->padding());
+                this->write<Bare>("+-> ");
+                this->writeArgs(args...);
+                this->m_output << Verbose{noformat,this->m_assembly.str()};
             }
         }
 
     private:
-        void
-        prefix() 
-        {
-            auto t = std::time(nullptr);
-            auto tm = *std::localtime(&t);
-            this->m_output << std::put_time(&tm, L"[%H:%M:%S]")
-                           << " P-" << ::GetCurrentProcessId() 
-                           << " T-" << ::GetCurrentThreadId() 
-                           << " : ";
-            for (int i = 0; i < s_callDepth; ++i)
-                this->m_output << "  ";
-        }
-
         template <OutputStyle Style, typename T>
         void 
         write(T const& arg)
         {
-            using ::to_wstring;
-            using std::to_wstring;
-            using detail::to_wstring;
+            using ::to_string;
+            using std::to_string;
+            using core::to_string;
         
             if constexpr (Style == Adorned && detail::is_stringish_v<T>)
-                this->m_output << '"';
+                this->m_assembly << '"';
 
-            this->m_output << to_wstring(arg);
+            this->m_assembly << to_string(arg);
 
             if constexpr (Style == Adorned && detail::is_stringish_v<T>)
-                this->m_output << '"';
+                this->m_assembly << '"';
         }
     
         template <typename T>
         void 
-        write(argument_t<T> const& arg) 
+        writeArgs(NameValuePair<T> const& arg) 
         {
-            this->write<Bare>(arg.second);
+            this->write<Bare>(arg.first);
             this->write<Bare>("=");
-            this->write<Adorned>(arg.first);
+            this->write<Adorned>(arg.second);
         }
 
         template <typename T, typename... Parameters>
         void 
-        write(argument_t<T> const& arg, argument_t<Parameters> const&... args)
+        writeArgs(NameValuePair<T> const& arg, NameValuePair<Parameters> const&... args)
         {
-            this->write(arg);
+            this->writeArgs(arg);
             this->write<Bare>(", ");
-            this->write(args...);
+            this->writeArgs(args...);
         }
     };
 }
 
 #define _makeLoggingArgument(s,d,e)                                                                                         \
-    std::make_pair(e,#e)
+    std::make_pair(#e,e)
 
 #define _makeLoggingArgumentList(...)                                                                                       \
     BOOST_PP_LIST_ENUM(BOOST_PP_LIST_TRANSFORM(_makeLoggingArgument, ~, BOOST_PP_VARIADIC_TO_LIST(__VA_ARGS__)))
@@ -262,5 +179,4 @@ namespace core
     })
 
 #define logException(e)                                                                                                     \
-    ::core::LoggingSentry loggingSentry{clog};                                                                              \
-    loggingSentry.onEntry(e)
+    clog << static_cast<std::exception const&>(e)
