@@ -47,7 +47,7 @@ namespace core::security
 	*			tasks such as argument verification, buffer allocation, and converting error-codes into 
 	*           exceptions, for example.
 	*/
-	class SecurityApi 
+	class PlatformExport SecurityApi 
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 	private:
@@ -233,7 +233,7 @@ namespace core::security
 	* @related	core::security::ISecurityApi
 	*/
 	SharedSecurityApi
-	security_api();
+	PlatformExport security_api();
 }   // namespace core::security
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #endif      // interface_SecurityApi_h_included

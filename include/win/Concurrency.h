@@ -8,7 +8,7 @@ namespace core::win
         enum WaitStrategy { WaitAny, WaitAll };
         
         std::optional<::HANDLE>
-        waitForMultipleObjects(std::span<::HANDLE> handles, WaitStrategy strategy, std::optional<chrono::milliseconds> timeout);
+        PlatformExport waitForMultipleObjects(std::span<::HANDLE> handles, WaitStrategy strategy, std::optional<chrono::milliseconds> timeout);
         
         template <meta::InputRangeOf<::HANDLE> HandleCollection> 
             requires (!ranges::contiguous_range<HandleCollection>)

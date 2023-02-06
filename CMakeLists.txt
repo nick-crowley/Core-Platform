@@ -86,20 +86,6 @@ link_directories($ENV{BOOST_ROOT}/stage/lib ${OUTPUT_FOLDER})
 set(CMAKE_CONFIGURATION_TYPES Debug Release CACHE TYPE INTERNAL FORCE )
 #set(CMAKE_CONFIGURATION_TYPES Debug CACHE TYPE INTERNAL FORCE )
 
-##############################################################################
-#         _________ __          __  .__         .____    ._____.             #
-#        /   _____//  |______ _/  |_|__| ____   |    |   |__\_ |__           #
-#        \_____  \\   __\__  \\   __\  |/ ___\  |    |   |  || __ \          #
-#        /        \|  |  / __ \|  | |  \  \___  |    |___|  || \_\ \         #
-#       /_______  /|__| (____  /__| |__|\___  > |_______ \__||___  /         #
-#               \/           \/             \/          \/       \/          #
-##############################################################################
-message("StaticLib: Generating project(s) from ${PROJECT_SOURCE_FOLDER} with ${PROJECT_INCLUDE_FOLDER}")
-
-# Define macro controlling dllexport/import specifier
-set(PROJECT_DLL_MACRO "PROJECT_BUILD_DYNAMIC")
-set(PROJECT_LIB_MACRO "PROJECT_BUILD_STATIC")
-
 # Source files
 file(GLOB_RECURSE PROJECT_SOURCE_FILES
     "${PROJECT_SOURCE_FOLDER}*.h"
@@ -124,6 +110,20 @@ file(GLOB_RECURSE PROJECT_INCLUDE_FILES
     "${PROJECT_INCLUDE_FOLDER}*.h"
     )
 
+# Define macro controlling dllexport/import specifier
+set(PROJECT_DLL_MACRO "BuildCorePlatformDLL")
+set(PROJECT_LIB_MACRO "BuildCorePlatformStaticLib")
+
+##############################################################################
+#         _________ __          __  .__         .____    ._____.             #
+#        /   _____//  |______ _/  |_|__| ____   |    |   |__\_ |__           #
+#        \_____  \\   __\__  \\   __\  |/ ___\  |    |   |  || __ \          #
+#        /        \|  |  / __ \|  | |  \  \___  |    |___|  || \_\ \         #
+#       /_______  /|__| (____  /__| |__|\___  > |_______ \__||___  /         #
+#               \/           \/             \/          \/       \/          #
+##############################################################################
+message("StaticLib: Generating project(s) from ${PROJECT_SOURCE_FOLDER} with ${PROJECT_INCLUDE_FOLDER}")
+
 # Project: libCorePlatform
 add_library(libCorePlatform STATIC 
 	${PROJECT_SOURCE_FILES} 
@@ -144,6 +144,40 @@ set_target_properties(libCorePlatform PROPERTIES
 					  #OUTPUT_NAME "libCorePlatform"
 					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS} -D${PROJECT_LIB_MACRO}")
 
+#############################################################################
+#  ________                              .__          .____    ._____.      #
+#  \______ \ ___.__. ____ _____    _____ |__| ____    |    |   |__\_ |__    #
+#   |    |  <   |  |/    \\__  \  /     \|  |/ ___\   |    |   |  || __ \   #
+#   |    `   \___  |   |  \/ __ \|  Y Y  \  \  \___   |    |___|  || \_\ \  #
+#  /_______  / ____|___|  (____  /__|_|  /__|\___  >  |_______ \__||___  /  #
+#          \/\/         \/     \/      \/        \/           \/       \/   #
+#############################################################################
+message("DynamicLib: Generating project(s) from ${PROJECT_SOURCE_FOLDER} with ${PROJECT_INCLUDE_FOLDER}")
+
+# Project: dllCorePlatform
+add_library(dllCorePlatform SHARED 
+	"${PROJECT_EXTRA_FOLDER}DllMain.cpp"
+	${PROJECT_SOURCE_CC_FILES} 
+    )
+  
+# Include folders
+target_include_directories(dllCorePlatform BEFORE
+    PRIVATE
+	${PROJECT_SOURCE_FOLDER} 
+    PUBLIC
+    ${PROJECT_INCLUDE_FOLDER}            
+	)
+	
+# Differentiate the filename of the static library
+set_target_properties(dllCorePlatform PROPERTIES
+					  OUTPUT_NAME "CorePlatform"
+					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS} -D${PROJECT_DLL_MACRO}")
+					  
+# Set project dependencies
+#add_dependencies(dllCorePlatform
+#	libCorePlatform
+#)
+
 ##############################################################
 #  ___________              __       _____                   #
 #  \__    ___/___   _______/  |_    /  _  \ ______ ______    #
@@ -153,20 +187,9 @@ set_target_properties(libCorePlatform PROPERTIES
 #               \/     \/                 \/|__|   |__|      #
 ##############################################################
 
-# Extra files
-file(GLOB_RECURSE PROJECT_EXTRA_FILES
-    "${PROJECT_EXTRA_FOLDER}*.h"
-    "${PROJECT_EXTRA_FOLDER}*.cpp"
-    )
-	
-# Resource files
-#file(GLOB_RECURSE PROJECT_RESOURCE_FILES
-#	"${PROJECT_RESOURCE_FOLDER}*.*"
-#    )
-
 # Project: appCorePlatform
 add_executable(appCorePlatform
-	${PROJECT_EXTRA_FILES}
+	"${PROJECT_EXTRA_FOLDER}main.cpp"
 	#${PROJECT_RESOURCE_FILES}
     )
 
@@ -181,8 +204,8 @@ target_include_directories(appCorePlatform BEFORE
 	
 # Set linker dependencies
 target_link_libraries(appCorePlatform
-	libCorePlatform
-	)
+	dllCorePlatform
+)
 
 # Set compiler & linker flags
 set_target_properties(appCorePlatform PROPERTIES
@@ -192,8 +215,8 @@ set_target_properties(appCorePlatform PROPERTIES
 
 # Set project dependencies
 add_dependencies(appCorePlatform
-	libCorePlatform)
-
+	dllCorePlatform
+)
 
 #################################################################################
 #     ___________.__.__           .____                                __   
@@ -203,6 +226,17 @@ add_dependencies(appCorePlatform
 #      \___  /   |__|____/\___  > |_______ (____  / ____|\____/|____/ |__|  
 #          \/                 \/          \/    \/\/                        
 #################################################################################
+
+# Extra files
+file(GLOB_RECURSE PROJECT_EXTRA_FILES
+    "${PROJECT_EXTRA_FOLDER}*.h"
+    "${PROJECT_EXTRA_FOLDER}*.cpp"
+    )
+	
+# Resource files
+#file(GLOB_RECURSE PROJECT_RESOURCE_FILES
+#	"${PROJECT_RESOURCE_FOLDER}*.*"
+#    )
 
 # Project file groups
 source_group(TREE ${PROJECT_SOURCE_FOLDER}    PREFIX "Build Files"    FILES ${PROJECT_SOURCE_CC_FILES}})

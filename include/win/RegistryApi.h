@@ -6,7 +6,7 @@
 
 namespace core::win
 {
-	class RegistryApi
+	class PlatformExport RegistryApi
 	{
 	public:
 		enum Lifetime { Volatile, NonVolatile };
@@ -36,5 +36,5 @@ namespace core::win
 	using SharedRegistryApi = std::shared_ptr<RegistryApi>;
 
 	SharedRegistryApi
-	registryApi();
+	PlatformExport registryApi();
 }

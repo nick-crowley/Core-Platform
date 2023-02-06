@@ -16,10 +16,10 @@ namespace core::win
 	SharedRegistryKey const 
 	inline LocalMachine {HKEY_LOCAL_MACHINE};
 
-	class RegistryKey
+	class PlatformExport RegistryKey
 	{
 	public:
-		class ConstRegistryValueProxy
+		class PlatformExport ConstRegistryValueProxy
 		{
 		protected:
 			RegistryKey const* m_key;
@@ -44,7 +44,7 @@ namespace core::win
 			RegistryValue() const;
 		};
 		
-		class RegistryValueProxy : public ConstRegistryValueProxy
+		class PlatformExport RegistryValueProxy : public ConstRegistryValueProxy
 		{
 			using base = ConstRegistryValueProxy;
 

@@ -9,7 +9,7 @@
 namespace core::win::detail
 {
 	std::string 
-	formatMessage(::LRESULT err);
+	PlatformExport formatMessage(::LRESULT err);
 }
 
 namespace core::win

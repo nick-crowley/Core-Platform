@@ -7,6 +7,8 @@
 #include "../../src/StdLibrary.h"
 #include "../../src/libBoost.h"
 
+#include "../../src/library/PlatformExport.h"
+
 #include "nstd/experimental/abstract.h"
 #include "nstd/experimental/implicit.h"
 #include "nstd/experimental/intern.h"

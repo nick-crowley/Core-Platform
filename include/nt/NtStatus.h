@@ -4,11 +4,12 @@
 #endif
 #include "nstd/experimental/implicit.h"
 #include "win/SystemError.h"
+#include "../../src/library/PlatformExport.h"
 
 namespace core::nt::detail
 {
 	std::string 
-	formatMessage(::LRESULT err);
+	PlatformExport formatMessage(::LRESULT err);
 }
 
 namespace core::nt
