@@ -38,7 +38,7 @@ set(PROJECT_RESOURCE_FOLDER "${BASE_FOLDER}res/")
 set(GSL_ASSERTION_BEHAVIOUR "GSL_THROW_ON_CONTRACT_VIOLATION")
 
 # Set compiler options used by all modules
-# /std:c++20		: ISO C++ 20 Standard
+# /std:c++latest	: Preview ISO C++ 23 Standard
 # /std:c17			: ISO C 17 Standard
 # /Zc:preprocessor	: ISO C++20 Preprocessor
 # /ZI				: PDBs for edit & continue
@@ -48,7 +48,7 @@ set(GSL_ASSERTION_BEHAVIOUR "GSL_THROW_ON_CONTRACT_VIOLATION")
 # /wd4275			: Disable W4275: Classes containing bases of STL type (CRT compatibility warning)
 # /wd4467           : Disable C4467: Usage of ATL attributes is deprecated
 # /MTd				: Statically link against (debug) CRT
-set(GLOBAL_COMPILER_OPTIONS "/std:c++20 /std:c17 /Zc:preprocessor /ZI /EHa /W4 /wd4251 /wd4275 /wd4467 /MTd")
+set(GLOBAL_COMPILER_OPTIONS "/std:c++latest /std:c17 /Zc:preprocessor /ZI /EHa /W4 /wd4251 /wd4275 /wd4467 /MTd")
 
 # Set compiler options used by test modules
 #set(GLOBAL_TEST_COMPILER_OPTIONS "${GLOBAL_COMPILER_OPTIONS} -DTEST_BUILD_CONTEXT -DGTEST_LINKED_AS_SHARED_LIBRARY=1")
