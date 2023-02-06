@@ -47,8 +47,7 @@ set(GSL_ASSERTION_BEHAVIOUR "GSL_THROW_ON_CONTRACT_VIOLATION")
 # /wd4251			: Disable W4251: Classes containing fields of STL type (CRT compatibility warning)
 # /wd4275			: Disable W4275: Classes containing bases of STL type (CRT compatibility warning)
 # /wd4467           : Disable C4467: Usage of ATL attributes is deprecated
-# /MTd				: Statically link against (debug) CRT
-set(GLOBAL_COMPILER_OPTIONS "/std:c++latest /std:c17 /Zc:preprocessor /ZI /EHa /W4 /wd4251 /wd4275 /wd4467 /MTd")
+set(GLOBAL_COMPILER_OPTIONS "/std:c++latest /std:c17 /Zc:preprocessor /ZI /EHa /W4 /wd4251 /wd4275 /wd4467")
 
 # Set compiler options used by test modules
 #set(GLOBAL_TEST_COMPILER_OPTIONS "${GLOBAL_COMPILER_OPTIONS} -DTEST_BUILD_CONTEXT -DGTEST_LINKED_AS_SHARED_LIBRARY=1")
@@ -129,20 +128,22 @@ add_library(libCorePlatform STATIC
 	${PROJECT_SOURCE_FILES} 
 	${PROJECT_SOURCE_CC_FILES} 
 	${PROJECT_INCLUDE_FILES} 
-    )
-  
+)
+
 # Include folders
 target_include_directories(libCorePlatform BEFORE
     PRIVATE
-	${PROJECT_SOURCE_FOLDER} 
+	${PROJECT_SOURCE_FOLDER}
     PUBLIC
-    ${PROJECT_INCLUDE_FOLDER}            
-	)
-	
-# Differentiate the filename of the static library
+    ${PROJECT_INCLUDE_FOLDER}
+)
+
+# Link against CRT statically
 set_target_properties(libCorePlatform PROPERTIES
-					  #OUTPUT_NAME "libCorePlatform"
-					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS} -D${PROJECT_LIB_MACRO}")
+					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS} /MTd -D${PROJECT_LIB_MACRO}"
+					  #COMPILE_FLAGS_DEBUG   "${GLOBAL_COMPILER_OPTIONS} /MTd -D${PROJECT_LIB_MACRO}"
+					  #COMPILE_FLAGS_RELEASE "${GLOBAL_COMPILER_OPTIONS} /MT  -D${PROJECT_LIB_MACRO}"
+)
 
 #############################################################################
 #  ________                              .__          .____    ._____.      #
@@ -158,21 +159,22 @@ message("DynamicLib: Generating project(s) from ${PROJECT_SOURCE_FOLDER} with ${
 add_library(dllCorePlatform SHARED 
 	"${PROJECT_EXTRA_FOLDER}DllMain.cpp"
 	${PROJECT_SOURCE_CC_FILES} 
-    )
-  
+)
+
 # Include folders
 target_include_directories(dllCorePlatform BEFORE
     PRIVATE
-	${PROJECT_SOURCE_FOLDER} 
+	${PROJECT_SOURCE_FOLDER}
     PUBLIC
-    ${PROJECT_INCLUDE_FOLDER}            
-	)
-	
-# Differentiate the filename of the static library
+    ${PROJECT_INCLUDE_FOLDER}
+)
+
+# Differentiate the filename of the import library
 set_target_properties(dllCorePlatform PROPERTIES
 					  OUTPUT_NAME "CorePlatform"
-					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS} -D${PROJECT_DLL_MACRO}")
-					  
+					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS} -D${PROJECT_DLL_MACRO}"
+)
+
 # Set project dependencies
 #add_dependencies(dllCorePlatform
 #	libCorePlatform
