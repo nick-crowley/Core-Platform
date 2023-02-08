@@ -106,6 +106,7 @@ namespace core
 
             this->write<Bare>(")");
             this->m_output << Verbose{noformat,this->m_assembly.str()};
+            this->m_assembly = std::stringstream{};
         }
     
         template <typename... Values>
