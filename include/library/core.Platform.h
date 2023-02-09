@@ -38,6 +38,7 @@
 
 #include "core/BitwiseEnum.h"
 #include "core/ToString.h"
+#include "core/ToHexString.h"
 
 #include "nt/NtStatus.h"
 #include "win/LResult.h"
