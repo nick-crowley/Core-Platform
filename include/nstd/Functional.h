@@ -35,7 +35,8 @@ namespace nstd
 		struct ICallable
 		{
 			satisfies(ICallable,
-				virtual IsDestructible
+				protected: IsDefaultConstructible,
+				public: IsPolymorphic
 			);
 		
 			result_t
@@ -161,7 +162,7 @@ namespace nstd
 
 	public:
 		satisfies(function,
-			IsSemiRegular
+			IsSemiRegular		//!< NOTE: Actually models @c Regular
 		);
 		
 		//! Construct from function pointer
