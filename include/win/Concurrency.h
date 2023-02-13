@@ -66,6 +66,7 @@ namespace core::win
         }
     }
     
+	//! @brief	Wait indefinitely until @e all handles in range are signalled
     template <nstd::InputRangeOf<::HANDLE> HandleCollection>
     bool
     allSignalled(HandleCollection&& handles)
@@ -74,6 +75,7 @@ namespace core::win
         return detail::waitForMultipleObjects(handles, detail::WaitAll, 0ms).has_value();
     }
 
+    //! @brief	Wait indefinitely until @e any handles in range are signalled
     template <nstd::InputRangeOf<::HANDLE> HandleCollection>
     bool
     anySignalled(HandleCollection&& handles)
@@ -82,6 +84,7 @@ namespace core::win
         return detail::waitForMultipleObjects(handles, detail::WaitAny, 0ms).has_value();
     }
 
+    //! @brief	Wait for @p timeout until all handles in range are signalled
     template <nstd::InputRangeOf<::HANDLE> HandleCollection>
     bool
     waitForAll(HandleCollection&& handles, std::optional<chrono::milliseconds> timeout = std::nullopt)
@@ -89,6 +92,7 @@ namespace core::win
         return detail::waitForMultipleObjects(handles, detail::WaitAll, timeout).has_value();
     }
     
+    //! @brief	Wait for @p timeout until any handles in range are signalled
     template <nstd::InputRangeOf<::HANDLE> HandleCollection>
     std::optional<::HANDLE>
     waitForAny(HandleCollection&& handles, std::optional<chrono::milliseconds> timeout = std::nullopt)
@@ -96,6 +100,7 @@ namespace core::win
         return detail::waitForMultipleObjects(handles, detail::WaitAny, timeout);
     }
 
+    //! @brief	Wait until @p deadline for all handles in range to be signalled
     template <nstd::InputRangeOf<::HANDLE> HandleCollection, nstd::Clock Clock> 
     bool
     waitUntilAll(HandleCollection&& handles, chrono::time_point<Clock> deadline)
@@ -105,6 +110,7 @@ namespace core::win
         return detail::waitForMultipleObjects(handles, detail::WaitAll, timeout).has_value();
     }
     
+    //! @brief	Wait until @p deadline for any handles in range to be signalled
     template <nstd::InputRangeOf<::HANDLE> HandleCollection, nstd::Clock Clock> 
     std::optional<::HANDLE>
     waitUntilAny(HandleCollection&& handles, chrono::time_point<Clock> deadline)
@@ -114,18 +120,21 @@ namespace core::win
         return detail::waitForMultipleObjects(handles, detail::WaitAny, timeout);
     }
     
+    //! @brief	Query whether @p handle is signalled
     bool
     inline isSignalled(::HANDLE handle)
     {
         return anySignalled(ranges::single_view{handle});
     }
 
+    //! @brief	Wait at most @p timeout for @p handle to become signalled
     bool
     inline waitFor(::HANDLE handle, std::optional<chrono::milliseconds> timeout = std::nullopt)
     {
         return waitForAll(ranges::single_view{handle}, timeout);
     }
     
+    //! @brief	Wait until @p deadline for @p handle to become signalled
     template <nstd::Clock Clock>
     bool
     waitUntil(::HANDLE handle, chrono::time_point<Clock> deadline)
