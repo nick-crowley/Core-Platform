@@ -10,6 +10,7 @@ namespace core::detail
 	inline ThrowIfImpl(bool cond, gsl::czstring argName, gsl::czstring invariant, std::source_location loc = std::source_location::current())
 	{
 		if (cond)
+			// BUG: Shouldn't `ThrowIfImpl()` throw invalid_argument now?
 			throw runtime_error{"{}(..) Invalid '{}' argument: {}", loc.function_name(), argName, invariant};
 	}
 }
