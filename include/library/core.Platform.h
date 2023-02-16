@@ -33,6 +33,7 @@
 #include "core/ThrowIfNot.h"
 #include "core/ThrowIfNull.h"
 #include "core/ThrowIfZero.h"
+#include "core/ThrowInvalidArg.h"
 #include "core/Invariant.h"
 #include "core/PostCondition.h"
 
