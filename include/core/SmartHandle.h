@@ -173,4 +173,10 @@ namespace core
             this->m_object.swap(r.m_object);
         }
     };
+
+    template <std::semiregular RawHandle, meta::SmartHandleTraits Traits>
+    bool 
+    empty(SmartHandle<RawHandle,Traits> const& handle) {
+        return handle.empty();
+    }
 }
