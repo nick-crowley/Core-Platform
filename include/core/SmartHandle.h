@@ -138,12 +138,12 @@ namespace core
 
         RawHandle
         get() const noexcept {
-            return this->m_object->get();
+            return this->m_object ? this->m_object->get() : Traits::empty;
         }
         
         RawHandle 
         operator*() const noexcept {
-            return this->m_object->get();
+            return this->get();
         }
 
         implicit operator 
