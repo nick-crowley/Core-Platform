@@ -29,10 +29,10 @@ namespace core
 
     private:
         int 
-        inline static thread_local s_callDepth = -1;
+        inline static thread_local LoggingSentry::CallDepth = -1;
 
         char constexpr
-        inline static s_padding[] = "           ";
+        inline static LoggingSentry::PaddingChars[] = "           ";
 
     private:
         std::stringstream m_assembly;
@@ -45,7 +45,7 @@ namespace core
         LoggingSentry(LogStream& output) 
             : m_output{output}, m_uncaught{std::uncaught_exceptions()}
         {
-            ++s_callDepth;
+            ++LoggingSentry::CallDepth;
         }
 
         ~LoggingSentry()
@@ -53,7 +53,7 @@ namespace core
             if (this->m_onExit)
                 if (this->m_uncaught == std::uncaught_exceptions())
                     this->m_onExit(*this);
-            --s_callDepth;
+            --LoggingSentry::CallDepth;
         }
         
         satisfies(LoggingSentry,
@@ -67,7 +67,10 @@ namespace core
     private:
         std::string_view
         static padding() {
-            return {s_padding, s_padding+std::clamp(s_callDepth,0,10)};
+            return { 
+                LoggingSentry::PaddingChars, 
+                LoggingSentry::PaddingChars + std::clamp(LoggingSentry::CallDepth,0,10)
+            };
         }
 
     public:
