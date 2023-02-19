@@ -170,17 +170,17 @@ namespace core
 			}
 		};
 	}
-}
  
-inline namespace literals
-{
-	inline namespace string_literals
+	inline namespace literals
 	{
-		template <core::detail::StringHolder S>
-		auto constexpr
-		operator ""_str()
+		inline namespace string_literals
 		{
-			return core::LiteralString<wchar_t,S.m_length+1>{S.m_text};
+			template <detail::StringHolder S>
+			auto constexpr
+			operator ""_str()
+			{
+				return LiteralString<wchar_t,S.m_length+1>{S.m_text};
+			}
 		}
 	}
 }
