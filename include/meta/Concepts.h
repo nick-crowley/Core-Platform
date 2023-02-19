@@ -20,7 +20,7 @@ namespace core::meta
 	                         && std::is_same_v<ranges::range_value_t<Range>,U>;
 	
 	template <typename T, typename... Types>
-	concept ConvertibleTo = (std::convertible_to<T,Types> || ...);
+	concept ConvertibleToAnyOf = (std::convertible_to<T,Types> || ...);
 
 	template <typename T>
 	concept Enumeration = std::is_enum_v<T>;
