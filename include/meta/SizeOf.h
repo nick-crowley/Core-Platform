@@ -12,7 +12,7 @@ namespace core::meta
 	* @returns	Sum of sizes of types within set @p Types
 	*/
 	template <typename... Types>
-	std::size_t constinit
+	std::size_t constexpr
 	inline sizeof_v = (... + sizeof(Types));
 
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
