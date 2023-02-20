@@ -29,10 +29,10 @@ namespace core
 
     private:
         int 
-        inline static thread_local LoggingSentry::CallDepth = -1;
+        inline static thread_local CallDepth = -1;
 
         char constexpr
-        inline static LoggingSentry::PaddingChars[] = "           ";
+        inline static PaddingChars[] = "           ";
 
     private:
         std::stringstream m_assembly;
