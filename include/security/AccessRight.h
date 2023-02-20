@@ -78,7 +78,7 @@ namespace core::win
 	*
 	* @details	Provides type-safe conversion and operators for access-right enumerations
 	*/
-	class AccessRight
+	class PlatformExport AccessRight
 	{
 		// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 		using type = AccessRight;
