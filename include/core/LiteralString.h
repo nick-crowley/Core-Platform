@@ -1,5 +1,6 @@
 #pragma once
 #include "library/core.Platform.h"
+#include "core/ZString.h"
 
 namespace core
 {
@@ -149,37 +150,15 @@ namespace core
 	template <meta::Character Character, size_t N>
 	LiteralString(Character const (&)[N]) -> LiteralString<Character,N>;
 
-	namespace detail 
-	{
-		struct StringHolder 
-		{
-			wchar_t const* m_text;
-			size_t         m_length;
-
-			constexpr 
-			StringHolder(wchar_t const *str)
-				: m_text{str}, m_length{StringHolder::measure(str)}
-			{}
-
-			constexpr size_t
-			measure(wchar_t const *str) {
-				size_t len = 0;
-				for (; str[len]; ++str)
-				{}
-				return len;
-			}
-		};
-	}
- 
 	inline namespace literals
 	{
 		inline namespace string_literals
 		{
-			template <detail::StringHolder S>
+			template <ZString<wchar_t> Buffer>
 			auto constexpr
 			operator ""_str()
 			{
-				return LiteralString<wchar_t,S.m_length+1>{S.m_text};
+				return LiteralString<wchar_t,Buffer.Length+1>{Buffer.Text};
 			}
 		}
 	}
