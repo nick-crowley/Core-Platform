@@ -7,6 +7,7 @@ namespace core
 	class ZString
 	{
 		using basic_zstring = gsl::basic_zstring<Character>;
+		using basic_czstring = gsl::basic_zstring<Character const>;
 
 	public:
 		basic_zstring const  Text;
@@ -21,10 +22,13 @@ namespace core
 
 	public:
 		constexpr size_t
-		static measure(basic_zstring str) {
+		static measure(basic_czstring str) {
+			if (!str)
+				return 0;
+
 			size_t len = 0;
-			for (; str[len]; ++len)
-			{}
+			while (str[len]) 
+				++len;
 			return len;
 		}
 	};
