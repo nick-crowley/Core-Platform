@@ -6,11 +6,15 @@ namespace core
 {
     std::string 
     inline to_string(gsl::czstring s) { 
+        if (!s)
+            return "nullptr";
         return {s, s+strlen(s)}; 
     }
     
     std::string 
     inline to_string(gsl::cwzstring ws) { 
+        if (!ws)
+            return "nullptr";
         return {
 			boost::make_transform_iterator(ws, nstd::convert_to<char>),
 			boost::make_transform_iterator(ws + wcslen(ws), nstd::convert_to<char>)
