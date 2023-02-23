@@ -43,6 +43,9 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::win
 {
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief	Convert any compatible argument to @c unsigned @c long (without casting)
+	*/
 	template <nstd::ExplicitlyConvertible<::DWORD> ValueType> 
 	class DWord
 	{
