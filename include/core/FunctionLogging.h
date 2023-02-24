@@ -100,7 +100,7 @@ namespace core
         void 
         print(gsl::czstring func, NameValuePair<Values> const&... args) 
         {
-            this->write<Bare>(this->padding());
+            //this->write<Bare>(this->padding());    // BUG: Requires thread_local dllexport
             this->write<Bare>(func);
             this->write<Bare>("(");
 
@@ -117,7 +117,7 @@ namespace core
         print(NameValuePair<Values> const&... args) 
         {
             if constexpr (sizeof...(Values) > 0) {
-                this->write<Bare>(this->padding());
+                //this->write<Bare>(this->padding());   // BUG: Requires thread_local dllexport
                 this->write<Bare>("+-> ");
                 this->writeArgs(args...);
                 this->m_output << Verbose{noformat,this->m_assembly.str()};
