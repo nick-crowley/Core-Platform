@@ -94,9 +94,9 @@ win::RegistryApi::setValue(SharedRegistryKey root, std::wstring_view path, std::
 	{
 		regSetKeyValue(*root, path.data(), name.data(), REG_SZ, str->data(), DWord{str->size()*sizeof(wchar_t)}); 
 	}
-	else if (auto* str = std::get_if<std::wstring_view>(&value))
+	else if (auto* wstr = std::get_if<std::wstring_view>(&value))
 	{
-		regSetKeyValue(*root, path.data(), name.data(), REG_SZ, str->data(), DWord{str->size()*sizeof(wchar_t)}); 
+		regSetKeyValue(*root, path.data(), name.data(), REG_SZ, wstr->data(), DWord{wstr->size()*sizeof(wchar_t)}); 
 	}
 	else if (auto* multi = std::get_if<std::vector<std::wstring>>(&value))
 	{
