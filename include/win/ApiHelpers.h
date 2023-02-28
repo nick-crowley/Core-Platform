@@ -36,10 +36,12 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::win
 {
+	//! @brief	Zero-value passed only for 'reserved' parameters of Windows API functions
 	template <typename Value>
 	constexpr Value 
 	Reserved {};
 
+	//! @brief	Null-value passed only for optional DACL parameters of Windows API functions
 	SECURITY_ATTRIBUTES constexpr*
 	Unsecured {};
 }
