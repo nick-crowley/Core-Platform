@@ -14,6 +14,9 @@ namespace core::nt::detail
 
 namespace core::nt
 {
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief	Long return-type frequently used by kernel-mode Windows APIs
+	*/
 	class NtStatus
 	{
 		::NTSTATUS m_value;
@@ -70,6 +73,9 @@ namespace core::nt
 	};
 
 	
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief	Success-only status-code which throws when assigned a failure code
+	*/
 	class ThrowingNtStatus
 	{
 		::NTSTATUS m_value;
