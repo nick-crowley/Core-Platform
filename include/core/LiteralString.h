@@ -40,6 +40,9 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core
 {
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief	String of literal type whose characters are part of its representation
+	*/
 	template <nstd::Character Character, size_t Capacity>
 	class LiteralString
 	{
@@ -187,6 +190,7 @@ namespace core
 		}
 	};
 
+	//! @brief	Deduce from character-array if possible but permit construction from char-pointer
 	template <nstd::Character Character, size_t N>
 	LiteralString(Character const (&)[N]) -> LiteralString<Character,N>;
 
@@ -194,6 +198,7 @@ namespace core
 	{
 		inline namespace string_literals
 		{
+			//! @brief	Produce literal string
 			template <ZString<wchar_t> Buffer>
 			auto constexpr
 			operator ""_str()
