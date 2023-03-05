@@ -51,9 +51,9 @@ namespace core
 
 		satisfies(LiteralString,
 			constexpr NotDefaultConstructible,
-			constexpr NotMovable,
-			constexpr IsDestructible,
-			constexpr IsEqualityComparable
+			constexpr IsMovable noexcept,
+			constexpr IsDestructible noexcept,
+			constexpr IsEqualityComparable noexcept
 		);
 	
 	private:
