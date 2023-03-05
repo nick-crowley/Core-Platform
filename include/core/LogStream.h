@@ -19,8 +19,12 @@ namespace core
 	template <Severity>
 	class LogEntry;
 	
-	class LogStream
+	class PlatformExport LogStream
 	{
+        std::recursive_mutex
+        inline static IsWriting;
+
+	private:
 		std::ostream* m_output;
 
 	public:
@@ -46,6 +50,7 @@ namespace core
 		
 		LogStream&
 		operator<<(std::exception const& e) {
+			std::lock_guard lock{LogStream::IsWriting};
 			this->write(Severity::Failure, e.what());
 			return *this;
 		}
@@ -98,6 +103,7 @@ namespace core
 	template <Severity Sev>
 	LogStream&
 	LogStream::operator<<(LogEntry<Sev> const& entry) {
+		std::lock_guard lock{LogStream::IsWriting};
 		if (auto* str = std::get_if<std::string>(&entry.Text))
 			this->write(Sev,*str);
 		else
@@ -118,6 +124,6 @@ namespace core
 	using Verbose = LogEntry<Severity::Verbose>;
 	
 	//! @brief	Line-orientated log-file
-    LogStream constinit 
-    inline clog;
+	LogStream constinit
+    extern PlatformExport clog;
 }
