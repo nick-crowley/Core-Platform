@@ -31,5 +31,12 @@ namespace core
 				++len;
 			return len;
 		}
+
+	public:
+		constexpr
+		implicit operator
+		std::basic_string_view<Character>() const {
+			return {this->Text, this->Text+this->Length};
+		}
 	};
 }
