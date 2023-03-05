@@ -74,21 +74,21 @@ namespace core
 		template <size_type... Idx>
 		constexpr
 		LiteralString(Character const *str, std::index_sequence<Idx...>) noexcept 
-		  : m_text{str[Idx]..., L'\0'}
+		  : m_text{str[Idx]..., '\0'}
 		{
 		}
 	
 		template <size_type... Idx>
 		constexpr
 		LiteralString(Character const *str, Character const c, std::index_sequence<Idx...>) noexcept 
-		  : m_text{str[Idx]..., c, L'\0'}
+		  : m_text{str[Idx]..., c, '\0'}
 		{
 		}
 	
 		template <size_type... Idx1, size_type... Idx2>
 		constexpr
 		LiteralString(Character const *lhs, std::index_sequence<Idx1...>, Character const *rhs, std::index_sequence<Idx2...>) noexcept 
-		  : m_text{lhs[Idx1]..., rhs[Idx2]..., L'\0'}
+		  : m_text{lhs[Idx1]..., rhs[Idx2]..., '\0'}
 		{
 		}
 
@@ -138,7 +138,7 @@ namespace core
 
 		constexpr
 		implicit operator 
-		std::wstring_view() const noexcept
+		std::basic_string_view<Character>() const noexcept
 		{
 			return {this->begin(), this->end()};
 		}
