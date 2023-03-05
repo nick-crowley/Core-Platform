@@ -9,7 +9,7 @@
 namespace core::nt::detail
 {
 	std::string 
-	PlatformExport formatMessage(::LRESULT err);
+	PlatformExport formatMessage(::NTSTATUS err);
 }
 
 namespace core::nt
