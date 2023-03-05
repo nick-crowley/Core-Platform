@@ -12,11 +12,8 @@ namespace core
 		template <meta::Character, size_t>
 		friend class LiteralString;
 
-	private:
 		using type = LiteralString<Character,Capacity>;
 		using char_t = Character;
-
-		Character m_text[Capacity];
 
 	public:
 		using const_reference = Character const&;
@@ -29,6 +26,10 @@ namespace core
 		using size_type = size_t;
 		using value_type = Character;
 	
+	private:
+		Character m_text[Capacity];
+
+	public:
 		constexpr 
 		LiteralString() noexcept = delete;
 	
@@ -53,63 +54,7 @@ namespace core
 
 		constexpr
 		~LiteralString() noexcept = default;
-
-		const_iterator constexpr 
-		begin() const noexcept
-		{
-			return std::begin(this->m_text);
-		}
-
-		const_iterator constexpr 
-		end() const noexcept
-		{
-			return std::prev(std::end(this->m_text));
-		}
-
-		const_pointer constexpr 
-		c_str() const noexcept
-		{
-			return std::begin(this->m_text);
-		}
-
-		const_pointer constexpr 
-		data() const noexcept
-		{
-			return std::begin(this->m_text);
-		}
-
-		size_type constexpr
-		size() const noexcept
-		{
-			return Capacity-1;
-		}
-
-		void constexpr
-		swap(type& r) noexcept
-		{
-			std::swap(this->m_text, r.m_text);
-		}
-
-		template <size_t N>
-		auto constexpr
-		operator+(LiteralString<Character,N> const& r) const noexcept
-		{
-			return LiteralString<Character,Capacity+N-1>{this->m_text, r.m_text};
-		}
 	
-		auto constexpr
-		operator+(Character const& c) const noexcept
-		{
-			return LiteralString<Character,Capacity+1>{this->m_text, c};
-		}
-
-		constexpr
-		implicit operator 
-		std::wstring_view() const noexcept
-		{
-			return {this->begin(), this->end()};
-		}
-
 	private:
 		template <size_type N>
 		constexpr
@@ -144,6 +89,64 @@ namespace core
 		LiteralString(Character const *lhs, std::index_sequence<Idx1...>, Character const *rhs, std::index_sequence<Idx2...>) noexcept 
 		  : m_text{lhs[Idx1]..., rhs[Idx2]..., L'\0'}
 		{
+		}
+
+	public:
+		const_iterator constexpr 
+		begin() const noexcept
+		{
+			return std::begin(this->m_text);
+		}
+
+		const_iterator constexpr 
+		end() const noexcept
+		{
+			return std::prev(std::end(this->m_text));
+		}
+
+		const_pointer constexpr 
+		c_str() const noexcept
+		{
+			return std::begin(this->m_text);
+		}
+
+		const_pointer constexpr 
+		data() const noexcept
+		{
+			return std::begin(this->m_text);
+		}
+
+		size_type constexpr
+		size() const noexcept
+		{
+			return Capacity-1;
+		}
+
+		template <size_t N>
+		auto constexpr
+		operator+(LiteralString<Character,N> const& r) const noexcept
+		{
+			return LiteralString<Character,Capacity+N-1>{this->m_text, r.m_text};
+		}
+	
+		auto constexpr
+		operator+(Character const& c) const noexcept
+		{
+			return LiteralString<Character,Capacity+1>{this->m_text, c};
+		}
+
+		constexpr
+		implicit operator 
+		std::wstring_view() const noexcept
+		{
+			return {this->begin(), this->end()};
+		}
+	
+	public:
+		void constexpr
+		swap(type& r) noexcept
+		{
+			std::swap(this->m_text, r.m_text);
 		}
 	};
 
