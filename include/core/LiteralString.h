@@ -30,9 +30,6 @@ namespace core
 		Character m_text[Capacity];
 
 	public:
-		constexpr 
-		LiteralString() noexcept = delete;
-	
 		constexpr
 		LiteralString(Character const *str) noexcept 
 		  : LiteralString{str, std::make_index_sequence<Capacity-1>{}}
@@ -52,8 +49,12 @@ namespace core
 			return *this;
 		}
 
-		constexpr
-		~LiteralString() noexcept = default;
+		satisfies(LiteralString,
+			constexpr NotDefaultConstructible,
+			constexpr NotMovable,
+			constexpr IsDestructible,
+			constexpr IsEqualityComparable
+		);
 	
 	private:
 		template <size_type N>
