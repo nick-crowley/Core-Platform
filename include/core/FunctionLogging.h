@@ -5,9 +5,9 @@
 
 namespace core::detail
 {
-    // BUG: std::decay_t<T> so if T is char[N]
     template <typename T>
-    constexpr bool is_stringish_v = meta::is_any_of_v<T,gsl::zstring,gsl::wzstring,
+    constexpr bool is_stringish_v = meta::is_any_of_v<std::decay_t<T>,
+                                                      gsl::zstring,gsl::wzstring,
                                                         gsl::czstring,gsl::cwzstring,
 #ifdef HAS_ATL_STRING
                                                         ATL::CString
