@@ -7,12 +7,16 @@ namespace core
 	
 	std::string_view
 	inline to_string(Severity s) {
+		using enum Severity;
 		switch (s) {
-		default: 
-		case Severity::Failure:  return "Failure";
-		case Severity::Important:return "Important";
-		case Severity::Warning:  return "Warning";
-		case Severity::Verbose:  return "Verbose";
+		default: return "Invalid";
+#define _CaseStringify(value)  \
+			case value: return #value
+		_CaseStringify(Failure);
+		_CaseStringify(Important);
+		_CaseStringify(Warning);
+		_CaseStringify(Verbose);
+#undef _CaseStringify
 		}
 	}
 
