@@ -29,7 +29,7 @@ namespace core
 		
         std::recursive_mutex
         inline static IsWriting;
-
+		
         char constexpr
         inline static PaddingChars[] = "           ";
         
@@ -99,7 +99,7 @@ namespace core
 			    *this->m_output << std::put_time(&tm, "[%H:%M:%S]")
 			                    << " P-" << ::GetCurrentProcessId() 
 			                    << " T-" << ::GetCurrentThreadId() 
-			                    << " "   << to_string(sev)
+			                    << " "   << std::setw(9) << std::left << core::to_string(sev)
 			                    << " : " << LogStream::padding() << str
 			                    << std::endl;
 		}
