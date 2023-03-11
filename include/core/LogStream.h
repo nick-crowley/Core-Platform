@@ -1,24 +1,9 @@
 #pragma once
 #include "library/core.Platform.h"
+#include "core/LogEntry.h"
 
 namespace core
 {
-	enum class Severity {Verbose,Important,Warning,Failure};
-	
-	std::string_view
-	inline to_string(Severity s) {
-		switch (s) {
-		default: 
-		case Severity::Failure:  return "Failure";
-		case Severity::Important:return "Important";
-		case Severity::Warning:  return "Warning";
-		case Severity::Verbose:  return "Verbose";
-		}
-	}
-
-	template <Severity>
-	class LogEntry;
-	
 	class PlatformExport LogStream
 	{
         using ThreadIdCollection = std::unordered_map<std::thread::id,int>;
@@ -78,9 +63,16 @@ namespace core
 			--LogStream::currentDepth();
 		}
 
-		template <Severity S>
+		template <Severity Level>
 		LogStream&
-		operator<<(LogEntry<S> const& entry);
+		operator<<(LogEntry<Level> const& entry) {
+			std::lock_guard lock{LogStream::IsWriting};
+			if (auto* str = std::get_if<std::string>(&entry.Text))
+				this->write(Level, *str);
+			else
+				this->write(Level, std::get<std::wstring>(entry.Text));
+			return *this;
+		}
 		
 		LogStream&
 		operator<<(std::exception const& e) {
@@ -110,53 +102,6 @@ namespace core
 		}
 	};
 
-	template <Severity>
-	class LogEntry 
-	{
-		template <Severity S>
-		std::add_lvalue_reference_t<LogStream> 
-		friend LogStream::operator<<(LogEntry<S> const&);
-
-	private:
-		std::variant<std::string,std::wstring>  Text;
-
-	public:
-		template <meta::ConvertibleToAnyOf<std::string_view,std::wstring_view> StringView>
-		explicit
-		LogEntry(meta::noformat_t, StringView msg)
-		  : Text{msg}
-		{}
-		
-		template <meta::ConvertibleToAnyOf<std::string_view,std::wstring_view> StringView, typename... Params>
-		explicit
-		LogEntry(StringView msg, Params&&... args)
-		  : Text{std::vformat(msg,std::make_format_args(args...))}
-		{}
-	};
-
-	template <Severity Sev>
-	LogStream&
-	LogStream::operator<<(LogEntry<Sev> const& entry) {
-		std::lock_guard lock{LogStream::IsWriting};
-		if (auto* str = std::get_if<std::string>(&entry.Text))
-			this->write(Sev,*str);
-		else
-			this->write(Sev,std::get<std::wstring>(entry.Text));
-		return *this;
-	}
-	
-	//! @brief	Error/failure log-entry
-	using Failure = LogEntry<Severity::Failure>;
-	
-	//! @brief	High-level/important log-entry
-	using Important = LogEntry<Severity::Important>;
-	
-	//! @brief	Warning log-entry
-	using Warning = LogEntry<Severity::Warning>;
-	
-	//! @brief	Detailed/debug log-entry
-	using Verbose = LogEntry<Severity::Verbose>;
-	
 	//! @brief	Line-orientated log-file
 	LogStream constinit
     extern PlatformExport clog;
