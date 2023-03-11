@@ -85,12 +85,10 @@ namespace core
 		void
 		write(Severity sev, std::string_view str) 
 		{
-			auto t = std::time(nullptr);
-			auto tm = *std::localtime(&t);
 			if (this->m_output)
-			    *this->m_output << std::put_time(&tm, "[%H:%M:%S]")
+				*this->m_output << std::format("[{:%H:%M:%OS}]", chrono::system_clock::now())
 			                    << " P-" << ::GetCurrentProcessId() 
-			                    << " T-" << ::GetCurrentThreadId() 
+			                    << " T-" << std::this_thread::get_id()
 			                    << " "   << std::setw(9) << std::left << core::to_string(sev)
 			                    << " : " << LogStream::padding() << str
 			                    << std::endl;
