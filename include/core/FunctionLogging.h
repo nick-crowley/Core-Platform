@@ -28,24 +28,24 @@ namespace core
         enum OutputStyle { Adorned, Bare };
 
     private:
-        std::stringstream m_assembly;
-        LoggingDelegate   m_onExit;
-        LogStream&        m_output;
-        int               m_uncaught;
+        int               initialUncaught;
+        std::stringstream lineBuffer;
+        LoggingDelegate   exitFunctor;
+        LogStream&        outputStream;
 
     public:
         explicit
         LoggingSentry(LogStream& output) 
-            : m_output{output}, m_uncaught{std::uncaught_exceptions()}
+          : outputStream{output}, initialUncaught{std::uncaught_exceptions()}
         {
         }
 
         ~LoggingSentry()
         {
-            this->m_output.outdent();
-            if (this->m_onExit)
-                if (this->m_uncaught == std::uncaught_exceptions())
-                    this->m_onExit(*this);
+            this->outputStream.outdent();
+            if (this->exitFunctor)
+                if (this->initialUncaught == std::uncaught_exceptions())
+                    this->exitFunctor(*this);
         }
         
         satisfies(LoggingSentry,
@@ -62,14 +62,14 @@ namespace core
         onEntry(gsl::czstring function, const NameValuePair<Values>&... args) 
         {
             this->print(function, args...);
-            this->m_output.indent();
+            this->outputStream.indent();
             return *this;
         }
     
         LoggingSentry& 
         onEntry(std::exception const& e) 
         {
-            this->m_output << Failure{"+-> THROWN: {}", e.what()};
+            this->outputStream << Failure{"+-> THROWN: {}", e.what()};
             return *this;
         }
     
@@ -77,7 +77,7 @@ namespace core
         std::void_t<LoggingSentry&>
         onExit(Delegate&& fx)
         {
-            this->m_onExit = fx;
+            this->exitFunctor = fx;
         }
 
         template <typename... Values>
@@ -91,8 +91,8 @@ namespace core
                 this->writeArgs(args...);
 
             this->write<Bare>(")");
-            this->m_output << Verbose{noformat,this->m_assembly.str()};
-            this->m_assembly = std::stringstream{};
+            this->outputStream << Verbose{noformat,this->lineBuffer.str()};
+            this->lineBuffer = std::stringstream{};
         }
     
         template <typename... Values>
@@ -102,7 +102,7 @@ namespace core
             if constexpr (sizeof...(Values) > 0) {
                 this->write<Bare>("+-> ");
                 this->writeArgs(args...);
-                this->m_output << Verbose{noformat,this->m_assembly.str()};
+                this->outputStream << Verbose{noformat,this->lineBuffer.str()};
             }
         }
 
@@ -116,12 +116,12 @@ namespace core
             using core::to_string;
         
             if constexpr (Style == Adorned && detail::is_stringish_v<T>)
-                this->m_assembly << '"';
+                this->lineBuffer << '"';
 
-            this->m_assembly << to_string(arg);
+            this->lineBuffer << to_string(arg);
 
             if constexpr (Style == Adorned && detail::is_stringish_v<T>)
-                this->m_assembly << '"';
+                this->lineBuffer << '"';
         }
     
         template <typename T>

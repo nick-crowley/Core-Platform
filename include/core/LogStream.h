@@ -19,7 +19,7 @@ namespace core
         inline static PaddingChars[] = "                      ";
         
 	private:
-		std::ostream* m_output;
+		std::ostream* outputStream;
 
 	public:
 		satisfies(LogStream,
@@ -33,7 +33,7 @@ namespace core
 		LogStream&
 		operator=(std::ostream& out)
 		{
-			this->m_output = &out;
+			this->outputStream = &out;
 			return *this;
 		}
 
@@ -85,13 +85,13 @@ namespace core
 		void
 		write(Severity sev, std::string_view str) 
 		{
-			if (this->m_output)
-				*this->m_output << std::format("[{:%H:%M:%OS}]", chrono::system_clock::now())
-			                    << " P-" << ::GetCurrentProcessId() 
-			                    << " T-" << std::this_thread::get_id()
-			                    << " "   << std::setw(9) << std::left << core::to_string(sev)
-			                    << " : " << LogStream::padding() << str
-			                    << std::endl;
+			if (this->outputStream)
+				*this->outputStream << std::format("[{:%H:%M:%OS}]", chrono::system_clock::now())
+			                        << " P-" << ::GetCurrentProcessId() 
+			                        << " T-" << std::this_thread::get_id()
+			                        << " "   << std::setw(9) << std::left << core::to_string(sev)
+			                        << " : " << LogStream::padding() << str
+			                        << std::endl;
 		}
 		
 		void
