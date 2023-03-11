@@ -59,7 +59,7 @@ namespace core
     public:
         template <typename... Values>
         LoggingSentry& 
-        onEntry(gsl::czstring function, const NameValuePair<Values>&... args) 
+        onEntry(gsl::czstring function, NameValuePair<Values> const&... args) 
         {
             this->print(function, args...);
             this->outputStream.indent();
