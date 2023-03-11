@@ -16,7 +16,7 @@ namespace core
         inline static IsWriting;
 		
         char constexpr
-        inline static PaddingChars[] = "           ";
+        inline static PaddingChars[] = "                      ";
         
 	private:
 		std::ostream* m_output;
@@ -45,7 +45,7 @@ namespace core
 
         std::string_view
         static padding() {
-            auto const charCount = std::clamp(2*LogStream::currentDepth(), 0, 10);
+            auto const charCount = std::clamp<int>(2*LogStream::currentDepth(), 0, lengthof(LogStream::PaddingChars)-3);
             return { 
                 LogStream::PaddingChars, 
                 LogStream::PaddingChars + charCount
