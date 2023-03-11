@@ -21,9 +21,18 @@ namespace core
 	
 	class PlatformExport LogStream
 	{
+        using ThreadIdCollection = std::unordered_map<std::thread::id,int>;
+
+    private:
+        ThreadIdCollection
+        inline static CallDepth;
+		
         std::recursive_mutex
         inline static IsWriting;
 
+        char constexpr
+        inline static PaddingChars[] = "           ";
+        
 	private:
 		std::ostream* m_output;
 
@@ -43,7 +52,32 @@ namespace core
 			return *this;
 		}
 
+	private:
+        std::type_identity_t<int&>
+        static currentDepth() {
+            return LogStream::CallDepth[std::this_thread::get_id()];
+        }
+
+        std::string_view
+        static padding() {
+            auto const charCount = std::clamp(2*LogStream::currentDepth(), 0, 10);
+            return { 
+                LogStream::PaddingChars, 
+                LogStream::PaddingChars + charCount
+            };
+        }
+
 	public:
+		void
+		indent() {
+			++LogStream::currentDepth();
+		}
+
+		void
+		outdent() {
+			--LogStream::currentDepth();
+		}
+
 		template <Severity S>
 		LogStream&
 		operator<<(LogEntry<S> const& entry);
@@ -66,7 +100,7 @@ namespace core
 			                    << " P-" << ::GetCurrentProcessId() 
 			                    << " T-" << ::GetCurrentThreadId() 
 			                    << " "   << to_string(sev)
-			                    << " : " << str
+			                    << " : " << LogStream::padding() << str
 			                    << std::endl;
 		}
 		

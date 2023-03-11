@@ -27,15 +27,6 @@ namespace core
 
         enum OutputStyle { Adorned, Bare };
 
-        using ThreadIdCollection = std::unordered_map<std::thread::id,int>;
-
-    private:
-        ThreadIdCollection
-        inline static CallDepth;
-
-        char constexpr
-        inline static PaddingChars[] = "           ";
-        
     private:
         std::stringstream m_assembly;
         LoggingDelegate   m_onExit;
@@ -47,15 +38,14 @@ namespace core
         LoggingSentry(LogStream& output) 
             : m_output{output}, m_uncaught{std::uncaught_exceptions()}
         {
-            ++LoggingSentry::currentDepth();
         }
 
         ~LoggingSentry()
         {
+            this->m_output.outdent();
             if (this->m_onExit)
                 if (this->m_uncaught == std::uncaught_exceptions())
                     this->m_onExit(*this);
-            --LoggingSentry::currentDepth();
         }
         
         satisfies(LoggingSentry,
@@ -66,34 +56,20 @@ namespace core
             NotSortable
         );
         
-    private:
-        std::type_identity_t<int&>
-        static currentDepth() {
-            return LoggingSentry::CallDepth[std::this_thread::get_id()];
-        }
-
-        std::string_view
-        static padding() {
-            auto const currentDepth = std::clamp(2*(LoggingSentry::currentDepth()-1), 0, 10);
-            return { 
-                LoggingSentry::PaddingChars, 
-                LoggingSentry::PaddingChars + currentDepth
-            };
-        }
-
     public:
         template <typename... Values>
         LoggingSentry& 
         onEntry(gsl::czstring function, const NameValuePair<Values>&... args) 
         {
             this->print(function, args...);
+            this->m_output.indent();
             return *this;
         }
     
         LoggingSentry& 
         onEntry(std::exception const& e) 
         {
-            this->m_output << Failure{"{}+-> THROWN: {}", this->padding(), e.what()};
+            this->m_output << Failure{"+-> THROWN: {}", e.what()};
             return *this;
         }
     
@@ -108,7 +84,6 @@ namespace core
         void 
         print(gsl::czstring func, NameValuePair<Values> const&... args) 
         {
-            this->write<Bare>(this->padding());
             this->write<Bare>(func);
             this->write<Bare>("(");
 
@@ -125,7 +100,6 @@ namespace core
         print(NameValuePair<Values> const&... args) 
         {
             if constexpr (sizeof...(Values) > 0) {
-                this->write<Bare>(this->padding());
                 this->write<Bare>("+-> ");
                 this->writeArgs(args...);
                 this->m_output << Verbose{noformat,this->m_assembly.str()};
