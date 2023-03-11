@@ -10,7 +10,7 @@ namespace core::detail
                                                       gsl::zstring,gsl::wzstring,
                                                         gsl::czstring,gsl::cwzstring,
 #ifdef HAS_ATL_STRING
-                                                        ATL::CString
+                                                      ATL::CString,
 #endif
                                                       std::string_view,std::wstring_view,
                                                         std::string,std::wstring>;
