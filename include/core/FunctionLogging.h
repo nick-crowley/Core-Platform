@@ -12,6 +12,7 @@ namespace core::detail
 #ifdef HAS_ATL_STRING
                                                         ATL::CString
 #endif
+                                                      std::string_view,std::wstring_view,
                                                         std::string,std::wstring>;
 }
 
