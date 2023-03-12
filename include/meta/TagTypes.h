@@ -21,6 +21,9 @@ namespace core::meta
 	struct hidden_t {} constexpr  
 	inline hidden;
 	
+	struct noconversion_t {} constexpr 
+	inline noconversion;
+
 	struct noformat_t {} constexpr 
 	inline noformat;
 
@@ -61,6 +64,9 @@ namespace core
 	auto constexpr 
 	inline hidden = meta::hidden;
 	
+	auto constexpr 
+	inline noconversion = meta::noconversion;
+
 	auto constexpr 
 	inline noformat = meta::noformat;
 

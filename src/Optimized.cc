@@ -1,4 +1,6 @@
+#include "core/CharacterConversion.cpp"
 #include "core/LogStream.cpp"
+#include "core/ToString.cpp"
 #include "nt/NtStatus.cpp"
 #include "win/Concurrency.cpp"
 #include "win/LResult.cpp"

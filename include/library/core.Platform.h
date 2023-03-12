@@ -37,6 +37,7 @@
 #include "core/Invariant.h"
 #include "core/PostCondition.h"
 
+#include "core/CharacterConversion.h"
 #include "core/BitwiseEnum.h"
 #include "core/ToString.h"
 #include "core/ToHexString.h"

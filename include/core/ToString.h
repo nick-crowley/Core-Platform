@@ -1,51 +1,36 @@
 #pragma once
-#include "library/core.Platform.h"
-#include "nstd/Functional.h"
+#ifndef CorePlatform_h_included
+#	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
+#endif
+#include "meta/Concepts.h"
+#include "core/CharacterConversion.h"
+#include "../../src/library/PlatformExport.h"
 
 namespace core
 {
     std::string 
-    inline to_string(gsl::czstring s) { 
-        if (!s)
-            return "nullptr";
-        return {s, s+strlen(s)}; 
-    }
-    
-    std::string 
-    inline to_string(gsl::cwzstring ws) { 
-        if (!ws)
-            return "nullptr";
-        return {
-			boost::make_transform_iterator(ws, nstd::convert_to<char>),
-			boost::make_transform_iterator(ws + wcslen(ws), nstd::convert_to<char>)
-        };
-    }
+    PlatformExport to_string(gsl::czstring s);
     
 	std::string 
-	inline to_string(std::string_view sv) {
-		return std::string{sv}; 
-	}
-
-	std::string 
-	inline to_string(std::wstring_view wsv) {
-        return {
-			boost::make_transform_iterator(wsv.begin(), nstd::convert_to<char>),
-			boost::make_transform_iterator(wsv.end(), nstd::convert_to<char>)
-        };
-	}
+	PlatformExport to_string(std::string_view s);
+    
+    std::type_identity_t<std::string const&>
+    PlatformExport to_string(std::string const& s);
+    
+    std::string 
+    PlatformExport to_string(gsl::cwzstring ws);
+    
+    std::string 
+	PlatformExport to_string(std::wstring_view ws); 
 
     std::string 
-    inline to_string(std::wstring const& ws) { 
-        return {
-			boost::make_transform_iterator(ws.begin(), nstd::convert_to<char>),
-			boost::make_transform_iterator(ws.end(), nstd::convert_to<char>)
-        };
-    }
+    PlatformExport to_string(std::wstring const& ws);
 
-    std::add_lvalue_reference_t<std::string const>
-    inline to_string(std::string const& s) { 
-        return s; 
-    }
+    std::string 
+    PlatformExport to_string(gsl::cwzstring ws, meta::noconversion_t);
+    
+	std::string 
+	PlatformExport to_string(std::wstring_view ws, meta::noconversion_t);
 
 #ifdef HAS_ATL_STRING
     std::string 
@@ -101,15 +86,7 @@ to_string(T* value) requires (!std::is_integral_v<T>)
 }
 
 std::string 
-inline to_string(BOOL const* value)
-{
-    return !value ? "nullptr" 
-        : (*value ? "TRUE" : "FALSE");
-}
+PlatformExport to_string(BOOL const* value);
 
 std::string 
-inline to_string(DWORD const* value)
-{
-    return !value ? "nullptr" 
-        : ((LONG)*value < 0 ? std::to_string((LONG)*value) : std::to_string(*value));
-}
+PlatformExport to_string(DWORD const* value);
