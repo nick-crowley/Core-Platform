@@ -61,7 +61,7 @@ namespace nstd
               typename Output = void, 
               typename _Input = std::conditional_t<std::is_same_v<Input,meta::use_default_t>,Output,Input>>
     out_ptr_t<_Input,Output> constexpr
-    inline out_ptr(Output& ptr) 
+    inline out_ptr [[deprecated]](Output& ptr)
     { 
         return out_ptr_t<_Input,Output>{ptr};
     }
