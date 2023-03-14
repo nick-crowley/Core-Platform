@@ -38,7 +38,7 @@ namespace nstd::detail
 	};
 }
 
-//! @brief	Execute a block of code on normal/abnormal exit (non-standard)
+//! @brief	Execute a block of code upon normal exit from a function only (non-standard)
 //! @param	...		[optional] Lambda capture-mode
 #define _on_exit_sentry(...)		\
 	::nstd::detail::NormalExitSentry const BOOST_PP_CAT(_onExitSentry,__COUNTER__) = [__VA_ARGS__]()
