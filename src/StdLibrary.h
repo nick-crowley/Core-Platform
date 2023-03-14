@@ -3,14 +3,17 @@
 #include <algorithm>
 #include <atomic>
 #include <chrono>
+#include <codecvt>
 #include <concepts>
 #include <compare>
 #include <coroutine>
 #include <exception>
+#include <filesystem>
 #include <format>
 #include <future>
 #include <functional>
 #include <iterator>
+#include <locale>
 #include <memory>
 #include <new>
 #include <numeric>
@@ -49,4 +52,8 @@ namespace core {
 	namespace ranges = std::ranges;
 	namespace views = std::ranges::views;
 	namespace chrono = std::chrono;
+}
+
+namespace core::filesystem {
+	using namespace std::filesystem;
 }
