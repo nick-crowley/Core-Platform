@@ -7,7 +7,7 @@
 namespace nstd
 {
 	//! @brief	Clone of @c std::source_location which satisfies C++20 non-type template argument requirements
-	struct SourceLocation
+	struct [[deprecated]] SourceLocation
 	{
 		char const* const    File {""};
 		char const* const    Function {""};
