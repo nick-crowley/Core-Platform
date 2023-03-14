@@ -10,7 +10,10 @@ core::narrow(std::wstring_view wstr, CodePage destination)
 	char const* NoDefaultChar = nullptr;
 	BOOL* UsedDefaultChar = nullptr;
 
-	if (size_t capacity = ::WideCharToMultiByte(std::to_underlying(destination), 
+	if (wstr.empty())
+		return {};
+
+	else if (size_t capacity = ::WideCharToMultiByte(std::to_underlying(destination), 
 		                                        flags, 
 		                                        wstr.data(), wstr.size(), 
 		                                        nullptr, 0, 
@@ -34,7 +37,10 @@ core::widen(std::string_view str, CodePage source)
 {
 	auto constexpr flags = MB_PRECOMPOSED|MB_ERR_INVALID_CHARS;
 		
-	if (size_t capacity = ::MultiByteToWideChar(std::to_underlying(source), 
+	if (str.empty())
+		return {};
+
+	else if (size_t capacity = ::MultiByteToWideChar(std::to_underlying(source), 
 		                                        flags, 
 		                                        str.data(), str.size(), 
 		                                        nullptr, 0); !capacity) 
