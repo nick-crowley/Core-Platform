@@ -20,7 +20,7 @@ namespace core
 		public:
 			std::type_identity_t<std::ostream&>
 			friend operator<<(std::ostream& os, type const& repetition) {
-				for (auto idx = 0; idx < repetition.count; ++idx)
+				for (uint32_t idx = 0; idx < repetition.count; ++idx)
 					os << repetition.value;
 				return os;
 			}
