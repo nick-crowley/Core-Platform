@@ -29,6 +29,10 @@ namespace core
         enum OutputStyle { Adorned, Bare };
 
     private:
+        char constexpr
+        inline static ReturnMarker[] = "\xe2\x95\x9a\xe2\x95\x90\xe2\x96\xba\x20";  // UTF-8 encoded "╚═► "
+
+    private:
         int               initialUncaught;
         std::stringstream lineBuffer;
         LoggingDelegate   exitFunctor;
@@ -70,7 +74,7 @@ namespace core
         LoggingSentry& 
         onEntry(std::exception const& e) 
         {
-            this->outputStream << Failure{"+-> THROWN: {}", e.what()};
+            this->outputStream << Failure{"{}THROWN: {}", LoggingSentry::ReturnMarker, e.what()};
             return *this;
         }
     
@@ -101,7 +105,7 @@ namespace core
         print(NameValuePair<Values> const&... args) 
         {
             if constexpr (sizeof...(Values) > 0) {
-                this->write<Bare>("+-> ");
+                this->write<Bare>(LoggingSentry::ReturnMarker);
                 this->writeArgs(args...);
                 this->outputStream << Verbose{noformat,this->lineBuffer.str()};
             }

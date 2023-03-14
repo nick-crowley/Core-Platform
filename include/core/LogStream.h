@@ -1,9 +1,32 @@
-#pragma once
+﻿#pragma once
 #include "library/core.Platform.h"
 #include "core/LogEntry.h"
 
 namespace core
 {
+	namespace detail {
+		template <typename WritableValue>
+		class repeat {
+			using type = repeat<WritableValue>;
+
+		private:
+			WritableValue  value;
+			uint32_t       count;
+
+		public:
+			repeat(WritableValue val, uint32_t num) : value{val}, count{num}
+			{}
+
+		public:
+			std::type_identity_t<std::ostream&>
+			friend operator<<(std::ostream& os, type const& repetition) {
+				for (auto idx = 0; idx < repetition.count; ++idx)
+					os << repetition.value;
+				return os;
+			}
+		};
+	}
+
 	class PlatformExport LogStream
 	{
         using ThreadIdCollection = std::unordered_map<std::thread::id,int>;
@@ -16,7 +39,7 @@ namespace core
         inline static IsWriting;
 		
         char constexpr
-        inline static PaddingChars[] = "                      ";
+        inline static PaddingChars[] = "\xe2\x95\x91\x20"; // UTF-8 encoded "║ "
         
 	private:
 		std::ostream* outputStream;
@@ -41,15 +64,6 @@ namespace core
         std::type_identity_t<int&>
         static currentDepth() {
             return LogStream::CallDepth[std::this_thread::get_id()];
-        }
-
-        std::string_view
-        static padding() {
-            auto const charCount = std::clamp<int>(2*LogStream::currentDepth(), 0, lengthof(LogStream::PaddingChars)-3);
-            return { 
-                LogStream::PaddingChars, 
-                LogStream::PaddingChars + charCount
-            };
         }
 
 	public:
@@ -90,7 +104,7 @@ namespace core
 			                        << " P-" << ::GetCurrentProcessId() 
 			                        << " T-" << std::this_thread::get_id()
 			                        << " "   << std::setw(9) << std::left << core::to_string(sev)
-			                        << " : " << LogStream::padding() << str
+			                        << " : " << detail::repeat(LogStream::PaddingChars, LogStream::currentDepth()) << str
 			                        << std::endl;
 		}
 		
