@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "library/core.Platform.h"
 #include "core/LogStream.h"
 #include "core/ToString.h"
@@ -8,12 +8,12 @@ namespace core::detail
     template <typename T>
     constexpr bool is_stringish_v = meta::is_any_of_v<std::decay_t<T>,
                                                       gsl::zstring,gsl::wzstring,
-                                                        gsl::czstring,gsl::cwzstring,
+                                                      gsl::czstring,gsl::cwzstring,
 #ifdef HAS_ATL_STRING
                                                       ATL::CString,
 #endif
                                                       std::string_view,std::wstring_view,
-                                                        std::string,std::wstring>;
+                                                      std::string,std::wstring>;
 }
 
 namespace core
@@ -149,23 +149,23 @@ namespace core
     };
 }
 
-#define _makeLoggingArgument(s,d,e)                                                                                         \
+#define _makeNameValuePair(s,d,e)                                                                                           \
     std::make_pair(#e,e)
 
-#define _makeLoggingArgumentList(...)                                                                                       \
-    BOOST_PP_LIST_ENUM(BOOST_PP_LIST_TRANSFORM(_makeLoggingArgument, ~, BOOST_PP_VARIADIC_TO_LIST(__VA_ARGS__)))
+#define _makeNameValuePairSequence(...)                                                                                     \
+    BOOST_PP_LIST_ENUM(BOOST_PP_LIST_TRANSFORM(_makeNameValuePair, ~, BOOST_PP_VARIADIC_TO_LIST(__VA_ARGS__)))
 
 #define logFunction(...)                                                                                                    \
     ::core::LoggingSentry loggingSentry{clog};                                                                              \
     loggingSentry.onEntry(                                                                                                  \
         __FUNCTION__                                                                                                        \
-        __VA_OPT__(, _makeLoggingArgumentList(__VA_ARGS__))                                                                 \
+        __VA_OPT__(, _makeNameValuePairSequence(__VA_ARGS__))                                                               \
     )
 
 #define withRetVals(...)                                                                                                    \
     onExit([&](::core::LoggingSentry& s) {                                                                                  \
         return s.print(                                                                                                     \
-			_makeLoggingArgumentList(__VA_ARGS__)                                                                           \
+			_makeNameValuePairSequence(__VA_ARGS__)                                                                         \
         );                                                                                                                  \
     })
 
