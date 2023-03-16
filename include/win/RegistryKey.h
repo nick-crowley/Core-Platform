@@ -26,7 +26,6 @@ namespace core::win
 			std::wstring_view m_valueName;
 
 		public:
-			explicit
 			ConstRegistryValueProxy(RegistryKey const& key, meta::use_default_t);
 
 			ConstRegistryValueProxy(RegistryKey const& key, std::wstring_view name);
@@ -49,7 +48,6 @@ namespace core::win
 			using base = ConstRegistryValueProxy;
 
 		public:
-			explicit
 			RegistryValueProxy(RegistryKey& key, meta::use_default_t)
 			  : base{key,use_default}
 			{}
