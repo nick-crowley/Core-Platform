@@ -18,7 +18,7 @@ template <core::meta::BitwiseEnumeration E>
 E constexpr
 operator&(E lhs, E rhs) { 
 	return static_cast<E>(
-		std::underlying_type_t<E>(lhs) & std::underlying_type_t<E>(rhs)
+		std::to_underlying<E>(lhs) & std::to_underlying<E>(rhs)
 	);
 };
 
@@ -26,7 +26,7 @@ template <core::meta::BitwiseEnumeration E>
 E constexpr
 operator|(E lhs, E rhs) { 
 	return static_cast<E>(
-		std::underlying_type_t<E>(lhs) | std::underlying_type_t<E>(rhs)
+		std::to_underlying<E>(lhs) | std::to_underlying<E>(rhs)
 	);
 };
 
@@ -34,7 +34,7 @@ template <core::meta::BitwiseEnumeration E>
 E constexpr
 operator^(E lhs, E rhs) { 
 	return static_cast<E>(
-		std::underlying_type_t<E>(lhs) ^ std::underlying_type_t<E>(rhs)
+		std::to_underlying<E>(lhs) ^ std::to_underlying<E>(rhs)
 	);
 };
 
@@ -42,7 +42,7 @@ template <core::meta::BitwiseEnumeration E>
 E constexpr
 operator~(E lhs) { 
 	return static_cast<E>(
-		~std::underlying_type_t<E>(lhs)
+		~std::to_underlying<E>(lhs)
 	);
 };
 
