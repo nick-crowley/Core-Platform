@@ -29,6 +29,7 @@
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Platform.h"      //
+#include "security/AccessRight.h"
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
@@ -37,7 +38,11 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-namespace core::win {
+namespace core::win 
+{
+enum class CommonRight : access_mask_t;
+enum class GenericRight : access_mask_t;
+enum class StandardRight : access_mask_t;
 
 /* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 * @brief		Defines access rights for registry key objects.
@@ -63,8 +68,15 @@ enum class KeyRight : access_mask_t {
 											//!< This flag must be combined using the OR operator with the other flags in this table that either query or access registry values.
 };
 // clang-format on
-
 }      // namespace core::win
+
+namespace core::meta 
+{
+	constdata bool Settings<bitwise_enum, core::win::KeyRight> = true;
+	constdata bool Settings<compatible_enum, core::win::KeyRight, core::win::CommonRight> = true;
+	constdata bool Settings<compatible_enum, core::win::KeyRight, core::win::GenericRight> = true;
+	constdata bool Settings<compatible_enum, core::win::KeyRight, core::win::StandardRight> = true;
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

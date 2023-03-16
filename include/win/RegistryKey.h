@@ -77,30 +77,30 @@ namespace core::win
 	private:
 		SharedRegistryApi m_api;
 		SharedRegistryKey m_handle;
-		AccessRight m_rights;
+		KeyRight m_rights;
 
 	public:
 		//! @brief	Open existing key (identified by handle)
-		RegistryKey(SharedRegistryKey handle, AccessRight rights, SharedRegistryApi api = registryApi());
+		RegistryKey(SharedRegistryKey handle, KeyRight rights, SharedRegistryApi api = registryApi());
 
 		//! @brief	Open child of existing key  (identified by handle)
-		RegistryKey(SharedRegistryKey parent, std::wstring_view child, AccessRight rights, SharedRegistryApi api = registryApi());
+		RegistryKey(SharedRegistryKey parent, std::wstring_view child, KeyRight rights, SharedRegistryApi api = registryApi());
 		
 		//! @brief	Create child of key (identified by handle)
-		RegistryKey(meta::create_new_t, SharedRegistryKey parent, std::wstring_view child, AccessRight rights, SharedRegistryApi api = registryApi());
+		RegistryKey(meta::create_new_t, SharedRegistryKey parent, std::wstring_view child, KeyRight rights, SharedRegistryApi api = registryApi());
 		
 		//! @brief	Open existing key
-		RegistryKey(RegistryKey const& key, AccessRight rights, SharedRegistryApi api = registryApi())
+		RegistryKey(RegistryKey const& key, KeyRight rights, SharedRegistryApi api = registryApi())
 		  : RegistryKey{key.m_handle, rights, api}
 		{}
 
 		//! @brief	Open child of existing key
-		RegistryKey(RegistryKey const& parent, std::wstring_view child, AccessRight rights, SharedRegistryApi api = registryApi())
+		RegistryKey(RegistryKey const& parent, std::wstring_view child, KeyRight rights, SharedRegistryApi api = registryApi())
 		  : RegistryKey{parent.m_handle, child, rights, api}
 		{}
 
 		//! @brief	Create child of key
-		RegistryKey(meta::create_new_t, RegistryKey const& parent, std::wstring_view child, AccessRight rights, SharedRegistryApi api = registryApi())
+		RegistryKey(meta::create_new_t, RegistryKey const& parent, std::wstring_view child, KeyRight rights, SharedRegistryApi api = registryApi())
 		  : RegistryKey{meta::create_new, parent.m_handle, child, rights, api}
 		{}
 		
@@ -113,7 +113,7 @@ namespace core::win
 			
 	public:
 		RegistryKey
-		subkey(std::wstring_view child, std::optional<AccessRight> rights = std::nullopt) const;
+		subkey(std::wstring_view child, std::optional<KeyRight> rights = std::nullopt) const;
 
 		template <typename Self>
 		auto
@@ -140,6 +140,6 @@ namespace core::win
 		removeKey(std::wstring_view child);
 
 		RegistryKey
-		subkey(meta::create_new_t, std::wstring_view child, std::optional<AccessRight> rights = std::nullopt);
+		subkey(meta::create_new_t, std::wstring_view child, std::optional<KeyRight> rights = std::nullopt);
 	};
 }

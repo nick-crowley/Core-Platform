@@ -2,7 +2,7 @@
 #include "library/core.Platform.h"
 #include "win/SharedHandle.h"
 #include "win/RegistryValue.h"
-#include "security/AccessRight.h"
+#include "security/KeyRight.h"
 
 namespace core::win
 {
@@ -15,10 +15,10 @@ namespace core::win
 		virtual ~RegistryApi() = default;
 
 		SharedRegistryKey
-		virtual createKey(SharedRegistryKey root, std::wstring_view path, AccessRight rights, Lifetime life = NonVolatile) const;
+		virtual createKey(SharedRegistryKey root, std::wstring_view path, KeyRight rights, Lifetime life = NonVolatile) const;
 
 		SharedRegistryKey
-		virtual openKey(SharedRegistryKey root, std::wstring_view path, AccessRight rights) const;
+		virtual openKey(SharedRegistryKey root, std::wstring_view path, KeyRight rights) const;
 		
 		RegistryValue
 		virtual getValue(SharedRegistryKey root, std::wstring_view path, std::wstring_view name) const;

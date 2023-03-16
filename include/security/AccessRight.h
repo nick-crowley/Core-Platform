@@ -29,23 +29,6 @@
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Platform.h"
-#include "security/CommonRight.h"
-#include "security/GenericRight.h"
-#include "security/KeyRight.h"
-#include "security/StandardRight.h"
-
-// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Documentation o=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
-/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
-* @brief	Access mask format
-*
-* @typedef	ACCESS_MASK
-*
-* @internal	
-*
-* 32 31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00
-* GR GW GE GA -- -- -- AS ------- STANDARD --------- ------------- OBJECT SPECIFIC -----------------
-*/
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
@@ -54,138 +37,23 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-namespace core::meta 
-{
-	template <typename T>
-	concept AccessRight = AnyOf<T, win::CommonRight, /*win::FileRight,*/ 
-	                      win::GenericRight, win::KeyRight, win::StandardRight, 
-	                      /*win::SystemRight,*/ /*win::ProcessRight,*/ /*win::TokenRight,*/ 
-	                      win::access_mask_t>;
-
-	
-	template <typename T>
-	concept ConvertibleToAccessMask = std::is_arithmetic_v<T> && !std::is_same_v<T,win::access_mask_t>;
-		
-	template <typename T>
-	concept ConvertibleFromAccessMask = std::is_arithmetic_v<T> && !is_any_of_v<T,bool,win::access_mask_t>;
-	
-}
-
 namespace core::win
 {
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
-	* @brief	Proxy for access-right enumeration(s)
+	* @brief	Access mask
 	*
-	* @details	Provides type-safe conversion and operators for access-right enumerations
+	* @internal	
+	*
+	* 32 31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00
+	* GR GW GE GA -- -- -- AS ------- STANDARD --------- ------------- OBJECT SPECIFIC -----------------
 	*/
-	class PlatformExport AccessRight
-	{
-		// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-		using type = AccessRight;
-		using reference = type&;
+	using access_mask_t = ::ACCESS_MASK;
+}
 
-		// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	private:
-		access_mask_t m_rights = NULL;      //!< Underlying access right mask
-
-		// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		//! @brief	Construct from any supported access-right
-		template <meta::AccessRight AnyRight>
-		constexpr
-		implicit
-		AccessRight(AnyRight r)
-			: m_rights(static_cast<access_mask_t>(r))
-		{}
-		
-		//! @brief 	Prevent unwanted implicit conversions
-		template <meta::ConvertibleToAccessMask Unwanted>
-		constexpr
-		implicit 
-		AccessRight(Unwanted&&) = delete;
-
-		// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-		satisfies(AccessRight,
-			constexpr IsRegular,
-			NotSortable
-		);
-
-		// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
-		// o~-~=~-~=~-~=~-~=~-~=~-~=~-~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		//! @brief 	Provide an implicit conversion to @c ::DWORD
-		constexpr
-		implicit operator 
-		access_mask_t() const
-		{
-			return this->m_rights;
-		}
-	
-		//! @brief 	Provide an implicit conversion to @c CommonRight
-		template <meta::AccessRight AnyRight>
-		constexpr
-		implicit operator 
-		AnyRight() const {
-			return static_cast<AnyRight>(this->m_rights);
-		}
-	
-		//! @brief 	Prevent unwanted implicit conversions
-		template <meta::ConvertibleFromAccessMask Unwanted>
-		constexpr
-		implicit operator
-		Unwanted() const = delete;
-
-		AccessRight constexpr
-		operator~() const {
-			return { static_cast<access_mask_t>(~this->m_rights) };
-		}
-	
-		AccessRight constexpr
-		operator|(AccessRight const& rhs) const {
-			return { static_cast<access_mask_t>(this->m_rights | rhs.m_rights) };
-		}
-	
-		AccessRight constexpr
-		operator&(AccessRight const& rhs) const {
-			return { static_cast<access_mask_t>(this->m_rights & rhs.m_rights) };
-		}
-
-		// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		reference constexpr
-		operator|=(AccessRight const& rhs) {
-			this->m_rights |= rhs.m_rights;
-			return *this;
-		}
-	
-		reference constexpr
-		operator&=(AccessRight const& rhs) {
-			this->m_rights &= rhs.m_rights;
-			return *this;
-		}
-	};
-
-}      // namespace core::win
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-namespace core::win 
-{
-	template <meta::AccessRight AnyRight>
-	AccessRight constexpr
-	operator|(AnyRight const& lhs, AccessRight const& rhs)
-	{
-		return rhs | lhs;
-	}
 
-	template <meta::AccessRight AnyRight>
-	AccessRight constexpr
-	operator&(AnyRight const& lhs, AccessRight const& rhs)
-	{
-		return rhs & lhs;
-	}
-}      // namespace core::win
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

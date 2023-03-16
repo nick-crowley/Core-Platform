@@ -29,6 +29,7 @@
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Platform.h"      //
+#include "security/AccessRight.h"
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
@@ -37,7 +38,11 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-namespace core::win {
+namespace core::win 
+{
+enum class CommonRight : access_mask_t;
+enum class GenericRight : access_mask_t;
+enum class KeyRight : access_mask_t;
 
 /* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 * @brief	Standard access-rights for securable objects
@@ -56,6 +61,14 @@ enum class StandardRight : access_mask_t {
 // clang-format on
 
 }      // namespace core::win
+
+namespace core::meta 
+{
+	constdata bool Settings<bitwise_enum, core::win::StandardRight> = true;
+	constdata bool Settings<compatible_enum, core::win::StandardRight, core::win::CommonRight> = true;
+	constdata bool Settings<compatible_enum, core::win::StandardRight, core::win::GenericRight> = true;
+	constdata bool Settings<compatible_enum, core::win::StandardRight, core::win::KeyRight> = true;
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
