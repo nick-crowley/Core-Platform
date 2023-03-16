@@ -39,113 +39,115 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-namespace core::security::detail
-{
-	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
-	* @brief	Variable-length security identifier wrapper
-	*/
-	template <meta::AnyOf<::SID,::SID const> MaybeConstSid>
-	class SidWrapper : public VarLengthStructure<MaybeConstSid>
-	{	
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-	private:
-		//! @brief	Aliases base type
-		using base = VarLengthStructure<MaybeConstSid>;
-	
-		//! @brief	Import const-propagating field-wrapper
-		template <typename Field> 
-		using propagate_const_t = typename base::template propagate_const_t<Field>;
-	
-		//! @brief	Equally CV-qualified std::byte
-		using maybe_const_byte = meta::mirror_cv_t<MaybeConstSid,std::byte>;
-
-	public:
-		//! @brief	Aliases our type
-		using type = SidWrapper<MaybeConstSid>;
-
-		//! @brief	Aliases our sibling
-		using other = SidWrapper<meta::toggle_const_t<MaybeConstSid>>;
-
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-	public:
-		propagate_const_t<::BYTE>                     Revision;
-		propagate_const_t<::BYTE>                     SubAuthorityCount;
-		propagate_const_t<::SID_IDENTIFIER_AUTHORITY> IdentifierAuthority;
-		propagate_const_t<::DWORD*>					  SubAuthority; 
-	
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-	public:
-		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
-		* @brief	Construct from [possibly-const] security identifier
-		* 
-		* @throws	std::invalid_argument		Missing argument
-		*/
-		implicit
-		SidWrapper(MaybeConstSid* sid)
-		  : base{ThrowIfNull(sid)},
-			Revision(sid->Revision),
-			SubAuthorityCount(sid->SubAuthorityCount),
-			IdentifierAuthority(sid->IdentifierAuthority),
-			SubAuthority(sid->SubAuthority)
-		{}
-
-		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
-		* @brief	Construct from [possibly-const] binary representation
-		* 
-		* @throws	std::invalid_argument		Missing argument
-		*/
-		explicit
-		SidWrapper(std::span<maybe_const_byte> bytes)
-			: SidWrapper{reinterpret_cast<MaybeConstSid*>(bytes.data())}
-		{}
-	
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-	public:
-		satisfies(SidWrapper,
-			NotDefaultConstructible,
-			IsCopyConstructible,
-			NotCopyAssignable,
-			NotEqualityComparable,
-			NotSortable
-		);
-	
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-	public:
-		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
-		* @brief	Retrieve size of structure, in bytes
-		*/
-		std::size_t
-		size() const
-		{
-			return meta::sizeof_v<::BYTE, ::BYTE, ::SID_IDENTIFIER_AUTHORITY> 
-			     + meta::sizeof_n<::DWORD>(this->SubAuthorityCount);
-		}
-	
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-	};
-}
-
+// 
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::security
 {
+	namespace detail 
+	{
+		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+		* @brief	Variable-length security identifier wrapper
+		*/
+		template <meta::AnyOf<::SID,::SID const> MaybeConstSid>
+		class SidWrapper : public VarLengthStructure<MaybeConstSid>
+		{	
+			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		private:
+			//! @brief	Aliases base type
+			using base = VarLengthStructure<MaybeConstSid>;
+	
+			//! @brief	Import const-propagating field-wrapper
+			template <typename Field> 
+			using propagate_const_t = typename base::template propagate_const_t<Field>;
+	
+			//! @brief	Equally CV-qualified std::byte
+			using maybe_const_byte = meta::mirror_cv_t<MaybeConstSid,std::byte>;
+
+		public:
+			//! @brief	Aliases our type
+			using type = SidWrapper<MaybeConstSid>;
+
+			//! @brief	Aliases our sibling
+			using other = SidWrapper<meta::toggle_const_t<MaybeConstSid>>;
+
+			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			propagate_const_t<::BYTE>                     Revision;
+			propagate_const_t<::BYTE>                     SubAuthorityCount;
+			propagate_const_t<::SID_IDENTIFIER_AUTHORITY> IdentifierAuthority;
+			propagate_const_t<::DWORD*>					  SubAuthority; 
+	
+			// o~=~-~=~-~=~-~=~-~=~-~=~-~=o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+			* @brief	Construct from [possibly-const] security identifier
+			* 
+			* @throws	std::invalid_argument		Missing argument
+			*/
+			implicit
+			SidWrapper(MaybeConstSid* sid)
+			  : base{ThrowIfNull(sid)},
+				Revision(sid->Revision),
+				SubAuthorityCount(sid->SubAuthorityCount),
+				IdentifierAuthority(sid->IdentifierAuthority),
+				SubAuthority(sid->SubAuthority)
+			{}
+
+			/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+			* @brief	Construct from [possibly-const] binary representation
+			* 
+			* @throws	std::invalid_argument		Missing argument
+			*/
+			explicit
+			SidWrapper(std::span<maybe_const_byte> bytes)
+				: SidWrapper{reinterpret_cast<MaybeConstSid*>(bytes.data())}
+			{}
+	
+			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			satisfies(SidWrapper,
+				NotDefaultConstructible,
+				IsCopyConstructible,
+				NotCopyAssignable,
+				NotEqualityComparable,
+				NotSortable
+			);
+	
+			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~=~-~=~-~=~-~=~-~=~-~=~-~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+			* @brief	Retrieve size of structure, in bytes
+			*/
+			std::size_t
+			size() const
+			{
+				return meta::sizeof_v<::BYTE, ::BYTE, ::SID_IDENTIFIER_AUTHORITY> 
+					 + meta::sizeof_n<::DWORD>(this->SubAuthorityCount);
+			}
+	
+			// o~=~-~=~-~=~-~=~-~=~-~=~-~=o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+		};
+	}
+
 	class Identifier
 	{
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		using type = Identifier;
 		using ByteBuffer = std::vector<std::byte>;
 		using SidWrapper = detail::SidWrapper<::SID>; 
 		using ConstSidWrapper = detail::SidWrapper<::SID const>; 
 
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		ByteBuffer        m_storage;      //!< Storage for var-length SID structure
 		SharedSecurityApi m_api;          //!< Security API implementation
 
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:	
-		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 		* @brief	Copy-construct from binary representation
 		*
 		* @param[in]	bytes	Binary representation of SID
@@ -154,11 +156,11 @@ namespace core::security
 		* @throws	std::invalid_argument		Missing argument
 		*/
 		explicit
-		Identifier(std::span<const std::byte> bytes, SharedSecurityApi api = security_api())
+		Identifier(std::span<std::byte const> bytes, SharedSecurityApi api = security_api())
 		  : m_storage{ThrowIfEmpty(bytes).begin(),bytes.end()}, m_api{ThrowIfEmpty(api)}
 		{}
 	
-		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 		* @brief	Move-construct from binary representation
 		*
 		* @param[in]	bytes	Binary representation of SID
@@ -171,7 +173,7 @@ namespace core::security
 		  : m_storage{std::move(ThrowIfEmpty(bytes))}, m_api{ThrowIfEmpty(api)}
 		{}
 
-		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 		* @brief	Construct from string representation
 		*
 		* @param[in]    sid		SID string (in the standard S-R-I-S-S… format)
@@ -186,7 +188,7 @@ namespace core::security
 			m_api{api}
 		{}
 
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		satisfies(Identifier,
 			NotDefaultConstructible,
@@ -194,9 +196,9 @@ namespace core::security
 			NotSortable
 		);
 	
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 		
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		//! @brief	Retrieve binary representation
 		std::span<std::byte const>
@@ -228,12 +230,9 @@ namespace core::security
 			return !this->m_api->compareSid(this->bytes(), rhs.bytes());
 		}
 
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};
-
 }      // namespace core::security
-// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
