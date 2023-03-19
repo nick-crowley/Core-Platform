@@ -73,10 +73,10 @@ namespace core
 		using value_type = ValueType;
 	
 		//! @brief	Non-const value-type
-		using mutable_value_t = std::remove_const_t<value_type>;
+		using mutable_value_type = std::remove_const_t<value_type>;
 	
 		//! @brief	Equally CV-qualified std::byte
-		using maybe_const_byte_t = meta::mirror_cv_t<value_type, std::byte>;
+		using MaybeConstByte = meta::mirror_cv_t<value_type, std::byte>;
 
 		//! @brief	Const-propagating wrapper mutable field of any type
 		template <typename Field>
@@ -116,9 +116,9 @@ namespace core
 	public:	
 		//! @brief	Retrieve byte-representation of object
 		template <typename Self>
-		std::span<maybe_const_byte_t>
+		std::span<MaybeConstByte>
 		bytes(this Self&& derived) {
-			return { reinterpret_cast<maybe_const_byte_t*>(derived.m_object), derived.size() };
+			return { reinterpret_cast<MaybeConstByte*>(derived.m_object), derived.size() };
 		}
 
 #if BUGGED
@@ -155,10 +155,10 @@ namespace core
 		using value_type = ValueType const;
 	
 		//! @brief	Non-const value-type
-		using mutable_value_t = ValueType;
+		using mutable_value_type = ValueType;
 
 		//! @brief	Equally CV-qualified std::byte
-		using maybe_const_byte_t = std::byte const;
+		using MaybeConstByte = std::byte const;
 
 		//! @brief	Const-propagating wrapper for const-fields of any type
 		template <typename Field>
@@ -179,7 +179,7 @@ namespace core
 		{}
 	
 		// Block construction from non-const values
-		VarLengthStructure(mutable_value_t*) = delete;
+		VarLengthStructure(mutable_value_type*) = delete;
 		VarLengthStructure(std::span<std::byte>) = delete;
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -203,7 +203,7 @@ namespace core
 			requires { typename Self::mutable_type; }
 		{
 			using MutableSelf = typename std::remove_reference_t<Self>::mutable_type;
-			return MutableSelf{ const_cast<mutable_value_t*>(derived.m_object) };
+			return MutableSelf{ const_cast<mutable_value_type*>(derived.m_object) };
 		}
 
 		//! @brief	Retrieve byte-representation of object
