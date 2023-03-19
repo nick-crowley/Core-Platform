@@ -25,6 +25,7 @@
 */
 #include "security/SecurityApi.h"
 #include "security/Identifier.h"
+#include "security/Descriptor.h"
 #include "win/Function.h"
 
 // o~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~o Name Imports o~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~o
@@ -44,14 +45,17 @@ security::security_api()
 
 // o~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~o Local Definitions o-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~o
 
-using SidWrapper = security::detail::SidWrapper<::SID>; 
-using ConstSidWrapper = security::detail::SidWrapper<::SID const>; 
-
 auto constexpr
 intern convertSidToStringSid = win::function<1>(::ConvertSidToStringSidW);
 
 auto constexpr
 intern convertStringSidToSidW = win::function<1>(::ConvertStringSidToSidW);
+
+auto constexpr
+intern convertDescriptorToStringW = win::function<2>(::ConvertSecurityDescriptorToStringSecurityDescriptorW);
+
+auto constexpr
+intern convertStringToDescriptorW = win::function<2>(::ConvertStringSecurityDescriptorToSecurityDescriptorW);
 
 // o~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~o Construction & Destruction o~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~o
 
@@ -84,58 +88,42 @@ SecurityApi::compareSidPrefix(std::span<std::byte const> lhs, std::span<std::byt
 	return ::EqualPrefixSid(ConstSidWrapper{lhs}.as_mutable(), 
 	                        ConstSidWrapper{rhs}.as_mutable()) != FALSE;
 }
-#if 0
+
 // ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ //
 std::wstring
-SecurityApi::descriptor_to_string(std::span<std::byte const> bytes) const
+SecurityApi::descriptorToString(std::span<std::byte const> bytes) const
 {
 	ThrowIfEmpty(bytes);
 
-	const auto flags = DACL_SECURITY_INFORMATION | GROUP_SECURITY_INFORMATION | OWNER_SECURITY_INFORMATION |
-					   SACL_SECURITY_INFORMATION;
-	wchar_t* str    = {};
-	::ULONG  length = {};
-	auto     descriptor = ConstDescriptorWrapper(bytes).as_mutable();
+	auto       descriptor = ConstDescriptorWrapper(bytes).as_mutable();
+	auto const flags = DACL_SECURITY_INFORMATION|GROUP_SECURITY_INFORMATION|OWNER_SECURITY_INFORMATION|SACL_SECURITY_INFORMATION;
 
-	// Attempt to convert 'str' to descriptor
-	if (!::ConvertSecurityDescriptorToStringSecurityDescriptorW(
-		  descriptor, SDDL_REVISION_1, flags, &str, &length)) {
-		//! @todo	returns ERROR_NONE_MAPPED if SID is not found
-		//! @todo	Returns ERROR_INVALID_ACL if ACL is invalid
-
-		// [FAILURE] Throw appropriate exception
-		platform::throw_exception_from_error(HERE, this->m_platform_api->get_last_error());
-	}
-	ON_EXIT(::LocalFree(str));
-
+	// Attempt to convert 'bytes' to descriptor
+	//! @todo	Throws @c ERROR_NONE_MAPPED if @c SID is not found
+	//! @todo	Throws @c ERROR_INVALID_ACL if @c ACL is invalid
+	auto const [_str, length] = convertDescriptorToStringW(descriptor, SDDL_REVISION_1, flags);
+	nstd::unique_local_ptr_t<wchar_t[]> str{_str};
+	
 	// [SUCCESS] Copy descriptor-string on return
-	return {str, &str[length]};
+	return {&str[0], &str[length]};
 }
 
 // ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ //
 std::vector<std::byte>
-SecurityApi::descriptor_from_string(std::wstring_view str) const
+SecurityApi::descriptorFromString(std::wstring_view str) const
 {
 	ThrowIfEmpty(str);
 
-	::SECURITY_DESCRIPTOR* descriptor = {};
-	::ULONG                length     = {};
-
 	// Attempt to convert 'str' to descriptor
-	if (!::ConvertStringSecurityDescriptorToSecurityDescriptorW(
-		  str.data(), SDDL_REVISION_1, (void**)&descriptor, &length)) {
-		//! @todo	ConvertStringSecurityDescriptorToSecurityDescriptorW() returns ERROR_NONE_MAPPED if SID is not found
-
-		// [FAILURE] Throw appropriate exception
-		platform::throw_exception_from_error(HERE, this->m_platform_api->get_last_error());
-	}
-	ON_EXIT(::LocalFree(descriptor));
+	//! @todo	Throws @c ERROR_NONE_MAPPED if @c SID is not found
+	auto [_sd, length] = convertStringToDescriptorW(str.data(), SDDL_REVISION_1);
+	nstd::unique_local_ptr_t<::SECURITY_DESCRIPTOR> descriptor{static_cast<::SECURITY_DESCRIPTOR*>(_sd)};
 
 	// [SUCCESS] Copy descriptor into byte-array on return
-	auto bytes = DescriptorWrapper(descriptor).bytes();
+	auto bytes = DescriptorWrapper(descriptor.get()).bytes();
 	return {bytes.begin(), bytes.end()};
 }
-
+#if 0
 // ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ //
 AccessRight
 SecurityApi::get_access_rights(registry::RegistryHandle handle) const

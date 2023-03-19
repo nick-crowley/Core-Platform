@@ -99,21 +99,35 @@ namespace core::security
 		[[nodiscard]]
 		bool
 		compareSidPrefix(std::span<std::byte const> lhs, std::span<std::byte const> rhs) const;
-#if 0
+		
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
-		* @brief		Implements ISecurityApi::descriptor_to_string()
+		* @brief		Converts a security descriptor into security descriptor definition language formatted string
+		*
+		* @param[in]	descriptor		Binary representation of SID to be converted
+		*
+		* @returns		Resultant string in SDDL format (O: G: D: S:)
+		*
+		* @throws		std::invalid_argument	Missing argument
+		* @throws		std::system_error		Operation failed
 		*/
 		[[nodiscard]]
 		std::wstring
-		descriptor_to_string(std::span<std::byte const> descriptor) const;
-
+		descriptorToString(std::span<std::byte const> descriptor) const;
+		
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
-		* @brief		Implements ISecurityApi::descriptor_from_string()
+		* @brief		Converts a string-format security descriptor into a valid, functional descriptor
+		*
+		* @param[in]	descriptor		String in security descriptor definition language (SDDL) (eg. O: G: D: S:)
+		*
+		* @returns		Binary representation of security descriptor
+		*
+		* @throws		std::invalid_argument	Missing argument
+		* @throws		std::system_error		Operation failed
 		*/
 		[[nodiscard]]
 		std::vector<std::byte>
-		descriptor_from_string(std::wstring_view descriptor) const;
-	
+		descriptorFromString(std::wstring_view descriptor) const;
+#if 0	
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 		* @brief	Implements ISecurityApi::get_access_rights()
 		*

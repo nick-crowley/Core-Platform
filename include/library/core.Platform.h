@@ -20,6 +20,7 @@
 #include "nstd/Bitset.h"
 #include "nstd/FormatString.h"
 #include "nstd/Iterator.h"
+#include "nstd/Memory.h"
 #include "nstd/SourceLocation.h"
 #include "nstd/Tuple.h"
 
