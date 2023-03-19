@@ -199,9 +199,10 @@ namespace core
 		//! @brief	Retrieve mutable wrapper to the same object
 		template <typename Self>
 		auto
-		as_mutable(this Self&& derived) 
+		as_mutable(this Self&& derived) requires
+			requires { typename Self::mutable_type; }
 		{
-			using MutableSelf = typename std::remove_reference_t<Self>::other;
+			using MutableSelf = typename std::remove_reference_t<Self>::mutable_type;
 			return MutableSelf{ const_cast<mutable_value_t*>(derived.m_object) };
 		}
 
