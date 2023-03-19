@@ -16,6 +16,15 @@ namespace nstd
 #define _MoveConstructibleDecl(className)       className(className&&)
 #define _EqualityComparableDecl(className)      bool operator==(className const&) const
 #define _SortableDecl(className)                auto operator<=>(className const&) const
+#define _AddableDecl(className)                 className operator+(className const&) const
+#define _AddAssignableDecl(className)           className& operator+=(className const&) const
+#define _SubtractableDecl(className)            className operator-(className const&) const
+#define _SubtractAssignableDecl(className)      className& operator-=(className const&) const
+#define _NegatableDecl(className)               className operator-() const
+#define _MultipliableDecl(className)            className operator*(className const&) const
+#define _MultiplyAssignableDecl(className)      className& operator*=(className const&) const
+#define _DividableDecl(className)               className operator/(className const&) const
+#define _DivideAssignableDecl(className)        className& operator/=(className const&) const
 
 #define _MakeDefaultedConceptMacro(...)         BOOST_PP_COMMA() BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__) BOOST_PP_COMMA() = default BOOST_PP_COMMA()
 #define _MakeDeletedConceptMacro(...)           BOOST_PP_COMMA() BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__) BOOST_PP_COMMA() = delete BOOST_PP_COMMA()
@@ -50,6 +59,7 @@ namespace nstd
 #define IsRegular                   _MakeDefaultedConceptMacro(_DefaultConstructibleDecl, _CopyConstructibleDecl, _CopyAssignableDecl, _MoveConstructibleDecl, _MoveAssignableDecl, _EqualityComparableDecl)
 #define NotCopyable                 _MakeDeletedConceptMacro(_CopyConstructibleDecl, _CopyAssignableDecl)
 #define NotMovable                  _MakeDeletedConceptMacro(_MoveConstructibleDecl, _MoveAssignableDecl)
+#define NotArithmetic               _MakeDeletedConceptMacro(_AddableDecl, _AddAssignableDecl, _SubtractableDecl, _SubtractAssignableDecl, _NegatableDecl, _MultipliableDecl, _MultiplyAssignableDecl, _DividableDecl, _DivideAssignableDecl)
 
 //! @brief	Expand 4-tuple: {prefix, class-name, postfix, enabled} with concept-name 'prefix concept(class-name) postfix enabled'
 #define _expandConceptDeclaration(r,state,conceptDecl)      \
