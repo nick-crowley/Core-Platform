@@ -2,6 +2,7 @@
 #include "core/LogStream.cpp"
 #include "core/ToString.cpp"
 #include "nt/NtStatus.cpp"
+#include "security/SecurityApi.cpp"
 #include "win/Concurrency.cpp"
 #include "win/LResult.cpp"
 #include "win/RegistryApi.cpp"
