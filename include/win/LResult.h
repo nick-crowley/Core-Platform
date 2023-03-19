@@ -23,7 +23,15 @@ namespace core::win
 		  : m_value{value}
 		{
 		}
-		
+
+		satisfies(LResult,
+			NotDefaultConstructible,
+			IsCopyable,
+			IsEqualityComparable,
+			NotSortable,
+			NotArithmetic
+		);
+
 	public:
 		std::string
 		str() const {
@@ -60,11 +68,20 @@ namespace core::win
 		}
 	};
 		
-	struct LastError : public LResult 
+	class LastError : public LResult 
 	{
+	public:
 		LastError(std::source_location loc = std::source_location::current()) 
 			: LResult{::GetLastError(), loc} 
 		{}
+		
+	public:
+		satisfies(LastError,
+			IsCopyable,
+			IsEqualityComparable,
+			NotSortable,
+			NotArithmetic
+		);
 	};
 
 	class ThrowingLResult
@@ -76,6 +93,14 @@ namespace core::win
 			if (value != ERROR_SUCCESS)
 				throw system_error{value};
 		}
+		
+		satisfies(ThrowingLResult,
+			NotDefaultConstructible,
+			NotCopyable,
+			IsEqualityComparable,
+			NotSortable,
+			NotArithmetic
+		);
 
 	public:
 		std::string
