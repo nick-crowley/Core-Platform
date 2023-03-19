@@ -61,15 +61,15 @@ namespace core::security
 			using propagate_const_t = typename base::template propagate_const_t<Field>;
 	
 			//! @brief	Equally CV-qualified std::byte
-			using maybe_const_byte = meta::mirror_cv_t<MaybeConstSid,std::byte>;
+			using MaybeConstByte = meta::mirror_cv_t<MaybeConstSid,std::byte>;
 
 		public:
 			//! @brief	Aliases our type
 			using type = SidWrapper<MaybeConstSid>;
-
-			//! @brief	Aliases our sibling
-			using other = SidWrapper<meta::toggle_const_t<MaybeConstSid>>;
-
+			
+			//! @brief	Non-const wrapper type
+			using mutable_type = SidWrapper<::SID>;
+			
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			propagate_const_t<::BYTE>                     Revision;
@@ -99,7 +99,7 @@ namespace core::security
 			* @throws	std::invalid_argument		Missing argument
 			*/
 			explicit
-			SidWrapper(std::span<maybe_const_byte> bytes)
+			SidWrapper(std::span<MaybeConstByte> bytes)
 				: SidWrapper{reinterpret_cast<MaybeConstSid*>(bytes.data())}
 			{}
 	
@@ -130,15 +130,22 @@ namespace core::security
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		};
 	}
+	
+	//! @brief	Wrapper for mutable security identifiers
+	using SidWrapper = detail::SidWrapper<::SID>;
 
+	//! @brief	Wrapper for const security identifiers
+	using ConstSidWrapper = detail::SidWrapper<::SID const>;
+	
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief	Security identifier
+	*/
 	class Identifier
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		using type = Identifier;
 		using ByteBuffer = std::vector<std::byte>;
-		using SidWrapper = detail::SidWrapper<::SID>; 
-		using ConstSidWrapper = detail::SidWrapper<::SID const>; 
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
@@ -173,6 +180,17 @@ namespace core::security
 		  : m_storage{std::move(ThrowIfEmpty(bytes))}, m_api{ThrowIfEmpty(api)}
 		{}
 
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
+		satisfies(Identifier,
+			NotDefaultConstructible,
+			IsCopyable,
+			NotSortable,
+			NotArithmetic
+		);
+	
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 		* @brief	Construct from string representation
 		*
@@ -182,22 +200,12 @@ namespace core::security
 		* @throws	std::invalid_argument	Missing argument
 		* @throws	std::system_error		Operation failed
 		*/
-		explicit
-		Identifier(std::wstring_view sid, SharedSecurityApi api = security_api())
-		  : m_storage{ThrowIfEmpty(api)->stringToSid(ThrowIfEmpty(sid))}, 
-			m_api{api}
-		{}
+		Identifier
+		static fromString(std::wstring_view sid, SharedSecurityApi api = security_api())
+		{
+			return Identifier{ThrowIfEmpty(api)->stringToSid(ThrowIfEmpty(sid)), api};
+		}
 
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		satisfies(Identifier,
-			NotDefaultConstructible,
-			IsCopyable,
-			NotSortable
-		);
-	
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		//! @brief	Retrieve binary representation
