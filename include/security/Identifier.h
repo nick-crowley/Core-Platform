@@ -222,7 +222,7 @@ namespace core::security
 
 		//! @brief	Generate string representation
 		std::wstring
-		str() const {
+		wstr() const {
 			return this->m_api->sidToString(this->bytes());
 		}
 	
