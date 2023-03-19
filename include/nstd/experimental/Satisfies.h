@@ -45,6 +45,7 @@ namespace nstd
 // Individual concepts (negative case)
 #define NotDefaultConstructible		_MakeDeletedConceptMacro(_DefaultConstructibleDecl)
 #define NotDestructible		        _MakeDeletedConceptMacro(_DestructibleDecl)
+#define NotPolymorphic		        _MakeDefaultedConceptMacro(_DestructibleDecl)
 #define NotCopyAssignable           _MakeDeletedConceptMacro(_CopyAssignableDecl)
 #define NotCopyConstructible        _MakeDeletedConceptMacro(_CopyConstructibleDecl)
 #define NotMoveAssignable           _MakeDeletedConceptMacro(_MoveAssignableDecl)
