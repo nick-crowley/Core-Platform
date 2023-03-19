@@ -5,9 +5,9 @@
 
 namespace core::win
 {
-	template <unsigned NumResults = 0, typename ReturnType, typename... Parameters>
+	template <unsigned NumResults = 0, meta::AnyOf<::LONG,::LONG_PTR> ReturnType, typename... Parameters>
 	auto constexpr 
-	function(ReturnType (__stdcall *fx)(Parameters...)) noexcept requires std::_Is_any_of_v<ReturnType,LONG,LONG_PTR>
+	function(ReturnType (__stdcall *fx)(Parameters...)) noexcept 
 	{	
 		auto const callable = [fx](Parameters... args) -> ReturnType
 		{
