@@ -8,7 +8,7 @@ namespace core::detail
 {
 	[[noreturn]]
 	void
-	inline ThrowInvalidArgImpl(gsl::czstring argName, gsl::czstring reason, std::source_location loc = std::source_location::current())
+	inline ThrowInvalidArgImpl(gsl::czstring argName, std::string_view reason, std::source_location loc = std::source_location::current())
 	{
 		throw invalid_argument{"{}(..) Invalid '{}' argument: {}", loc.function_name(), argName, reason};
 	}
