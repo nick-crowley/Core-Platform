@@ -8,11 +8,17 @@
 namespace nstd
 {
 	// tuple_first_n
+	struct tuple_first_n_invalid_argument;
+
 	template <size_t N, typename Tuple>
-	struct tuple_first_n : std::type_identity<void> {};
+	struct tuple_first_n : std::type_identity<tuple_first_n_invalid_argument> {};
 
 	template <size_t N, typename Tuple>
 	using tuple_first_n_t = typename tuple_first_n<N,Tuple>::type;
+
+	template <typename...R>
+	struct tuple_first_n<0,std::tuple<R...>>
+		: std::type_identity<std::tuple<>> {};
 
 	// template <typename T0, ..., typename Tn, typename... Rest> 
 	// struct tuple_first_n<1..N, std::tuple<T0,..,Tn,Rest...>> : std::type_identity<std::tuple<T0,..,Tn>> {};
@@ -27,11 +33,16 @@ namespace nstd
 
 
 	// tuple_reverse
+	struct tuple_reverse_invalid_argument;
+
 	template <typename Tuple>
-	struct tuple_reverse : std::type_identity<void> {};
+	struct tuple_reverse : std::type_identity<tuple_reverse_invalid_argument> {};
 
 	template <typename Tuple>
 	using tuple_reverse_t = typename tuple_reverse<Tuple>::type;
+
+	template <>
+	struct tuple_reverse<std::tuple<>> : std::type_identity<std::tuple<>> {};
 
 	// template <typename T0, ..., typename Tn>
 	// struct tuple_reverse<std::tuple<T0,..,Tn>> : std::type_identity<std::tuple<Tn,...,T0>> {};
@@ -58,8 +69,10 @@ namespace nstd
 
 
 	// tuple_transform
+	struct tuple_transform_invalid_argument;
+
 	template <typename Tuple, template <typename> typename UnaryMetaFunction>
-	struct tuple_transform : std::type_identity<void> {};
+	struct tuple_transform : std::type_identity<tuple_transform_invalid_argument> {};
 
 	template <typename Tuple, template <typename> typename UnaryMetaFunction>
 	using tuple_transform_t = typename tuple_transform<Tuple,UnaryMetaFunction>::type;
@@ -120,13 +133,21 @@ namespace nstd::testing
 
 	// tuple_first_n_t
 	
-	// static_assert(std::is_same_v<void, tuple_first_n_t<n,std::tuple<>>>);
-#define tuple_first_n_t__returns_void_for_empty_tuple(dummy, n, unused)								\
-	static_assert(std::is_same_v<void, tuple_first_n_t<n,std::tuple<>>>);
+	// static_assert(std::is_same_v<std::tuple<>, tuple_first_n_t<0,std::tuple<T0,...,TN>>>);
+#define tuple_first_n_t__returns_empty_tuple_for_n_zero(dummy, n, unused)							\
+	static_assert(std::is_same_v<std::tuple<>, tuple_first_n_t<0,std::tuple<BOOST_PP_ENUM_PARAMS(n,UT)>>>);
 	// Test operations for 1 <= N <= 15
-	// eg. static_assert(std::is_same_v<void, tuple_first_n_t<n,std::tuple<>>>);
-	BOOST_PP_REPEAT(16, tuple_first_n_t__returns_void_for_empty_tuple, ~);
-#undef tuple_first_n_t__returns_void_for_empty_tuple
+	// eg. static_assert(std::is_same_v<std::tuple<>, tuple_first_n_t<n,std::tuple<>>>);
+	BOOST_PP_REPEAT(16, tuple_first_n_t__returns_empty_tuple_for_n_zero, ~);
+#undef tuple_first_n_t__returns_empty_tuple_for_zero
+
+	// static_assert(std::is_same_v<invalid_argument, tuple_first_n_t<n,std::tuple<>>>);
+#define tuple_first_n_t__returns_invalid_argument_for_empty_tuple(dummy, n, unused)					\
+	static_assert(std::is_same_v<tuple_first_n_invalid_argument, tuple_first_n_t<n,std::tuple<>>>);
+	// Test operations for 1 <= N <= 15
+	// eg. static_assert(std::is_same_v<invalid_argument, tuple_first_n_t<n,std::tuple<>>>);
+	BOOST_PP_REPEAT_FROM_TO(1, 16, tuple_first_n_t__returns_invalid_argument_for_empty_tuple, ~);
+#undef tuple_first_n_t__returns_invalid_argument_for_empty_tuple
 	
 	// static_assert(std::is_same_v<std::tuple<T0,..,Tn>, tuple_first_n_t<1..N,std::tuple<T0,..,Tn,Tn+1>>>);
 #define tuple_first_n_t__returns_first_n_types(dummy, n, unused)									\
@@ -139,13 +160,22 @@ namespace nstd::testing
 
 	// tuple_last_n_t
 
-	// static_assert(std::is_same_v<void, tuple_last_n_t<n,std::tuple<>>>);
-#define tuple_last_n_t__returns_void_for_empty_tuple(dummy, n, unused)								\
-	static_assert(std::is_same_v<void, tuple_last_n_t<n,std::tuple<>>>);
+	// static_assert(std::is_same_v<std::tuple<>, tuple_last_n_t<n,std::tuple<>>>);
+#define tuple_last_n_t__returns_empty_tuple_for_n_zero(dummy, n, unused)								\
+	static_assert(std::is_same_v<std::tuple<>, tuple_last_n_t<0,std::tuple<BOOST_PP_ENUM_PARAMS(n,UT)>>>);
 	// Test operations for 1 <= N <= 15
-	// eg. static_assert(std::is_same_v<void, tuple_last_n_t<n,std::tuple<>>>);
-	BOOST_PP_REPEAT(16, tuple_last_n_t__returns_void_for_empty_tuple, ~);
-#undef tuple_last_n_t__returns_void_for_empty_tuple
+	// eg. static_assert(std::is_same_v<std::tuple<>, tuple_last_n_t<n,std::tuple<>>>);
+	BOOST_PP_REPEAT(16, tuple_last_n_t__returns_empty_tuple_for_n_zero, ~);
+#undef tuple_last_n_t__returns_empty_tuple_for_n_zero
+	
+	// static_assert(std::is_same_v<invalid_argument, tuple_last_n_t<n,std::tuple<>>>);
+#define tuple_last_n_t__returns_invalid_argument_for_empty_tuple(dummy, n, unused)								\
+	static_assert(std::is_same_v<tuple_reverse_invalid_argument, tuple_last_n_t<n,std::tuple<>>>);
+	
+	// Test operations for 1 <= N <= 15
+	// eg. static_assert(std::is_same_v<invalid_argument, tuple_last_n_t<n,std::tuple<>>>);
+	BOOST_PP_REPEAT_FROM_TO(1,16, tuple_last_n_t__returns_invalid_argument_for_empty_tuple, ~);
+#undef tuple_last_n_t__returns_invalid_argument_for_empty_tuple
 	
 	// static_assert(std::is_same_v<std::tuple<T1,..,Tn,Tn+1>, tuple_last_n_t<1..N,std::tuple<T0,..,Tn,Tn+1>>>);
 #define tuple_last_n_t__returns_last_n_types(dummy, n, unused)										\
