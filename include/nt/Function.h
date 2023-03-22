@@ -1,6 +1,6 @@
 #pragma once
 #include "library/core.Platform.h"
-#include "core/CallAdapter.h"
+#include "core/SignatureAdapter.h"
 #include "nt/NtStatus.h"
 
 namespace core::nt

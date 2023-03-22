@@ -1,6 +1,6 @@
 #pragma once
 #include "library/core.Platform.h"
-#include "core/CallAdapter.h"
+#include "core/SignatureAdapter.h"
 #include "win/LResult.h"
 
 namespace core::win
