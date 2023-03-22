@@ -30,6 +30,7 @@
 #include "meta/Settings.h"
 #include "meta/TypeTraits.h"
 #include "meta/Concepts.h"
+#include "meta/IndexedTuple.h"
 
 #include "core/Exceptions.h"
 #include "core/ThrowIfEmpty.h"
