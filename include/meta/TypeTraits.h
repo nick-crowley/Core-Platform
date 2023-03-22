@@ -2,6 +2,7 @@
 #ifndef CorePlatform_h_included
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
+#include "nstd/experimental/Metafunc.h"
 #include "../src/StdLibrary.h"
 
 // clang-format off
@@ -33,6 +34,17 @@ namespace core::meta
 
     template <typename T, typename... U>
     constexpr bool is_any_of_v = (std::is_same_v<T,U> || ...);
+
+	
+	//! @brief	Query whether type is function-pointer
+	template <typename T>
+	metafunc is_function_pointer : std::false_type {};
+
+	template <typename R, typename... Params>
+	metafunc is_function_pointer<R(*)(Params...)> : std::true_type {};
+	
+	template <typename T>
+	bool constexpr is_function_pointer_v = is_function_pointer<T>::value;
 
 
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
