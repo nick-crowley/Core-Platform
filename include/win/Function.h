@@ -14,28 +14,22 @@ namespace core::win
 			ThrowingLResult r = (*fx)(std::forward<Parameters>(args)...);
 			return static_cast<ReturnType>(r);
 		};
-
-		return core::detail::makeCallAdapter<NumResults, 
-		                                     sizeof...(Parameters), 
-		                                     decltype(callable), 
-		                                     Parameters...>(std::move(callable));
+		
+		return core::detail::adaptSignature<NumResults>(std::move(callable));
 	}
 	
 	template <unsigned NumResults = 0, typename... Parameters>
 	auto constexpr 
 	function(::BOOL (__stdcall *fx)(Parameters...)) noexcept
 	{	
-		auto const callable = [fx](Parameters... args) -> BOOL
+		auto const callable = [fx](Parameters... args) -> ::BOOL
 		{
-			if (BOOL r = (*fx)(std::forward<Parameters>(args)...); r == FALSE)
+			if (::BOOL r = (*fx)(std::forward<Parameters>(args)...); r == FALSE)
 				LastError{}.throwAlways();
 			else
 				return r;
 		};
 
-		return core::detail::makeCallAdapter<NumResults, 
-		                                     sizeof...(Parameters), 
-		                                     decltype(callable), 
-		                                     Parameters...>(std::move(callable));
+		return core::detail::adaptSignature<NumResults>(std::move(callable));
 	}
 }  // namespace core::win

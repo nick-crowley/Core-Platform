@@ -16,10 +16,7 @@ namespace core::nt
 			else
 				return r;
 		};
-
-		return ::detail::makeCallAdapter<NumResults, 
-		                                 sizeof...(Parameters), 
-		                                 decltype(callable), 
-		                                 Parameters...>(std::move(callable));
+		
+		return core::detail::adaptSignature<NumResults>(std::move(callable));
 	}
 }  // namespace core::nt
