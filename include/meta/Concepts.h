@@ -41,6 +41,44 @@ namespace core::meta
 	template <typename T, typename Return, typename... Params>
 	concept Invocable_r = std::is_invocable_r_v<Return,T,Params...>;
 
+	//! @brief	Ensure type is a function-object/lambda (of any signature)
+	template <typename T>
+	concept FunctionObject = std::is_class_v<T> && !std::is_abstract_v<T> && requires {
+		T::operator();
+		// BUG: meta::FunctionObject can't support templated lambdas or overloaded function-call operators
+	};
+	
+	//! @brief	Ensure type is callable target (of any signature)
+	template <typename T>
+	concept CallableTarget = FunctionObject<T>
+		|| std::is_member_function_pointer_v<T>
+		|| std::is_function_v<T>
+		|| is_function_pointer_v<T>;
+	
 	template <typename T>
 	concept RealNumber = std::is_arithmetic_v<T> && !Character<T>;
+}
+
+namespace core::meta::testing {
+	struct TestClass {};
+	static_assert(FunctionObject<decltype([](){})>);
+	static_assert(FunctionObject<decltype([](){ return 42; })>);
+	static_assert(FunctionObject<decltype([](int){})>);
+	static_assert(!FunctionObject<void()>);
+	static_assert(!FunctionObject<void(int)>);
+	static_assert(!FunctionObject<void(*)()>);
+	static_assert(!FunctionObject<void(TestClass::*)()>);
+	static_assert(!FunctionObject<void(TestClass::*)(int)>);
+	static_assert(!FunctionObject<void(TestClass::*)(int) const>);
+	static_assert(CallableTarget<void()>);
+	static_assert(CallableTarget<void(int)>);
+	static_assert(CallableTarget<void(*)()>);
+	static_assert(CallableTarget<void(TestClass::*)()>);
+	static_assert(CallableTarget<void(TestClass::*)(int)>);
+	static_assert(CallableTarget<void(TestClass::*)(int) const>);
+	static_assert(CallableTarget<decltype([](){})>);
+	static_assert(CallableTarget<decltype([](){ return 42; })>);
+	static_assert(CallableTarget<decltype([](int){})>);
+	static_assert(!CallableTarget<TestClass>);
+	static_assert(!CallableTarget<int>);
 }
