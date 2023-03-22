@@ -13,6 +13,7 @@
 #include "nstd/experimental/implicit.h"
 #include "nstd/experimental/intern.h"
 #include "nstd/experimental/lambda.h"
+#include "nstd/experimental/metafunc.h"
 #include "nstd/experimental/nameof.h"
 #include "nstd/experimental/satisfies.h"
 #include "nstd/experimental/lengthof.h"
