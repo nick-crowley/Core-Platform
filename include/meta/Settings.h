@@ -18,5 +18,5 @@ namespace core::meta
 	inline Settings = {};
 	
 	//! @brief	Initializer for compile-time meta-data (non-standard)
-#	define constdata	template <> constexpr inline
+	#define metadata    template <> constexpr inline
 }

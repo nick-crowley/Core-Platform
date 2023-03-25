@@ -63,10 +63,10 @@ enum class GenericRight : access_mask_t {
 
 namespace core::meta 
 {
-	constdata bool Settings<bitwise_enum, core::win::GenericRight> = true;
-	constdata bool Settings<compatible_enum, core::win::GenericRight, core::win::CommonRight> = true;
-	constdata bool Settings<compatible_enum, core::win::GenericRight, core::win::StandardRight> = true;
-	constdata bool Settings<compatible_enum, core::win::GenericRight, core::win::KeyRight> = true;
+	metadata bool Settings<bitwise_enum, core::win::GenericRight> = true;
+	metadata bool Settings<compatible_enum, core::win::GenericRight, core::win::CommonRight> = true;
+	metadata bool Settings<compatible_enum, core::win::GenericRight, core::win::StandardRight> = true;
+	metadata bool Settings<compatible_enum, core::win::GenericRight, core::win::KeyRight> = true;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
