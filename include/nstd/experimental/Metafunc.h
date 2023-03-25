@@ -2,6 +2,7 @@
 
 namespace nstd
 {	
-#define metafunc struct   /* meta-function definition (non-standard) */
+	//! @brief	Meta-function definition (non-standard) 
+#	define metafunc struct 
 
 } // namespace nstd

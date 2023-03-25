@@ -2,7 +2,7 @@
 
 namespace nstd
 {	
-
-#define abstract       = 0 /*non-standard*/
+	//! @brief	Abstract method specifier (non-standard) 
+#	define abstract       = 0 
 
 } // namespace nstd

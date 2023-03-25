@@ -8,6 +8,7 @@
 
 namespace nstd
 {
+	//! @brief	Unconditionally executes a delegate upon destruction
 	class FinalAction
 	{
 		std::function<void()> m_action;
@@ -28,7 +29,7 @@ namespace nstd
 			NotMovable);
 	};
 
-	//! @brief	Execute a block of code on normal/abnormal exit (non-standard)
+	//! @brief	Execute a block of code on normal/abnormal function exit (non-standard)
 	//! @param	...		[optional] Lambda capture-mode
 #	define final_act(...)		\
 		::nstd::FinalAction const BOOST_PP_CAT(_finalAct,__COUNTER__) = [__VA_ARGS__]()

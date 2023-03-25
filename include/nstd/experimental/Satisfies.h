@@ -101,6 +101,11 @@ namespace nstd
 	)
 
 //! @brief	Expands supported concepts into defaulted/deleted method declarations
+//! 
+//! @param	className   Class name (without namespace qualifier)
+//! @param	concept     First named-requirement to declare as defaulted or deleted
+//! @param	nextConcept [optional] Second named-requirement to declare as defaulted or deleted
+//! @param	    ...     [optional] Third named-requirement... and so on
 #define satisfies(className, ...)		\
 	__VA_OPT__(_expandConceptSequence(className,BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__)))
 

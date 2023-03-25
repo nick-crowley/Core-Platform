@@ -3,6 +3,7 @@
 namespace nstd
 {	
 
-#define intern       static /* internal linkage (non-standard)*/
+	//! @brief	Symbol has internal linkage (non-standard)
+#	define intern       static
 
 } // namespace nstd
