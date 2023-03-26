@@ -9,6 +9,11 @@
 
 #include "../../src/library/PlatformExport.h"
 
+#include "meta/TagTypes.h"
+#include "meta/Settings.h"
+#include "meta/Concepts.h"
+#include "nstd/TypeTraits.h"
+
 #include "nstd/experimental/abstract.h"
 #include "nstd/experimental/implicit.h"
 #include "nstd/experimental/intern.h"
@@ -26,11 +31,6 @@
 #include "nstd/SizeOf.h"
 #include "nstd/SourceLocation.h"
 #include "nstd/Tuple.h"
-#include "nstd/TypeTraits.h"
-
-#include "meta/TagTypes.h"
-#include "meta/Settings.h"
-#include "meta/Concepts.h"
 
 #include "core/Exceptions.h"
 #include "core/ThrowIfEmpty.h"
