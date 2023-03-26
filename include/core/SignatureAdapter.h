@@ -9,12 +9,12 @@ namespace core::detail
 	* @tparam	ReturnSequence		Indexed sequence of types returned by function
 	* @tparam	ParamSequence		Indexed sequence of types used by function's parameter list 
 	*/
-	template <meta::AnyIndexedTuple ReturnSequence, meta::AnyIndexedTuple ParamSequence>
+	template <nstd::AnyIndexedTuple ReturnSequence, nstd::AnyIndexedTuple ParamSequence>
 	struct FunctionSignature {};
 
 	//! @brief	Function signature type represented as pair of type-lists
 	template <typename Result, typename... Params>
-	using FunctionSignature_t = FunctionSignature<meta::MakeIndexedTuple<Result>, meta::MakeIndexedTuple<Params...>>;
+	using FunctionSignature_t = FunctionSignature<nstd::MakeIndexedTuple<Result>, nstd::MakeIndexedTuple<Params...>>;
 
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 	* @brief	Method return-type(s) and parameter-types represented as type-lists
@@ -23,12 +23,12 @@ namespace core::detail
 	* @tparam	ReturnSequence		Indexed sequence of types returned by method
 	* @tparam	ParamSequence		Indexed sequence of types used by method's parameter list 
 	*/
-	template <typename Class, meta::AnyIndexedTuple ReturnSequence, meta::AnyIndexedTuple ParamSequence>
+	template <typename Class, nstd::AnyIndexedTuple ReturnSequence, nstd::AnyIndexedTuple ParamSequence>
 	struct MethodSignature {};
 
 	//! @brief	Method signature type represented as pair of type-lists
 	template <typename Class, typename Result, typename... Params>
-	using MethodSignature_t = MethodSignature<Class, meta::MakeIndexedTuple<Result>, meta::MakeIndexedTuple<Params...>>;
+	using MethodSignature_t = MethodSignature<Class, nstd::MakeIndexedTuple<Result>, nstd::MakeIndexedTuple<Params...>>;
 }
 namespace core::meta 
 {
@@ -36,14 +36,14 @@ namespace core::meta
 	template <typename T>
 	metafunc is_function_signature : std::false_type {};
 
-	template <meta::AnyIndexedTuple R, meta::AnyIndexedTuple P>
+	template <nstd::AnyIndexedTuple R, nstd::AnyIndexedTuple P>
 	metafunc is_function_signature<core::detail::FunctionSignature<R,P>> : std::true_type {};
 
 	//! @brief	Query whether type is method signature
 	template <typename T>
 	metafunc is_method_signature : std::false_type {};
 
-	template <typename C, meta::AnyIndexedTuple R, meta::AnyIndexedTuple P>
+	template <typename C, nstd::AnyIndexedTuple R, nstd::AnyIndexedTuple P>
 	metafunc is_method_signature<core::detail::MethodSignature<C,R,P>> : std::true_type {};
 	
 	//! @brief	Ensure type is function signature
@@ -70,7 +70,7 @@ namespace core::detail
 	template <meta::MethodSignature M>
 	metafunc StripMethodSignature;
 	
-	template <typename Class, meta::AnyIndexedTuple ReturnSequence, meta::AnyIndexedTuple ParamSequence>
+	template <typename Class, nstd::AnyIndexedTuple ReturnSequence, nstd::AnyIndexedTuple ParamSequence>
 	metafunc StripMethodSignature<MethodSignature<Class,ReturnSequence,ParamSequence>> {
 		using type = FunctionSignature<ReturnSequence,ParamSequence>;
 	};
@@ -95,16 +95,16 @@ namespace core::detail
 	template <typename... Params>
 	metafunc DeduceSignature<void(Params...)> { 
 		using type = FunctionSignature<
-			meta::EmptyIndexedTuple,
-			meta::MakeIndexedTuple<Params...>
+			nstd::EmptyIndexedTuple,
+			nstd::MakeIndexedTuple<Params...>
 		>;
 	};
 
 	template <typename R, typename... Params>
 	metafunc DeduceSignature<R(Params...)> { 
 		using type = FunctionSignature<
-			meta::UnaryIndexedTuple<R>,
-			meta::MakeIndexedTuple<Params...>
+			nstd::UnaryIndexedTuple<R>,
+			nstd::MakeIndexedTuple<Params...>
 		>;
 	};
 
@@ -117,8 +117,8 @@ namespace core::detail
 	metafunc DeduceSignature<void(T::*)(Params...)> { 
 		using type = MethodSignature<
 			T,
-			meta::EmptyIndexedTuple,
-			meta::MakeIndexedTuple<Params...>
+			nstd::EmptyIndexedTuple,
+			nstd::MakeIndexedTuple<Params...>
 		>;
 	};
 
@@ -126,8 +126,8 @@ namespace core::detail
 	metafunc DeduceSignature<void(T::*)(Params...) const> { 
 		using type = MethodSignature<
 			T const,
-			meta::EmptyIndexedTuple,
-			meta::MakeIndexedTuple<Params...>
+			nstd::EmptyIndexedTuple,
+			nstd::MakeIndexedTuple<Params...>
 		>;
 	};
 	
@@ -135,8 +135,8 @@ namespace core::detail
 	metafunc DeduceSignature<R(T::*)(Params...)> { 
 		using type = MethodSignature<
 			T,
-			meta::UnaryIndexedTuple<R>,
-			meta::MakeIndexedTuple<Params...>
+			nstd::UnaryIndexedTuple<R>,
+			nstd::MakeIndexedTuple<Params...>
 		>;
 	};
 
@@ -144,8 +144,8 @@ namespace core::detail
 	metafunc DeduceSignature<R(T::*)(Params...) const> { 
 		using type = MethodSignature<
 			T const,
-			meta::UnaryIndexedTuple<R>,
-			meta::MakeIndexedTuple<Params...>
+			nstd::UnaryIndexedTuple<R>,
+			nstd::MakeIndexedTuple<Params...>
 		>;
 	};
 
@@ -184,8 +184,8 @@ namespace core::detail
 	template <typename CallableTarget, typename ParamTuple, size_t... ParamIdx>
 	struct SignatureAdapter<CallableTarget, 
 	                        FunctionSignature<
-	                            meta::EmptyIndexedTuple,
-	                            meta::IndexedTuple<ParamTuple,std::index_sequence<ParamIdx...>>
+	                            nstd::EmptyIndexedTuple,
+	                            nstd::IndexedTuple<ParamTuple,std::index_sequence<ParamIdx...>>
 	                       >>
 	{
 		CallableTarget	Callable;
@@ -201,8 +201,8 @@ namespace core::detail
 	template <typename CallableTarget, typename Result, typename ParamTuple, size_t... ParamIdx>
 	struct SignatureAdapter<CallableTarget, 
 	                        FunctionSignature<
-	                            meta::UnaryIndexedTuple<Result>,
-	                            meta::IndexedTuple<ParamTuple,std::index_sequence<ParamIdx...>>
+	                            nstd::UnaryIndexedTuple<Result>,
+	                            nstd::IndexedTuple<ParamTuple,std::index_sequence<ParamIdx...>>
 	                       >>
 	{
 		CallableTarget	Callable;
@@ -220,8 +220,8 @@ namespace core::detail
 	template <typename CallableTarget, typename ResultTuple, size_t... ResultIdx, typename ParamTuple, size_t... ParamIdx>
 	struct SignatureAdapter<CallableTarget, 
 	                        FunctionSignature<
-	                            meta::IndexedTuple<ResultTuple,std::index_sequence<ResultIdx...>>,
-	                            meta::IndexedTuple<ParamTuple,std::index_sequence<ParamIdx...>>
+	                            nstd::IndexedTuple<ResultTuple,std::index_sequence<ResultIdx...>>,
+	                            nstd::IndexedTuple<ParamTuple,std::index_sequence<ParamIdx...>>
 	                       >>
 	{
 		CallableTarget	Callable;
@@ -240,8 +240,8 @@ namespace core::detail
 	struct SignatureAdapter<CallableTarget, 
 	                        MethodSignature<
 	                            Class,
-	                            meta::EmptyIndexedTuple,
-	                            meta::IndexedTuple<ParamTuple,std::index_sequence<ParamIdx...>>
+	                            nstd::EmptyIndexedTuple,
+	                            nstd::IndexedTuple<ParamTuple,std::index_sequence<ParamIdx...>>
 	                       >>
 	{
 		CallableTarget	Callable;
@@ -259,8 +259,8 @@ namespace core::detail
 	struct SignatureAdapter<CallableTarget, 
 	                        MethodSignature<
 	                            Class,
-	                            meta::UnaryIndexedTuple<Result>,
-	                            meta::IndexedTuple<ParamTuple,std::index_sequence<ParamIdx...>>
+	                            nstd::UnaryIndexedTuple<Result>,
+	                            nstd::IndexedTuple<ParamTuple,std::index_sequence<ParamIdx...>>
 	                       >>
 	{
 		CallableTarget	Callable;
@@ -279,8 +279,8 @@ namespace core::detail
 	struct SignatureAdapter<CallableTarget, 
 	                        MethodSignature<
 	                            Class,
-	                            meta::IndexedTuple<ResultTuple,std::index_sequence<ResultIdx...>>,
-	                            meta::IndexedTuple<ParamTuple,std::index_sequence<ParamIdx...>>
+	                            nstd::IndexedTuple<ResultTuple,std::index_sequence<ResultIdx...>>,
+	                            nstd::IndexedTuple<ParamTuple,std::index_sequence<ParamIdx...>>
 	                       >>
 	{
 		CallableTarget	Callable;
@@ -311,12 +311,12 @@ namespace core::detail
 	metafunc AdaptedSignature<0,
 	                          FunctionSignature<
 	                              ResultSequence,
-	                              meta::MakeIndexedTuple<Params...>
+	                              nstd::MakeIndexedTuple<Params...>
 	                         >> 
 	{
 		using type = FunctionSignature<
-			meta::EmptyIndexedTuple,
-			meta::MakeIndexedTuple<Params...>
+			nstd::EmptyIndexedTuple,
+			nstd::MakeIndexedTuple<Params...>
 		>;
 	};
 
@@ -325,12 +325,12 @@ namespace core::detail
 	metafunc AdaptedSignature<1,
 	                          FunctionSignature<
 	                              ResultSequence,
-	                              meta::MakeIndexedTuple<Params..., FinalParam>
+	                              nstd::MakeIndexedTuple<Params..., FinalParam>
 	                         >> 
 	{
 		using type = FunctionSignature<
-			meta::UnaryIndexedTuple<std::remove_pointer_t<FinalParam>>,
-			meta::MakeIndexedTuple<Params...>
+			nstd::UnaryIndexedTuple<std::remove_pointer_t<FinalParam>>,
+			nstd::MakeIndexedTuple<Params...>
 		>;
 	};
 
@@ -339,7 +339,7 @@ namespace core::detail
 	metafunc AdaptedSignature<NumResults,
 	                          FunctionSignature<
 	                              ResultSequence,
-	                              meta::MakeIndexedTuple<Params...>
+	                              nstd::MakeIndexedTuple<Params...>
 	                         >> 
 	{
 		static_assert(NumResults <= sizeof...(Params));
@@ -353,8 +353,8 @@ namespace core::detail
 		>;
 		
 		using type = FunctionSignature<
-			meta::IndexedTuple<result_tuple_t, std::make_index_sequence<NumResults>>,
-			meta::IndexedTuple<params_tuple_t, std::make_index_sequence<NumArguments>>
+			nstd::IndexedTuple<result_tuple_t, std::make_index_sequence<NumResults>>,
+			nstd::IndexedTuple<params_tuple_t, std::make_index_sequence<NumArguments>>
 		>;
 	};
 
@@ -391,70 +391,70 @@ namespace core::detail::testing {
 	// Functions
 	static_assert(std::is_same_v<
 		DeduceSignature_t<void ()>,
-		FunctionSignature<meta::EmptyIndexedTuple, meta::EmptyIndexedTuple>
+		FunctionSignature<nstd::EmptyIndexedTuple, nstd::EmptyIndexedTuple>
 	>);
 	
 	static_assert(std::is_same_v<
 		DeduceSignature_t<int ()>,
-		FunctionSignature<meta::UnaryIndexedTuple<int>, meta::EmptyIndexedTuple>
+		FunctionSignature<nstd::UnaryIndexedTuple<int>, nstd::EmptyIndexedTuple>
 	>);
 
 	static_assert(std::is_same_v<
 		DeduceSignature_t<void (int)>,
-		FunctionSignature<meta::EmptyIndexedTuple, meta::MakeIndexedTuple<int>>
+		FunctionSignature<nstd::EmptyIndexedTuple, nstd::MakeIndexedTuple<int>>
 	>);
 
 	static_assert(std::is_same_v<
 		DeduceSignature_t<void (int,long)>,
-		FunctionSignature<meta::EmptyIndexedTuple, meta::MakeIndexedTuple<int,long>>
+		FunctionSignature<nstd::EmptyIndexedTuple, nstd::MakeIndexedTuple<int,long>>
 	>);
 	
 	// Function pointers
 	static_assert(std::is_same_v<
 		DeduceSignature_t<void(*)()>,
-		FunctionSignature<meta::EmptyIndexedTuple, meta::EmptyIndexedTuple>
+		FunctionSignature<nstd::EmptyIndexedTuple, nstd::EmptyIndexedTuple>
 	>);
 	
 	static_assert(std::is_same_v<
 		DeduceSignature_t<int(*)()>,
-		FunctionSignature<meta::UnaryIndexedTuple<int>, meta::EmptyIndexedTuple>
+		FunctionSignature<nstd::UnaryIndexedTuple<int>, nstd::EmptyIndexedTuple>
 	>);
 
 	static_assert(std::is_same_v<
 		DeduceSignature_t<void(*)(int)>,
-		FunctionSignature<meta::EmptyIndexedTuple, meta::MakeIndexedTuple<int>>
+		FunctionSignature<nstd::EmptyIndexedTuple, nstd::MakeIndexedTuple<int>>
 	>);
 
 	static_assert(std::is_same_v<
 		DeduceSignature_t<void(*)(int,long)>,
-		FunctionSignature<meta::EmptyIndexedTuple, meta::MakeIndexedTuple<int,long>>
+		FunctionSignature<nstd::EmptyIndexedTuple, nstd::MakeIndexedTuple<int,long>>
 	>);
 	
 	// Method pointers
 	struct TestClass;
 	static_assert(std::is_same_v<
 		DeduceSignature_t<void(TestClass::*)()>,
-		MethodSignature<TestClass, meta::EmptyIndexedTuple, meta::EmptyIndexedTuple>
+		MethodSignature<TestClass, nstd::EmptyIndexedTuple, nstd::EmptyIndexedTuple>
 	>);
 	
 	static_assert(std::is_same_v<
 		DeduceSignature_t<int(TestClass::*)()>,
-		MethodSignature<TestClass, meta::UnaryIndexedTuple<int>, meta::EmptyIndexedTuple>
+		MethodSignature<TestClass, nstd::UnaryIndexedTuple<int>, nstd::EmptyIndexedTuple>
 	>);
 
 	static_assert(std::is_same_v<
 		DeduceSignature_t<void(TestClass::*)(int)>,
-		MethodSignature<TestClass, meta::EmptyIndexedTuple, meta::MakeIndexedTuple<int>>
+		MethodSignature<TestClass, nstd::EmptyIndexedTuple, nstd::MakeIndexedTuple<int>>
 	>);
 
 	static_assert(std::is_same_v<
 		DeduceSignature_t<void(TestClass::*)(int,long)>,
-		MethodSignature<TestClass, meta::EmptyIndexedTuple, meta::MakeIndexedTuple<int,long>>
+		MethodSignature<TestClass, nstd::EmptyIndexedTuple, nstd::MakeIndexedTuple<int,long>>
 	>);
 	
 	static_assert(std::is_same_v<
 		DeduceSignature_t<void(TestClass::*)(int) const>,
-		MethodSignature<TestClass const, meta::EmptyIndexedTuple, meta::MakeIndexedTuple<int>>
+		MethodSignature<TestClass const, nstd::EmptyIndexedTuple, nstd::MakeIndexedTuple<int>>
 	>);
 	
 	// Function Object
@@ -463,7 +463,7 @@ namespace core::detail::testing {
 	};
 	static_assert(std::is_same_v<
 		DeduceSignature_t<VoidTestFunctor>,
-		FunctionSignature<meta::EmptyIndexedTuple, meta::EmptyIndexedTuple>
+		FunctionSignature<nstd::EmptyIndexedTuple, nstd::EmptyIndexedTuple>
 	>);
 
 	struct NullaryTestFunctor {
@@ -471,7 +471,7 @@ namespace core::detail::testing {
 	};
 	static_assert(std::is_same_v<
 		DeduceSignature_t<NullaryTestFunctor>,
-		FunctionSignature<meta::UnaryIndexedTuple<int>, meta::EmptyIndexedTuple>
+		FunctionSignature<nstd::UnaryIndexedTuple<int>, nstd::EmptyIndexedTuple>
 	>);
 	
 	struct UnaryTestFunctor {
@@ -479,7 +479,7 @@ namespace core::detail::testing {
 	};
 	static_assert(std::is_same_v<
 		DeduceSignature_t<UnaryTestFunctor>,
-		FunctionSignature<meta::UnaryIndexedTuple<int>, meta::UnaryIndexedTuple<int>>
+		FunctionSignature<nstd::UnaryIndexedTuple<int>, nstd::UnaryIndexedTuple<int>>
 	>);
 	
 	struct BinaryTestFunctor {
@@ -487,51 +487,51 @@ namespace core::detail::testing {
 	};
 	static_assert(std::is_same_v<
 		DeduceSignature_t<BinaryTestFunctor>,
-		FunctionSignature<meta::EmptyIndexedTuple, meta::MakeIndexedTuple<int,long>>
+		FunctionSignature<nstd::EmptyIndexedTuple, nstd::MakeIndexedTuple<int,long>>
 	>);
 #pragma endregion
 	
 #pragma region core::detail::AdaptedSignature Unit Tests
 	// Test: Pre-existing return type, if present, is replaced with void
 	static_assert(std::is_same_v<
-		AdaptedSignature_t<0, FunctionSignature<meta::UnaryIndexedTuple<unsigned>, meta::MakeIndexedTuple<int>>>,
-		FunctionSignature<meta::EmptyIndexedTuple, meta::MakeIndexedTuple<int>>
+		AdaptedSignature_t<0, FunctionSignature<nstd::UnaryIndexedTuple<unsigned>, nstd::MakeIndexedTuple<int>>>,
+		FunctionSignature<nstd::EmptyIndexedTuple, nstd::MakeIndexedTuple<int>>
 	>);
 
 	// Test: When N == 0 and return-type is void, signature is unchanged
 	static_assert(std::is_same_v<
-		AdaptedSignature_t<0, FunctionSignature<meta::EmptyIndexedTuple, meta::MakeIndexedTuple<int,long>>>,
-		FunctionSignature<meta::EmptyIndexedTuple, meta::MakeIndexedTuple<int,long>>
+		AdaptedSignature_t<0, FunctionSignature<nstd::EmptyIndexedTuple, nstd::MakeIndexedTuple<int,long>>>,
+		FunctionSignature<nstd::EmptyIndexedTuple, nstd::MakeIndexedTuple<int,long>>
 	>);
 	
 	// Test: When N == 1, the last parameter is removed, transformed, and becomes the return type
 	static_assert(std::is_same_v<
-		AdaptedSignature_t<1, FunctionSignature<meta::EmptyIndexedTuple, meta::MakeIndexedTuple<int,long*>>>,
-		FunctionSignature<meta::UnaryIndexedTuple<long>, meta::MakeIndexedTuple<int>>
+		AdaptedSignature_t<1, FunctionSignature<nstd::EmptyIndexedTuple, nstd::MakeIndexedTuple<int,long*>>>,
+		FunctionSignature<nstd::UnaryIndexedTuple<long>, nstd::MakeIndexedTuple<int>>
 	>);
 	
 	// Test: When N == 1, transforming the last parameter replaces any pre-existing return type
 	static_assert(std::is_same_v<
-		AdaptedSignature_t<1, FunctionSignature<meta::UnaryIndexedTuple<bool>, meta::MakeIndexedTuple<int,long*>>>,
-		FunctionSignature<meta::UnaryIndexedTuple<long>, meta::MakeIndexedTuple<int>>
+		AdaptedSignature_t<1, FunctionSignature<nstd::UnaryIndexedTuple<bool>, nstd::MakeIndexedTuple<int,long*>>>,
+		FunctionSignature<nstd::UnaryIndexedTuple<long>, nstd::MakeIndexedTuple<int>>
 	>);
 	
 	// Test: When N > 1, the final N parameters are removed, transformed, and become a return type tuple
 	static_assert(std::is_same_v<
-		AdaptedSignature_t<2, FunctionSignature<meta::EmptyIndexedTuple, meta::MakeIndexedTuple<int,long*,long*>>>,
-		FunctionSignature<meta::MakeIndexedTuple<long,long>, meta::MakeIndexedTuple<int>>
+		AdaptedSignature_t<2, FunctionSignature<nstd::EmptyIndexedTuple, nstd::MakeIndexedTuple<int,long*,long*>>>,
+		FunctionSignature<nstd::MakeIndexedTuple<long,long>, nstd::MakeIndexedTuple<int>>
 	>);
 	
 	// Test: As above
 	static_assert(std::is_same_v<
-		AdaptedSignature_t<3, FunctionSignature<meta::EmptyIndexedTuple, meta::MakeIndexedTuple<float,long*,float*,char**>>>,
-		FunctionSignature<meta::MakeIndexedTuple<long,float,char*>, meta::MakeIndexedTuple<float>>
+		AdaptedSignature_t<3, FunctionSignature<nstd::EmptyIndexedTuple, nstd::MakeIndexedTuple<float,long*,float*,char**>>>,
+		FunctionSignature<nstd::MakeIndexedTuple<long,float,char*>, nstd::MakeIndexedTuple<float>>
 	>);
 	
 	// Test: When N > 1, transforming the final parameters replaces any pre-existing return type
 	static_assert(std::is_same_v<
-		AdaptedSignature_t<2, FunctionSignature<meta::UnaryIndexedTuple<float>, meta::MakeIndexedTuple<int,long*,long*>>>,
-		FunctionSignature<meta::MakeIndexedTuple<long,long>, meta::MakeIndexedTuple<int>>
+		AdaptedSignature_t<2, FunctionSignature<nstd::UnaryIndexedTuple<float>, nstd::MakeIndexedTuple<int,long*,long*>>>,
+		FunctionSignature<nstd::MakeIndexedTuple<long,long>, nstd::MakeIndexedTuple<int>>
 	>);
 	
 #pragma endregion
