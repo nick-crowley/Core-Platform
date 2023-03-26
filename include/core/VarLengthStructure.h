@@ -123,7 +123,7 @@ namespace core
 
 #if BUGGED
 		//! @brief	Implicit conversion to pointer-to-mutable
-		template <typename Self, meta::AnyOf<value_type,void> Output>
+		template <typename Self, nstd::AnyOf<value_type,void> Output>
 		implicit operator
 		nstd::mirror_cv_t<std::remove_reference_t<Self>,Output>*(this Self&& derived) {
 			return derived.m_object;

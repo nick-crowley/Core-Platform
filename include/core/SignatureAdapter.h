@@ -89,7 +89,7 @@ namespace core::detail
 	* @returns	core::detail::FunctionSignature<R,P> when @T is function, function-pointer, or function-object
 	* @returns	core::detail::MethodSignature<C,R,P> when @T is method
 	*/
-	template <meta::CallableTarget T>
+	template <nstd::CallableTarget T>
 	metafunc DeduceSignature; 
 	
 	template <typename... Params>
@@ -149,9 +149,9 @@ namespace core::detail
 		>;
 	};
 
-	template <meta::CallableTarget T>
+	template <nstd::CallableTarget T>
 	metafunc DeduceSignature {
-		static_assert(meta::FunctionObject<T>);
+		static_assert(nstd::FunctionObject<T>);
 
 		using type = StripMethodSignature_t<
 			typename DeduceSignature<decltype(&T::operator())
@@ -177,7 +177,7 @@ namespace core::detail
 	* @tparam	CallableTarget		Unadapted callable target
 	* @tparam	Signature			Signature of @c CallableTarget
 	*/
-	template <meta::CallableTarget CallableTarget, meta::AnySignature Signature = DeduceSignature_t<CallableTarget>>
+	template <nstd::CallableTarget CallableTarget, meta::AnySignature Signature = DeduceSignature_t<CallableTarget>>
 	struct SignatureAdapter;
 
 	// Specialization: Function without return-parameters
@@ -376,7 +376,7 @@ namespace core::detail
 	* 
 	* @param	fx	Callable target
 	*/
-	template <unsigned NumResults, meta::CallableTarget CallableTarget> 
+	template <unsigned NumResults, nstd::CallableTarget CallableTarget> 
 	SignatureAdapter<CallableTarget, AdaptedSignature_t<NumResults,DeduceSignature_t<CallableTarget>>> constexpr 
 	adaptSignature(CallableTarget fx) noexcept 
 	{

@@ -3,12 +3,12 @@
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
 #include "nstd/experimental/implicit.h"
-#include "meta/Concepts.h"
+#include "nstd/Concepts.h"
 #include "../src/PlatformSdk.h"
 
 namespace core::win
 {
-	template <meta::ExplicitlyConvertible<::DWORD> ValueType> 
+	template <nstd::ExplicitlyConvertible<::DWORD> ValueType> 
 	class DWord
 	{
 		ValueType const& m_value;

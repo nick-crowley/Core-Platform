@@ -4,12 +4,12 @@
 
 namespace core
 {
-	template <meta::Character Character, size_t Capacity>
+	template <nstd::Character Character, size_t Capacity>
 	class LiteralString
 	{
 		static_assert(Capacity != 0, "'Capacity' cannot be zero");
 
-		template <meta::Character, size_t>
+		template <nstd::Character, size_t>
 		friend class LiteralString;
 
 		using type = LiteralString<Character,Capacity>;
@@ -151,7 +151,7 @@ namespace core
 		}
 	};
 
-	template <meta::Character Character, size_t N>
+	template <nstd::Character Character, size_t N>
 	LiteralString(Character const (&)[N]) -> LiteralString<Character,N>;
 
 	inline namespace literals

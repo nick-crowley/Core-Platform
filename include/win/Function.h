@@ -5,7 +5,7 @@
 
 namespace core::win
 {
-	template <unsigned NumResults = 0, meta::AnyOf<::LONG,::LONG_PTR> ReturnType, typename... Parameters>
+	template <unsigned NumResults = 0, nstd::AnyOf<::LONG,::LONG_PTR> ReturnType, typename... Parameters>
 	auto constexpr 
 	function(ReturnType (__stdcall *fx)(Parameters...)) noexcept 
 	{	

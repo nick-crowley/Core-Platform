@@ -18,7 +18,7 @@ namespace core
 		return buffer;
 	}
 
-	template <unsigned Width = -1, meta::IntegralOrEnum Value>
+	template <unsigned Width = -1, nstd::IntegralOrEnum Value>
 	auto 
 	inline to_hexString(Value const n)
 	{

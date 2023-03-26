@@ -2,15 +2,15 @@
 #ifndef CorePlatform_h_included
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
-#include "meta/Concepts.h"
+#include "nstd/Concepts.h"
 #include "core/BitwiseEnum.h"
 
 namespace nstd
 {
-	template <core::meta::Enumeration E>
+	template <Enumeration E>
 	class bitset
 	{
-		template <core::meta::Enumeration>
+		template <Enumeration>
 		friend class bitset;
 
 		using type = bitset<E>;
@@ -32,7 +32,7 @@ namespace nstd
 			: Value{v}
 		{}
 		
-		template <core::meta::Enumeration E2>
+		template <Enumeration E2>
 		constexpr 
 		explicit(!core::meta::CompatibleEnumeration<E,E2>)
 		bitset(E2 const& v) noexcept
@@ -45,13 +45,13 @@ namespace nstd
 		);
 
 	public:
-		template <core::meta::Enumeration E2>
+		template <Enumeration E2>
 		bitset<E2> constexpr
 		cast() const noexcept {
 			return static_cast<E2>(this->Value);
 		}
 	
-		template <core::meta::Enumeration E2>
+		template <Enumeration E2>
 		bool constexpr
 		test(E2 bits) const noexcept {
 			return (this->Value & static_cast<value_type>(bits)) != Zero;
@@ -127,31 +127,31 @@ namespace nstd
 	};
 }
 
-template <core::meta::Enumeration E1, core::meta::CompatibleEnumeration<E1> E2>
+template <nstd::Enumeration E1, core::meta::CompatibleEnumeration<E1> E2>
 nstd::bitset<E1> constexpr
 operator|(E1 lhs, nstd::bitset<E2> rhs) noexcept {
 	return nstd::bitset<E1>{lhs} | rhs;
 }
 
-template <core::meta::Enumeration E1, core::meta::CompatibleEnumeration<E1> E2>
+template <nstd::Enumeration E1, core::meta::CompatibleEnumeration<E1> E2>
 nstd::bitset<E1> constexpr
 operator&(E1 lhs, nstd::bitset<E2> rhs) noexcept {
 	return nstd::bitset<E1>{lhs} & rhs;
 }
 
-template <core::meta::Enumeration E1, core::meta::CompatibleEnumeration<E1> E2>
+template <nstd::Enumeration E1, core::meta::CompatibleEnumeration<E1> E2>
 nstd::bitset<E1> constexpr
 operator^(E1 lhs, nstd::bitset<E2> rhs) noexcept {
 	return nstd::bitset<E1>{lhs} ^ rhs;
 }
 	
-template <core::meta::Enumeration E1, core::meta::CompatibleEnumeration<E1> E2>
+template <nstd::Enumeration E1, core::meta::CompatibleEnumeration<E1> E2>
 bool constexpr
 operator==(E1 lhs, nstd::bitset<E2> rhs) noexcept {
 	return nstd::bitset<E1>{lhs} == rhs;
 }
 
-template <core::meta::Enumeration E1, core::meta::CompatibleEnumeration<E1> E2>
+template <nstd::Enumeration E1, core::meta::CompatibleEnumeration<E1> E2>
 bool constexpr
 operator!=(E1 lhs, nstd::bitset<E2> rhs) noexcept {
 	return nstd::bitset<E1>{lhs} != rhs;

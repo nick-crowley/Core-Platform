@@ -3,7 +3,7 @@
 
 namespace core
 {
-	template <meta::Character Character>
+	template <nstd::Character Character>
 	class ZString
 	{
 		using basic_zstring = gsl::basic_zstring<Character>;

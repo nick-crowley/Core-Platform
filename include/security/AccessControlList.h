@@ -60,7 +60,7 @@ namespace core::security
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 		* @brief	Variable-length wrapper for access control lists
 		*/
-		template <meta::AnyOf<::ACL,::ACL const> MaybeConstAcl>
+		template <nstd::AnyOf<::ACL,::ACL const> MaybeConstAcl>
 		class AclWrapper : public VarLengthStructure<MaybeConstAcl>
 		{
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

@@ -48,7 +48,7 @@ namespace core::security
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 		* @brief	Variable-length security identifier wrapper
 		*/
-		template <meta::AnyOf<::SID,::SID const> MaybeConstSid>
+		template <nstd::AnyOf<::SID,::SID const> MaybeConstSid>
 		class SidWrapper : public VarLengthStructure<MaybeConstSid>
 		{	
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

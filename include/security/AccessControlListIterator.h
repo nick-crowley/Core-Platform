@@ -47,7 +47,7 @@ namespace core::security
 		*
 		* @tparam	MaybeConstAce	Optionally const-qualified access-control-entry
 		*/
-		template <meta::AnyOf<::ACE_HEADER,::ACE_HEADER const> MaybeConstAce>
+		template <nstd::AnyOf<::ACE_HEADER,::ACE_HEADER const> MaybeConstAce>
 		class AccessControlListIterator : public boost::iterator_facade<AccessControlListIterator<MaybeConstAce>, MaybeConstAce, boost::forward_traversal_tag>
 		{
 			//! @brief	Enable boost::iterator_facade to operate by granting friendship to it's core logic

@@ -45,7 +45,7 @@ namespace core
 {
 	namespace detail
 	{
-		template <meta::Enumeration E>
+		template <nstd::Enumeration E>
 		auto constexpr
 		nameof() noexcept 
 		{
@@ -62,14 +62,14 @@ namespace core
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 	* @brief	Retrieve name of any enumeration type
 	*/
-	template <meta::Enumeration E>
+	template <nstd::Enumeration E>
 	std::string_view constexpr
 	enumeration_name_v = detail::nameof<E>();
 
 
 	namespace detail
 	{
-		template <meta::Enumeration E, E Enumerator>
+		template <nstd::Enumeration E, E Enumerator>
 		auto constexpr
 		__cdecl nameof() noexcept 
 		{
@@ -100,26 +100,26 @@ namespace core
 	*
 	* @returns	Non-empty string if enumerator is valid, otherwise empty string
 	*/
-	template <meta::Enumeration E, E Enumerator>
+	template <nstd::Enumeration E, E Enumerator>
 	std::string_view constexpr
 	enumerator_name_v = detail::nameof<E, Enumerator>();
 	
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 	* @brief	Query whether a value represents a valid enumerator of enumeration @c E
 	*/
-	template <meta::Enumeration E, auto Enumerator>
+	template <nstd::Enumeration E, auto Enumerator>
 	bool constexpr
 	is_valid_enumerator_v = enumerator_name_v<E, static_cast<E>(Enumerator)>.size() != 0;
 
 
 	namespace detail 
 	{
-		template <meta::Enumeration E, nstd::EnumSequenceOf<E> Sequence, auto Value>
+		template <nstd::Enumeration E, nstd::EnumSequenceOf<E> Sequence, auto Value>
 		using push_back_if_valid_t = std::conditional_t<is_valid_enumerator_v<E,Value>, 
 		                                                nstd::sequence_push_back_t<Sequence,static_cast<E>(Value)>, 
 		                                                Sequence>;
 
-		template <meta::Enumeration         E,
+		template <nstd::Enumeration         E,
 		          std::underlying_type_t<E> Start,
 		          std::underlying_type_t<E> Finish,
 		          nstd::EnumSequenceOf<E>   Result = nstd::enum_sequence<E>>
@@ -131,7 +131,7 @@ namespace core
 		> 
 		{};
 		
-		template <meta::Enumeration         E,
+		template <nstd::Enumeration         E,
 		          std::underlying_type_t<E> Start,
 		          std::underlying_type_t<E> Finish,
 		          nstd::EnumSequenceOf<E>   Result = nstd::enum_sequence<E>>
@@ -154,7 +154,7 @@ namespace core
 	* @tparam	Start	Inclusive minimum of search range
 	* @tparam	Finish	Inclusive maximum of search range
 	*/
-	template <meta::Enumeration E, std::underlying_type_t<E> Start, std::underlying_type_t<E> Finish>
+	template <nstd::Enumeration E, std::underlying_type_t<E> Start, std::underlying_type_t<E> Finish>
 		requires (Start < Finish)
 	using BlindLinearSearch = typename detail::linear_search_impl<E,Start,Finish>::type;
 
@@ -166,7 +166,7 @@ namespace core
 	* @tparam	Start	Inclusive minimum of search range for initial blind linear search
 	* @tparam	Finish	Inclusive maximum of search range for initial blind linear search
 	*/
-	template <meta::Enumeration E, std::underlying_type_t<E> Start, std::underlying_type_t<E> Finish>
+	template <nstd::Enumeration E, std::underlying_type_t<E> Start, std::underlying_type_t<E> Finish>
 		requires (Start < Finish) 
 		      && std::unsigned_integral<std::underlying_type_t<E>>
 		      && (nstd::is_pow2(Finish))
@@ -184,20 +184,20 @@ namespace core
 	* @tparam	E	Enumeration whos enumerators are to be searched
 	* @tparam	Values...	Sequence of valid enumerators
 	*/
-	template <meta::Enumeration E, E... Values>
+	template <nstd::Enumeration E, E... Values>
 		requires (sizeof...(Values) >= 1)
 		      && (is_valid_enumerator_v<E,Values> && ...)
 	using SuppliedValues = nstd::enum_sequence<E,Values...>;
 
 
 	//! @brief	Name-value pair containing string-representation of one enumerator
-	template <meta::Enumeration E>
+	template <nstd::Enumeration E>
 	using EnumName = std::pair<std::string_view,E>;
 	
 
-	/* @todo	Retrieve enumerator search algorithm from meta::Settings
+	/* @todo	Retrieve enumerator search algorithm from nstd::Settings
 
-	template <meta::Enumeration E>
+	template <nstd::Enumeration E>
 	BlindLinearSearchThenPowersOf2<E,0,32> constexpr
 	enumerator_values_v {};
 	*/
@@ -209,11 +209,11 @@ namespace core
 	* @tparam	E	Any enumeration type
 	* @tparam	Values...	[optional] User-provided valid enumerators
 	*/
-	template <meta::Enumeration E, nstd::EnumSequence Values = BlindLinearSearchThenPowersOf2<E,0,32> /*std::remove_cv_t<decltype(enumerator_values_v<E>)>*/ >
+	template <nstd::Enumeration E, nstd::EnumSequence Values = BlindLinearSearchThenPowersOf2<E,0,32> /*std::remove_cv_t<decltype(enumerator_values_v<E>)>*/ >
 	meta::undefined_t constexpr
 	enumerator_dictionary_v;
 
-	template <meta::Enumeration E, E... Values>
+	template <nstd::Enumeration E, E... Values>
 	std::array<EnumName<E>,sizeof...(Values)> constexpr
 	enumerator_dictionary_v<E, nstd::enum_sequence<E,Values...>> {
 		EnumName<E>{enumerator_name_v<E,Values>, Values}...

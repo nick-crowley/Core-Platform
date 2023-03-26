@@ -2,7 +2,7 @@
 #ifndef CorePlatform_h_included
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
-#include "meta/Concepts.h"
+#include "nstd/Concepts.h"
 #include "meta/Settings.h"
 
 namespace core::meta 
@@ -11,7 +11,7 @@ namespace core::meta
 	struct DataType<bitwise_enum> : std::type_identity<bool> {};
 
 	template <typename E>
-	concept BitwiseEnumeration = Enumeration<E> && Settings<bitwise_enum,E>;
+	concept BitwiseEnumeration = nstd::Enumeration<E> && Settings<bitwise_enum,E>;
 }
 
 template <core::meta::BitwiseEnumeration E>
@@ -52,11 +52,11 @@ namespace core::meta
 	struct DataType<compatible_enum> : std::type_identity<bool> {};
 
 	template <typename E1, typename E2>
-	concept CompatibleEnumeration = Enumeration<E1> 
-	                             && Enumeration<E2> 
+	concept CompatibleEnumeration = nstd::Enumeration<E1> 
+	                             && nstd::Enumeration<E2> 
 	                             && Settings<compatible_enum,E1,E2>;
 
-	template <Enumeration E>
+	template <nstd::Enumeration E>
 	bool constexpr inline Settings<compatible_enum, E, E> = true;
 }
 

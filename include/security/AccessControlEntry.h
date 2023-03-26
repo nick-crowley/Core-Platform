@@ -101,7 +101,7 @@ namespace core::security
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 		* @brief	Variable-length wrapper for access control entries
 		*/
-		template <meta::AnyOf<::ACE_HEADER,::ACE_HEADER const> MaybeConstAce>
+		template <nstd::AnyOf<::ACE_HEADER,::ACE_HEADER const> MaybeConstAce>
 		class AceWrapper : public VarLengthStructure<MaybeConstAce>
 		{
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

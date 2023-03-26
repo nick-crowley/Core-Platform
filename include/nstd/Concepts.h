@@ -4,20 +4,20 @@
 #endif
 #include "nstd/TypeTraits.h"
 
-namespace core::meta
+namespace nstd
 {
 	template <typename T, typename... Types>
-	concept AnyOf = nstd::is_any_of_v<T,Types...>;
+	concept AnyOf = is_any_of_v<T,Types...>;
 
 	template <typename T>
 	concept Character = AnyOf<T,char,wchar_t,char8_t,char16_t,char32_t>;
 
 	template <typename T>
-	concept Clock = chrono::is_clock_v<T>;
+	concept Clock = std::chrono::is_clock_v<T>;
 	
 	template <typename Range, typename U>
-	concept ContiguousRangeOf = ranges::contiguous_range<Range> 
-	                         && std::is_same_v<ranges::range_value_t<Range>,U>;
+	concept ContiguousRangeOf = std::ranges::contiguous_range<Range> 
+	                         && std::is_same_v<std::ranges::range_value_t<Range>,U>;
 	
 	template <typename T, typename... Types>
 	concept ConvertibleToAnyOf = (std::convertible_to<T,Types> || ...);
@@ -33,14 +33,14 @@ namespace core::meta
 	
 	//! @brief	Verify type is non-bool, non-character, integral type (signed or unsigned)
 	template <typename T>
-	concept Integer = std::integral<T> && !meta::AnyOf<std::make_signed_t<std::remove_cv_t<T>>, bool,char,wchar_t,char8_t,char16_t,char32_t>;
+	concept Integer = std::integral<T> && !AnyOf<std::make_signed_t<std::remove_cv_t<T>>, bool,char,wchar_t,char8_t,char16_t,char32_t>;
 
 	template <typename T>
 	concept IntegralOrEnum = std::is_integral_v<T> || Enumeration<T>;
 	
 	template <typename Range, typename U>
-	concept InputRangeOf = ranges::input_range<Range> 
-	                    && std::is_same_v<ranges::range_value_t<Range>,U>;
+	concept InputRangeOf = std::ranges::input_range<Range> 
+	                    && std::is_same_v<std::ranges::range_value_t<Range>,U>;
 
 	template <typename T, typename Return, typename... Params>
 	concept Invocable_r = std::is_invocable_r_v<Return,T,Params...>;
@@ -49,7 +49,7 @@ namespace core::meta
 	template <typename T>
 	concept FunctionObject = std::is_class_v<T> && !std::is_abstract_v<T> && requires {
 		T::operator();
-		// BUG: meta::FunctionObject can't support templated lambdas or overloaded function-call operators
+		// BUG: nstd::FunctionObject can't support templated lambdas or overloaded function-call operators
 	};
 	
 	//! @brief	Ensure type is callable target (of any signature)
@@ -57,13 +57,13 @@ namespace core::meta
 	concept CallableTarget = FunctionObject<T>
 		|| std::is_member_function_pointer_v<T>
 		|| std::is_function_v<T>
-		|| nstd::is_function_pointer_v<T>;
+		|| is_function_pointer_v<T>;
 	
 	template <typename T>
 	concept RealNumber = std::is_arithmetic_v<T> && !Character<T>;
 }
 
-namespace core::meta::testing {
+namespace nstd::testing {
 	struct TestClass {};
 	static_assert(FunctionObject<decltype([](){})>);
 	static_assert(FunctionObject<decltype([](){ return 42; })>);

@@ -143,7 +143,7 @@ namespace nstd
 				? std::future_status::ready : std::future_status::timeout;
 		}
 		
-		template <core::meta::Clock Clock>
+		template <nstd::Clock Clock>
 		std::future_status
 		wait_until(std::chrono::time_point<Clock> deadline) const {
 			Invariant(this->m_state);

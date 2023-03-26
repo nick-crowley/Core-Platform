@@ -2,7 +2,7 @@
 #ifndef CorePlatform_h_included
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
-#include "meta/Concepts.h"
+#include "nstd/Concepts.h"
 #include "core/CharacterConversion.h"
 #include "../../src/library/PlatformExport.h"
 
@@ -39,7 +39,7 @@ namespace core
 }
 #endif
 
-    template <meta::Enumeration Enum> 
+    template <nstd::Enumeration Enum> 
     std::string 
     inline to_string(Enum&& e) { 
         return "todo"; 
@@ -63,7 +63,7 @@ to_string(T** value)
     using std::to_string;
     using core::to_string;
 
-    if constexpr (core::meta::AnyOf<std::remove_const_t<T>,char,wchar_t>)
+    if constexpr (nstd::AnyOf<std::remove_const_t<T>,char,wchar_t>)
         return !value ? "nullptr" : '\'' + to_string(*value) + '\'';
     else if constexpr (core::meta::ToWStringCompatible<T*> || core::meta::ToWStringCompatible<T>)
         return !value ? "nullptr" : '*' + to_string(*value);

@@ -31,7 +31,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "nstd/sequence/is_integer_sequence.h"
 #include "nstd/sequence/sequence_element.h"
-#include "meta/Concepts.h"
+#include "nstd/Concepts.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -44,7 +44,7 @@
 namespace nstd
 {	
 	//! @brief	Calculate number of elements in @c std::integer_sequence<> (of any type)
-	template <core::meta::Enumeration E, E... Values>
+	template <Enumeration E, E... Values>
 	using enum_sequence = std::integer_sequence<E,Values...>;
 	
 	//! @brief	Verify type is an @c std::integer_sequence<> of (any) enumeration type

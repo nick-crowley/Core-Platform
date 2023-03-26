@@ -6,7 +6,7 @@
 namespace core::detail
 {
     template <typename T>
-    constexpr bool is_stringish_v = meta::AnyOf<std::decay_t<T>,
+    constexpr bool is_stringish_v = nstd::AnyOf<std::decay_t<T>,
                                                 gsl::zstring,gsl::wzstring,
                                                 gsl::czstring,gsl::cwzstring,
 #ifdef HAS_ATL_STRING

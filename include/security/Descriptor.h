@@ -84,7 +84,7 @@ namespace core::security {
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 		* @brief	Implementation of a wrapper for a variable-length security descriptor structure
 		*/
-		template <meta::AnyOf<::SECURITY_DESCRIPTOR,::SECURITY_DESCRIPTOR const> MaybeConstDescriptor>
+		template <nstd::AnyOf<::SECURITY_DESCRIPTOR,::SECURITY_DESCRIPTOR const> MaybeConstDescriptor>
 		class DescriptorWrapper : public VarLengthStructure<MaybeConstDescriptor>
 		{
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
