@@ -6,7 +6,7 @@ namespace nstd
 	//! 
 	//! @param	identifier		Any identifier
 	//! 
-	//! @return	Narrow-character string representation
-#	define nameof(identifier)       #identifier 
+	//! @return	Narrow-character string representation of @p identifier
+	#define nameof(identifier)       #identifier 
 
 } // namespace nstd
