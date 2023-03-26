@@ -29,12 +29,7 @@
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "nstd/sequence/is_index_sequence.h"
 #include "nstd/sequence/is_integer_sequence.h"
-#include "nstd/sequence/is_sequence_of.h"
-#include "nstd/sequence/sequence_element.h"
-#include "nstd/sequence/sequence_length.h"
-#include "nstd/sequence/sequence_push_back.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -44,7 +39,23 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace nstd
+{
+	//! @brief	Calculate number of elements in @c std::integer_sequence<> (of any type)
+	template <IntegerSequence Sequence>
+	metafunc sequence_length;
 
+	template <typename T, T... Values>
+	metafunc sequence_length<std::integer_sequence<T,Values...>> : std::integral_constant<size_t,sizeof...(Values)> {};
+	
+	template <IntegerSequence Sequence>
+	size_t constexpr
+	sequence_length_v = sequence_length<Sequence>::value;
+	
+	static_assert(sequence_length_v<std::integer_sequence<int>> == 0);
+	static_assert(sequence_length_v<std::integer_sequence<int,1>> == 1);
+
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

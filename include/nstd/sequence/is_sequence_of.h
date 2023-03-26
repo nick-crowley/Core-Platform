@@ -29,12 +29,8 @@
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "nstd/sequence/is_index_sequence.h"
-#include "nstd/sequence/is_integer_sequence.h"
-#include "nstd/sequence/is_sequence_of.h"
-#include "nstd/sequence/sequence_element.h"
-#include "nstd/sequence/sequence_length.h"
-#include "nstd/sequence/sequence_push_back.h"
+#include "nstd/experimental/metafunc.h"
+#include "../../../src/StdLibrary.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -44,7 +40,25 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace nstd
+{
+	//! @brief	Query whether type is an @c std::integer_sequence<> of a particular type
+	template <typename Sequence, typename T>
+	metafunc is_sequence_of : std::false_type {};
 
+	template <typename Value, Value... Values>
+	metafunc is_sequence_of<std::integer_sequence<Value,Values...>, Value> : std::true_type {};
+	
+
+	//! @brief	Ensure type is an @c std::integer_sequence<> of a particular type
+	template <typename T, typename Element>
+	concept SequenceOf = is_sequence_of<T,Element>::value;
+	
+
+	static_assert(SequenceOf<std::integer_sequence<int>,int>);
+	static_assert(SequenceOf<std::integer_sequence<int,1>,int>);
+	static_assert(!SequenceOf<std::integer_sequence<float>,int>);
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
