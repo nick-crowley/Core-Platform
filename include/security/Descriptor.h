@@ -216,13 +216,13 @@ namespace core::security {
 					//! @todo	Verify alignment of these sub-objects
 					auto n = nstd::sizeof_v<::SECURITY_DESCRIPTOR_RELATIVE>;
 					if (this->Owner)
-						n += sid_wrapper_t{meta::const_pointer_cast<MaybeConstSid*>(this->Owner)}.size();
+						n += sid_wrapper_t{nstd::const_pointer_cast<MaybeConstSid*>(this->Owner)}.size();
 					if (this->Group)
-						n += sid_wrapper_t{meta::const_pointer_cast<MaybeConstSid*>(this->Group)}.size();
+						n += sid_wrapper_t{nstd::const_pointer_cast<MaybeConstSid*>(this->Group)}.size();
 					if (this->Dacl)
-						n += acl_wrapper_t{meta::const_pointer_cast<MaybeConstAcl*>(this->Dacl)}.size();
+						n += acl_wrapper_t{nstd::const_pointer_cast<MaybeConstAcl*>(this->Dacl)}.size();
 					if (this->Sacl)
-						n += acl_wrapper_t{meta::const_pointer_cast<MaybeConstAcl*>(this->Sacl)}.size();
+						n += acl_wrapper_t{nstd::const_pointer_cast<MaybeConstAcl*>(this->Sacl)}.size();
 					return n;
 				}
 			}

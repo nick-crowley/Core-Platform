@@ -51,7 +51,7 @@ namespace core::detail
 	template <typename ValueType, typename Field>
 	using propagate_const_t = std::conditional_t<
 		std::is_pointer_v<Field>, 
-		meta::propagate_const<nstd::mirror_cv_t<ValueType, std::remove_pointer_t<Field>>*>,
+		nstd::propagate_const<nstd::mirror_cv_t<ValueType, std::remove_pointer_t<Field>>*>,
 		std::add_lvalue_reference_t<nstd::mirror_cv_t<ValueType, Field>>
 	>;
 }

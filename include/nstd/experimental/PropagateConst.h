@@ -430,18 +430,17 @@ struct greater_equal<experimental::fundamentals_v2::propagate_const<T>> {
 
 #undef PROPAGATE_CONST_CONSTEXPR
 
-}  // end namespace std
+}  // namespace std
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-namespace nstd {
+
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace nstd 
+{
     // Import @c propagate_const<T> into 'nstd' namespace
     template <typename T>
     using propagate_const = std::experimental::fundamentals_v2::propagate_const<T>;
-}
-
-namespace core::meta {
-	// Import @c propagate_const<T> into 'meta' namespace
-	template <typename T>
-	using propagate_const = std::experimental::fundamentals_v2::propagate_const<T>;
 	
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 	* @brief	Performs const-cast on a const-propagating wrapper
@@ -455,11 +454,6 @@ namespace core::meta {
 	{
 		return const_cast<U>(p.get());
 	}
-}      // namespace core::meta
-
-// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
-// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #endif // meta_PropagateConst_h_included
