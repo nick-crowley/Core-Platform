@@ -48,10 +48,10 @@ namespace nstd
 	* @tparam	Item	Type of new element
 	*/
 	template <Tuple T, typename Item>
-	struct tuple_push_front;
+	metafunc tuple_push_front;
 
 	template <typename... Items, typename Item>
-	struct tuple_push_front<std::tuple<Items...>,Item> : std::type_identity<std::tuple<Item,Items...>>
+	metafunc tuple_push_front<std::tuple<Items...>,Item> : std::type_identity<std::tuple<Item,Items...>>
 	{};
 
 	//! @brief	Retrieve type of tuple with an element pre-pended to an existing tuple

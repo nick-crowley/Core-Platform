@@ -48,17 +48,17 @@ namespace nstd
 	* @tparam	T	Source tuple
 	*/
 	template <Tuple T>
-	struct tuple_reverse : std::type_identity<invalid_argument_t> {};
+	metafunc tuple_reverse : std::type_identity<invalid_argument_t> {};
 	
 	// Specialization: Empty tuple : return empty-tuple
 	template <>
-	struct tuple_reverse<std::tuple<>> : std::type_identity<std::tuple<>> {};
+	metafunc tuple_reverse<std::tuple<>> : std::type_identity<std::tuple<>> {};
 
 	// template <typename T0, ..., typename Tn>
 	// struct tuple_reverse<std::tuple<T0,..,Tn>> : std::type_identity<std::tuple<Tn,...,T0>> {};
 #define tuple_reverse__definition(dummy, n, unused)                                               \
 	template <BOOST_PP_ENUM_PARAMS(n,typename T)>                                                 \
-	struct tuple_reverse<std::tuple<BOOST_PP_ENUM_PARAMS(n,T)>>                                   \
+	metafunc tuple_reverse<std::tuple<BOOST_PP_ENUM_PARAMS(n,T)>>                                 \
 	  : std::type_identity<std::tuple<BOOST_PP_REPEAT(n,tuple_reverse__decrementing_type,BOOST_PP_DEC(n))>> {};
 	// [,] T(idx-n)
 #define tuple_reverse__decrementing_type(dummy, n, count)                                         \

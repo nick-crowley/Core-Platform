@@ -49,11 +49,11 @@ namespace nstd
 	* @tparam	UnaryMetaFunction	Transformation meta-function
 	*/
 	template <Tuple T, template <typename> typename UnaryMetaFunction>
-	struct tuple_transform : std::type_identity<invalid_argument_t> {};
+	metafunc tuple_transform : std::type_identity<invalid_argument_t> {};
 	
 	// Specialization: Empty tuple : return empty-tuple
 	template <template <typename> typename Fx>
-	struct tuple_transform<std::tuple<>, Fx>
+	metafunc tuple_transform<std::tuple<>, Fx>
 		: std::type_identity<std::tuple<>> {};
 
 	// template <typename T0, ... , typename Tn, template <typename> typename UnaryMetaFunction>
@@ -61,7 +61,7 @@ namespace nstd
 	//   : std::type_identity<std::tuple<UnaryMetaFunction<T0>,...,UnaryMetaFunction<Tn>>> {};
 #define tuple_transform__definition(dummy, n, unused)                                             \
 	template <BOOST_PP_ENUM_PARAMS(n,typename T), template <typename> typename UnaryMetaFunction> \
-	struct tuple_transform<std::tuple<BOOST_PP_ENUM_PARAMS(n,T)>,UnaryMetaFunction>               \
+	metafunc tuple_transform<std::tuple<BOOST_PP_ENUM_PARAMS(n,T)>,UnaryMetaFunction>             \
 		: std::type_identity<std::tuple<BOOST_PP_REPEAT(n,tuple_transform__functor,unused)>> {};
 	// [, ] UnaryMetaFunction<Tn>
 #define tuple_transform__functor(dummy, n, unused)                                                \

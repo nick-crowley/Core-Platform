@@ -48,7 +48,7 @@ namespace nstd
 	*/
 	template <Tuple T>
 		requires (std::tuple_size_v<T> > 0)
-	struct tuple_back : std::type_identity<std::tuple_element_t<std::tuple_size_v<T>-1,T>> {};
+	metafunc tuple_back : std::type_identity<std::tuple_element_t<std::tuple_size_v<T>-1,T>> {};
 	
 	template <Tuple T>
 		requires (std::tuple_size_v<T> > 0)

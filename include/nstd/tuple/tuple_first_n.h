@@ -50,18 +50,18 @@ namespace nstd
 	*/
 	template <size_t N, Tuple T>
 		requires (N <= std::tuple_size_v<T>)
-	struct tuple_first_n : std::type_identity<invalid_argument_t> {};
+	metafunc tuple_first_n : std::type_identity<invalid_argument_t> {};
 	
 	// Specialization: N==0 : return empty-tuple
 	template <typename...R>
-	struct tuple_first_n<0,std::tuple<R...>>
+	metafunc tuple_first_n<0,std::tuple<R...>>
 		: std::type_identity<std::tuple<>> {};
 
 	// template <typename T0, ..., typename Tn, typename... Rest> 
 	// struct tuple_first_n<1..N, std::tuple<T0,..,Tn,Rest...>> : std::type_identity<std::tuple<T0,..,Tn>> {};
 #define tuple_first_n__definition(obj, n, unused)                                                 \
 	template <BOOST_PP_ENUM_PARAMS(n,typename T), typename... Rest>                               \
-	struct tuple_first_n<n,std::tuple<BOOST_PP_ENUM_PARAMS(n,T),Rest...>>                         \
+	metafunc tuple_first_n<n,std::tuple<BOOST_PP_ENUM_PARAMS(n,T),Rest...>>                       \
 		: std::type_identity<std::tuple<BOOST_PP_ENUM_PARAMS(n,T)>> {};
 	// Define operations for 1 <= N <= 15
 	// template <typename T0, typename T1, typename... Rest> struct tuple_first_n<2,std::tuple<T0, T1, Rest...>> : std::type_identity<std::tuple<T0, T1>> {};
