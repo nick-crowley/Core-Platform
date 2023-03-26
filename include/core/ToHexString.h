@@ -9,7 +9,7 @@ namespace core
 	std::string
 	inline to_hexString(std::span<std::byte const> bytes)
 	{
-		char constinit
+		char constexpr
 		static digits[] = {'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'};
 	
 		std::string buffer(2*bytes.size(), '\0');

@@ -19,7 +19,7 @@ namespace nstd
 		using underlying_t = std::underlying_type_t<value_type>;
 
 	private:
-		value_type constinit
+		value_type constexpr
 		inline static Zero = static_cast<value_type>(0);
 
 	private:
