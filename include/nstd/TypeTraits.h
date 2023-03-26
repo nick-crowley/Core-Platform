@@ -6,7 +6,7 @@
 #include "../src/StdLibrary.h"
 
 // clang-format off
-namespace core::meta 
+namespace nstd
 {
     template <typename F>
 	metafunc add_function_pointer : std::type_identity<F> {};

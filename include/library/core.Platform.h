@@ -26,10 +26,10 @@
 #include "nstd/SizeOf.h"
 #include "nstd/SourceLocation.h"
 #include "nstd/Tuple.h"
+#include "nstd/TypeTraits.h"
 
 #include "meta/TagTypes.h"
 #include "meta/Settings.h"
-#include "meta/TypeTraits.h"
 #include "meta/Concepts.h"
 #include "meta/IndexedTuple.h"
 

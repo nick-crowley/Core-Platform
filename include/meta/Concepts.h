@@ -2,12 +2,12 @@
 #ifndef CorePlatform_h_included
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
-#include "meta/TypeTraits.h"
+#include "nstd/TypeTraits.h"
 
 namespace core::meta
 {
 	template <typename T, typename... Types>
-	concept AnyOf = is_any_of_v<T,Types...>;
+	concept AnyOf = nstd::is_any_of_v<T,Types...>;
 
 	template <typename T>
 	concept Character = AnyOf<T,char,wchar_t,char8_t,char16_t,char32_t>;
@@ -53,7 +53,7 @@ namespace core::meta
 	concept CallableTarget = FunctionObject<T>
 		|| std::is_member_function_pointer_v<T>
 		|| std::is_function_v<T>
-		|| is_function_pointer_v<T>;
+		|| nstd::is_function_pointer_v<T>;
 	
 	template <typename T>
 	concept RealNumber = std::is_arithmetic_v<T> && !Character<T>;

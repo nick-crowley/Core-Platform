@@ -104,13 +104,13 @@ namespace core::security {
 			using mutable_type = DescriptorWrapper<::SECURITY_DESCRIPTOR>;
 
 			//! @brief	Aliases a const or mutable access-control-list type
-			using MaybeConstAcl = meta::mirror_cv_t<MaybeConstDescriptor,::ACL>;
+			using MaybeConstAcl = nstd::mirror_cv_t<MaybeConstDescriptor,::ACL>;
 	
 			//! @brief	Equally cv-qualified std::byte
-			using MaybeConstByte = meta::mirror_cv_t<MaybeConstDescriptor,std::byte>;
+			using MaybeConstByte = nstd::mirror_cv_t<MaybeConstDescriptor,std::byte>;
 
 			//! @brief	Aliases a const or mutable security-identifier type
-			using MaybeConstSid = meta::mirror_cv_t<MaybeConstDescriptor,::SID>;
+			using MaybeConstSid = nstd::mirror_cv_t<MaybeConstDescriptor,::SID>;
 
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
@@ -159,7 +159,7 @@ namespace core::security {
 				}
 				// [SELF-RELATIVE] Calculate position of each field using offsets
 				else {
-					using MaybeConstRelativeDescriptor = meta::mirror_cv_t<MaybeConstDescriptor, ::SECURITY_DESCRIPTOR_RELATIVE>;
+					using MaybeConstRelativeDescriptor = nstd::mirror_cv_t<MaybeConstDescriptor, ::SECURITY_DESCRIPTOR_RELATIVE>;
 					// Reinterpret pointers
 					auto* const self = reinterpret_cast<MaybeConstRelativeDescriptor*>(sd);
 					auto* const start = reinterpret_cast<MaybeConstByte*>(self); 

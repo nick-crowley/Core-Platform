@@ -121,7 +121,7 @@ namespace core::security
 			using mutable_type = AceWrapper<::ACE_HEADER>;
 
 			//! @brief	Equally CV-qualified std::byte
-			using MaybeConstByte = meta::mirror_cv_t<MaybeConstAce,std::byte>;
+			using MaybeConstByte = nstd::mirror_cv_t<MaybeConstAce,std::byte>;
 
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:

@@ -62,7 +62,7 @@ namespace core::security
 			using type = AccessControlListIterator<MaybeConstAce>;
 	
 			//! @brief	Equally cv-qualified std::byte
-			using MaybeConstByte = meta::mirror_cv_t<MaybeConstAce,std::byte>;
+			using MaybeConstByte = nstd::mirror_cv_t<MaybeConstAce,std::byte>;
 
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:

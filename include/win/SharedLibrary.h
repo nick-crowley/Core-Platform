@@ -1,7 +1,7 @@
 #pragma once
 #include "library/core.Platform.h"
 #include "win/SharedHandle.h"
-#include "meta/TypeTraits.h"
+#include "nstd/TypeTraits.h"
 
 namespace core::win
 {
@@ -21,7 +21,7 @@ namespace core::win
 		auto
 		loadFunction(std::string_view name)
 		{
-			using proc_signature_t = meta::add_function_pointer_t<Signature>;
+			using proc_signature_t = nstd::add_function_pointer_t<Signature>;
 			if (auto* const pfx = reinterpret_cast<proc_signature_t>(::GetProcAddress(*this->m_module, name.data())); !pfx)
 				LastError{}.throwAlways();
 			else

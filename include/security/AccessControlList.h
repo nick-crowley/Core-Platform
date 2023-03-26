@@ -80,13 +80,13 @@ namespace core::security
 			using mutable_type = AclWrapper<::ACL>;
 			
 			//! @brief	Const/non-const access control entry
-			using MaybeConstAce = meta::mirror_cv_t<MaybeConstAcl, ::ACE_HEADER>;
+			using MaybeConstAce = nstd::mirror_cv_t<MaybeConstAcl, ::ACE_HEADER>;
 	
 			//! @brief	Const/non-const iterator for access control entries
 			using MaybeConstAclIterator = AccessControlListIterator<MaybeConstAce>;
 	
 			//! @brief	Equally CV-qualified std::byte
-			using MaybeConstByte = meta::mirror_cv_t<MaybeConstAce,std::byte>;
+			using MaybeConstByte = nstd::mirror_cv_t<MaybeConstAce,std::byte>;
 
 		private:
 			//! @brief	Const/non-const pair delimiting the entries

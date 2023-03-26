@@ -51,8 +51,8 @@ namespace core::detail
 	template <typename ValueType, typename Field>
 	using propagate_const_t = std::conditional_t<
 		std::is_pointer_v<Field>, 
-		meta::propagate_const<meta::mirror_cv_t<ValueType, std::remove_pointer_t<Field>>*>,
-		std::add_lvalue_reference_t<meta::mirror_cv_t<ValueType, Field>>
+		meta::propagate_const<nstd::mirror_cv_t<ValueType, std::remove_pointer_t<Field>>*>,
+		std::add_lvalue_reference_t<nstd::mirror_cv_t<ValueType, Field>>
 	>;
 }
 
@@ -76,7 +76,7 @@ namespace core
 		using mutable_value_type = std::remove_const_t<value_type>;
 	
 		//! @brief	Equally CV-qualified std::byte
-		using MaybeConstByte = meta::mirror_cv_t<value_type, std::byte>;
+		using MaybeConstByte = nstd::mirror_cv_t<value_type, std::byte>;
 
 		//! @brief	Const-propagating wrapper mutable field of any type
 		template <typename Field>
@@ -125,7 +125,7 @@ namespace core
 		//! @brief	Implicit conversion to pointer-to-mutable
 		template <typename Self, meta::AnyOf<value_type,void> Output>
 		implicit operator
-		meta::mirror_cv_t<std::remove_reference_t<Self>,Output>*(this Self&& derived) {
+		nstd::mirror_cv_t<std::remove_reference_t<Self>,Output>*(this Self&& derived) {
 			return derived.m_object;
 		}
 #endif
