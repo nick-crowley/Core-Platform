@@ -50,36 +50,36 @@ namespace nstd
 {	
 	//! @brief	Tuple with its matching index sequence
 	template <Tuple Types, nstd::AnyIndexSequence Indicies>
-	struct IndexedTuple {};
+	struct indexed_tuple {};
 
-	//! @brief	An @c IndexedTuple containing an empty tuple and empty indicies sequence
-	using EmptyIndexedTuple = IndexedTuple<std::tuple<>, std::index_sequence<>>;
+	//! @brief	An @c indexed_tuple containing an empty tuple and empty indicies sequence
+	using empty_indexed_tuple_t = indexed_tuple<std::tuple<>, std::index_sequence<>>;
 	
 
-	//! @brief	An @c IndexedTuple containing a single element
+	//! @brief	An @c indexed_tuple containing a single element
 	template <typename T>
-	using UnaryIndexedTuple = IndexedTuple<std::tuple<T>, std::index_sequence<0>>;
+	using unary_indexed_tuple_t = indexed_tuple<std::tuple<T>, std::index_sequence<0>>;
 
 
-	//! @brief	Generate an @c IndexedTuple of arbitrary length
+	//! @brief	Generate an @c indexed_tuple of arbitrary length
 	template <typename... Types>
-	using MakeIndexedTuple = IndexedTuple<std::tuple<Types...>, std::index_sequence_for<Types...>>;
+	using make_indexed_tuple_t = indexed_tuple<std::tuple<Types...>, std::index_sequence_for<Types...>>;
 
 	
-	//! @brief	Query whether type is @c IndexedTuple (of any length)
+	//! @brief	Query whether type is @c indexed_tuple (of any length)
 	template <typename T>
 	metafunc is_indexed_tuple : std::false_type {};
 
 	template <Tuple T, nstd::AnyIndexSequence I>
-	metafunc is_indexed_tuple<IndexedTuple<T,I>> : std::true_type {};
+	metafunc is_indexed_tuple<indexed_tuple<T,I>> : std::true_type {};
 	
 	template <typename T>
 	bool constexpr is_indexed_tuple_v = is_indexed_tuple<T>::value;
 
 	
-	//! @brief	Ensure type is @c IndexedTuple (of any length)
+	//! @brief	Ensure type is @c indexed_tuple (of any length)
 	template <typename T>
-	concept AnyIndexedTuple = is_indexed_tuple<T>::value;
+	concept IndexedTuple = is_indexed_tuple<T>::value;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
