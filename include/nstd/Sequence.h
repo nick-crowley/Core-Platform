@@ -35,6 +35,7 @@
 #include "nstd/sequence/sequence_element.h"
 #include "nstd/sequence/sequence_length.h"
 #include "nstd/sequence/sequence_push_back.h"
+#include "nstd/sequence/enum_sequence.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
