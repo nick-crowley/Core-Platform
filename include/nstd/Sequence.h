@@ -35,12 +35,12 @@ namespace nstd
 
 	//! @brief	Ensure type is @c std::integer_sequence<> (of any type and length)
 	template <typename T>
-	concept AnyIntegerSequence = is_integer_sequence_v<T>;
+	concept IntegerSequence = is_integer_sequence_v<T>;
 	
-	static_assert(AnyIntegerSequence<std::integer_sequence<int>>);
-	static_assert(AnyIntegerSequence<std::integer_sequence<int,1>>);
-	static_assert(AnyIntegerSequence<std::integer_sequence<double,2.0>>);
-	static_assert(!AnyIntegerSequence<float>);
+	static_assert(IntegerSequence<std::integer_sequence<int>>);
+	static_assert(IntegerSequence<std::integer_sequence<int,1>>);
+	static_assert(IntegerSequence<std::integer_sequence<double,2.0>>);
+	static_assert(!IntegerSequence<float>);
 
 	
 	//! @brief	Query whether type is an @c std::integer_sequence<> of a particular type
@@ -60,7 +60,7 @@ namespace nstd
 
 	
 	//! @brief	Query the element type of a @c std::integer_sequence<>
-	template <AnyIntegerSequence Sequence>
+	template <IntegerSequence Sequence>
 	metafunc sequence_element;
 
 	template <typename Value, Value... Values>
@@ -68,18 +68,18 @@ namespace nstd
 		using type = Value;
 	};
 
-	template <AnyIntegerSequence Sequence>
+	template <IntegerSequence Sequence>
 	using sequence_element_t = typename sequence_element<Sequence>::type;
 	
 	
 	//! @brief	Calculate number of elements in @c std::integer_sequence<> (of any type)
-	template <AnyIntegerSequence Sequence>
+	template <IntegerSequence Sequence>
 	metafunc sequence_length;
 
 	template <typename T, T... Values>
 	metafunc sequence_length<std::integer_sequence<T,Values...>> : std::integral_constant<size_t,sizeof...(Values)> {};
 	
-	template <AnyIntegerSequence Sequence>
+	template <IntegerSequence Sequence>
 	size_t constexpr
 	sequence_length_v = sequence_length<Sequence>::value;
 	
@@ -88,7 +88,7 @@ namespace nstd
 
 	
 	//! @brief	Append an item to an integer sequence
-	template <AnyIntegerSequence Sequence, sequence_element_t<Sequence> Element>
+	template <IntegerSequence Sequence, sequence_element_t<Sequence> Element>
 	metafunc push_back;
 
 	template <typename Element, Element... Values, Element NewValue>
@@ -96,7 +96,7 @@ namespace nstd
 		: std::type_identity<std::integer_sequence<Element,Values...,NewValue>> 
 	{};
 
-	template <AnyIntegerSequence Sequence, sequence_element_t<Sequence> Element>
+	template <IntegerSequence Sequence, sequence_element_t<Sequence> Element>
 	using push_back_t = typename push_back<Sequence,Element>::type;
 	
 	static_assert(std::same_as<push_back_t<std::integer_sequence<int>, 1>, std::integer_sequence<int,1>>);
