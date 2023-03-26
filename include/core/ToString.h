@@ -63,7 +63,7 @@ to_string(T** value)
     using std::to_string;
     using core::to_string;
 
-    if constexpr (core::meta::is_any_of_v<std::remove_const_t<T>,char,wchar_t>)
+    if constexpr (core::meta::AnyOf<std::remove_const_t<T>,char,wchar_t>)
         return !value ? "nullptr" : '\'' + to_string(*value) + '\'';
     else if constexpr (core::meta::ToWStringCompatible<T*> || core::meta::ToWStringCompatible<T>)
         return !value ? "nullptr" : '*' + to_string(*value);

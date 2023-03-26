@@ -6,14 +6,14 @@
 namespace core::detail
 {
     template <typename T>
-    constexpr bool is_stringish_v = meta::is_any_of_v<std::decay_t<T>,
-                                                      gsl::zstring,gsl::wzstring,
-                                                      gsl::czstring,gsl::cwzstring,
+    constexpr bool is_stringish_v = meta::AnyOf<std::decay_t<T>,
+                                                gsl::zstring,gsl::wzstring,
+                                                gsl::czstring,gsl::cwzstring,
 #ifdef HAS_ATL_STRING
-                                                      ATL::CString,
+                                                ATL::CString,
 #endif
-                                                      std::string_view,std::wstring_view,
-                                                      std::string,std::wstring>;
+                                                std::string_view,std::wstring_view,
+                                                std::string,std::wstring>;
 }
 
 namespace core
