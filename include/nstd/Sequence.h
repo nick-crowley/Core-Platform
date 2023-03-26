@@ -59,4 +59,17 @@ namespace nstd
 	static_assert(!SequenceOf<std::integer_sequence<float>,int>);
 
 	
+	//! @brief	Query the element type of a @c std::integer_sequence<>
+	template <AnyIntegerSequence Sequence>
+	metafunc sequence_element;
+
+	template <typename Value, Value... Values>
+	metafunc sequence_element<std::integer_sequence<Value,Values...>> {
+		using type = Value;
+	};
+
+	template <AnyIntegerSequence Sequence>
+	using sequence_element_t = typename sequence_element<Sequence>::type;
+	
+	
 } // namespace nstd
