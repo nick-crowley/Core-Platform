@@ -29,9 +29,7 @@
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "../src/StdLibrary.h"
-#include "../src/libBoost.h"
-
+#include "nstd/tuple/is_tuple.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -46,13 +44,15 @@ namespace nstd
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 	* @brief	Retrieve type of first element of a tuple 
 	*
-	* @tparam	Tuple	Source tuple
+	* @tparam	T	Source tuple
 	*/
-	template <typename Tuple>
-	struct tuple_front : std::type_identity<std::tuple_element_t<0,Tuple>> {};
+	template <Tuple T>
+		requires (std::tuple_size_v<T> > 0)
+	struct tuple_front : std::type_identity<std::tuple_element_t<0,T>> {};
 	
-	template <typename Tuple>
-	using tuple_front_t = typename tuple_front<Tuple>::type;
+	template <Tuple T>
+		requires (std::tuple_size_v<T> > 0)
+	using tuple_front_t = typename tuple_front<T>::type;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 

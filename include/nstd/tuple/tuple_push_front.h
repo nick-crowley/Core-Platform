@@ -29,9 +29,7 @@
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "../src/StdLibrary.h"
-#include "../src/libBoost.h"
-
+#include "nstd/tuple/is_tuple.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -46,10 +44,10 @@ namespace nstd
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 	* @brief	Retrieve type of tuple with an element pre-pended to an existing tuple
 	*
-	* @tparam	Tuple	Source tuple
+	* @tparam	T	Source tuple
 	* @tparam	Item	Type of new element
 	*/
-	template <typename Tuple, typename Item>
+	template <Tuple T, typename Item>
 	struct tuple_push_front;
 
 	template <typename... Items, typename Item>
@@ -57,8 +55,8 @@ namespace nstd
 	{};
 
 	//! @brief	Retrieve type of tuple with an element pre-pended to an existing tuple
-	template <typename Tuple, typename Item>
-	using tuple_push_front_t = typename tuple_push_front<Tuple,Item>::type;
+	template <Tuple T, typename Item>
+	using tuple_push_front_t = typename tuple_push_front<T,Item>::type;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 

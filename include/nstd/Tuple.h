@@ -47,25 +47,9 @@
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace nstd
-{
-	//! @brief	Query whether type is @c std::tuple<> (of any length)
-	template <typename T>
-	metafunc is_tuple : std::false_type {};
-
-	template <typename... R>
-	metafunc is_tuple<std::tuple<R...>> : std::true_type {};
-
-	template <typename T>
-	bool constexpr is_tuple_v = is_tuple<T>::value;
-
-
-	//! @brief	Ensure type is @c std::tuple<> (of any length)
-	template <typename T>
-	concept AnyTuple = is_tuple<T>::value;
-
-	
+{	
 	//! @brief	Tuple with its matching index sequence
-	template <AnyTuple Types, nstd::AnyIndexSequence Indicies>
+	template <Tuple Types, nstd::AnyIndexSequence Indicies>
 	struct IndexedTuple {};
 
 	//! @brief	An @c IndexedTuple containing an empty tuple and empty indicies sequence
@@ -86,7 +70,7 @@ namespace nstd
 	template <typename T>
 	metafunc is_indexed_tuple : std::false_type {};
 
-	template <AnyTuple T, nstd::AnyIndexSequence I>
+	template <Tuple T, nstd::AnyIndexSequence I>
 	metafunc is_indexed_tuple<IndexedTuple<T,I>> : std::true_type {};
 	
 	template <typename T>

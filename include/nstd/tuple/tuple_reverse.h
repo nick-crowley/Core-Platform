@@ -29,9 +29,8 @@
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "../src/StdLibrary.h"
+#include "nstd/tuple/is_tuple.h"
 #include "../src/libBoost.h"
-
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -48,9 +47,9 @@ namespace nstd
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 	* @brief	Retrieve type of tuple with its element types in reverse order
 	*
-	* @tparam	Tuple	Source tuple
+	* @tparam	T	Source tuple
 	*/
-	template <typename Tuple>
+	template <Tuple T>
 	struct tuple_reverse : std::type_identity<tuple_reverse_invalid_argument> {};
 
 	template <>
@@ -72,8 +71,8 @@ namespace nstd
 #undef tuple_reverse__decrementing_type
 	
 
-	template <typename Tuple>
-	using tuple_reverse_t = typename tuple_reverse<Tuple>::type;
+	template <Tuple T>
+	using tuple_reverse_t = typename tuple_reverse<T>::type;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 

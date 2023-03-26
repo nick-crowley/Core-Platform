@@ -29,9 +29,8 @@
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "nstd/tuple/is_tuple.h"
-#include "nstd/tuple/tuple_first_n.h"
-#include "nstd/tuple/tuple_reverse.h"
+#include "nstd/experimental/Metafunc.h"
+#include "../src/StdLibrary.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -43,49 +42,20 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace nstd
 {
-	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
-	* @brief	Retrieve type of tuple representing subset of final @c N types of existing tuple
-	*
-	* @tparam	N	Length of subset
-	* @tparam	T	Source tuple
-	*/
-	template <size_t N, Tuple T>
-		requires (N <= std::tuple_size_v<T>)
-	using tuple_last_n = tuple_reverse<tuple_first_n_t<N,tuple_reverse_t<T>>>;
+	//! @brief	Query whether type is @c std::tuple<> (of any length)
+	template <typename T>
+	metafunc is_tuple : std::false_type {};
+
+	template <typename... R>
+	metafunc is_tuple<std::tuple<R...>> : std::true_type {};
+
+	template <typename T>
+	bool constexpr is_tuple_v = is_tuple<T>::value;
 
 
-	template <size_t N, Tuple T>
-		requires (N <= std::tuple_size_v<T>)
-	using tuple_last_n_t = typename tuple_last_n<N,T>::type;
-}
-
-namespace nstd::testing 
-{
-	// static_assert(std::is_same_v<std::tuple<>, tuple_last_n_t<n,std::tuple<>>>);
-#define tuple_last_n_t__returns_empty_tuple_for_n_zero(dummy, n, unused)                          \
-	static_assert(std::is_same_v<std::tuple<>, tuple_last_n_t<0,std::tuple<BOOST_PP_ENUM_PARAMS(n,UT)>>>);
-	// Test operations for 1 <= N <= 15
-	// eg. static_assert(std::is_same_v<std::tuple<>, tuple_last_n_t<n,std::tuple<>>>);
-	BOOST_PP_REPEAT(16, tuple_last_n_t__returns_empty_tuple_for_n_zero, ~);
-#undef tuple_last_n_t__returns_empty_tuple_for_n_zero
-	
-	// static_assert(std::is_same_v<invalid_argument, tuple_last_n_t<n,std::tuple<>>>);
-#define tuple_last_n_t__returns_invalid_argument_for_empty_tuple(dummy, n, unused)                \
-	static_assert(std::is_same_v<tuple_reverse_invalid_argument, tuple_last_n_t<n,std::tuple<>>>);
-	
-	// Test operations for 1 <= N <= 15
-	// eg. static_assert(std::is_same_v<invalid_argument, tuple_last_n_t<n,std::tuple<>>>);
-	BOOST_PP_REPEAT_FROM_TO(1,16, tuple_last_n_t__returns_invalid_argument_for_empty_tuple, ~);
-#undef tuple_last_n_t__returns_invalid_argument_for_empty_tuple
-	
-	// static_assert(std::is_same_v<std::tuple<T1,..,Tn,Tn+1>, tuple_last_n_t<1..N,std::tuple<T0,..,Tn,Tn+1>>>);
-#define tuple_last_n_t__returns_last_n_types(dummy, n, unused)                                    \
-	static_assert(std::is_same_v<std::tuple<BOOST_PP_ENUM_SHIFTED_PARAMS(BOOST_PP_INC(n),UT)>,    \
-		tuple_last_n_t<n,std::tuple<BOOST_PP_ENUM_PARAMS(n,UT), BOOST_PP_CAT(UT,n)>>>);
-	// Test operations for 1 <= N <= 15
-	// eg. static_assert(std::is_same_v<std::tuple<UT1>, tuple_last_n_t<1,std::tuple<UT0, UT1>>>);
-	BOOST_PP_REPEAT_FROM_TO(1, 15, tuple_last_n_t__returns_last_n_types, ~);
-#undef tuple_last_n_t__returns_last_n_types
+	//! @brief	Ensure type is @c std::tuple<> (of any length)
+	template <typename T>
+	concept Tuple = is_tuple<T>::value;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 

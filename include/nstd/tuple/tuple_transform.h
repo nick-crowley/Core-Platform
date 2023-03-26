@@ -29,9 +29,8 @@
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "../src/StdLibrary.h"
+#include "nstd/tuple/is_tuple.h"
 #include "../src/libBoost.h"
-
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -48,10 +47,10 @@ namespace nstd
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 	* @brief	Retrieve type of tuple resulting from applying transformation to each element of existing tuple
 	*
-	* @tparam	Tuple	Source tuple
+	* @tparam	T	Source tuple
 	* @tparam	UnaryMetaFunction	Transformation meta-function
 	*/
-	template <typename Tuple, template <typename> typename UnaryMetaFunction>
+	template <Tuple T, template <typename> typename UnaryMetaFunction>
 	struct tuple_transform : std::type_identity<tuple_transform_invalid_argument> {};
 
 	// template <typename T0, ... , typename Tn, template <typename> typename UnaryMetaFunction>
@@ -71,8 +70,8 @@ namespace nstd
 #undef tuple_transform__functor
 #undef tuple_transform__definition	
 	
-	template <typename Tuple, template <typename> typename UnaryMetaFunction>
-	using tuple_transform_t = typename tuple_transform<Tuple,UnaryMetaFunction>::type;
+	template <Tuple T, template <typename> typename UnaryMetaFunction>
+	using tuple_transform_t = typename tuple_transform<T,UnaryMetaFunction>::type;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 

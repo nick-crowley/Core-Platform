@@ -29,9 +29,8 @@
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "../src/StdLibrary.h"
+#include "nstd/tuple/is_tuple.h"
 #include "../src/libBoost.h"
-
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -48,10 +47,11 @@ namespace nstd
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 	* @brief	Retrieve type of tuple representing subset of first @c N types of existing tuple
 	*
-	* @tparam	N		Length of subset
-	* @tparam	Tuple	Source tuple
+	* @tparam	N	Length of subset
+	* @tparam	T	Source tuple
 	*/
-	template <size_t N, typename Tuple>
+	template <size_t N, Tuple T>
+		requires (N <= std::tuple_size_v<T>)
 	struct tuple_first_n : std::type_identity<tuple_first_n_invalid_argument> {};
 
 	template <typename...R>
@@ -69,8 +69,9 @@ namespace nstd
 	BOOST_PP_REPEAT_FROM_TO(1, 16, tuple_first_n__definition, ~);
 #undef tuple_first_n__definition
 	
-	template <size_t N, typename Tuple>
-	using tuple_first_n_t = typename tuple_first_n<N,Tuple>::type;
+	template <size_t N, Tuple T>
+		requires (N <= std::tuple_size_v<T>)
+	using tuple_first_n_t = typename tuple_first_n<N,T>::type;
 }
 
 namespace nstd::testing 
