@@ -3,6 +3,7 @@
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
 #include "nstd/experimental/metafunc.h"
+#include "nstd/Sequence.h"
 #include "../../src/StdLibrary.h"
 
 namespace core::meta
@@ -23,24 +24,8 @@ namespace core::meta
 	concept AnyTuple = is_tuple<T>::value;
 
 	
-	//! @brief	Query whether type is @c std::index_sequence<> (of any length)
-	template <typename T>
-	metafunc is_index_sequence : std::false_type {};
-
-	template <size_t... N>
-	metafunc is_index_sequence<std::index_sequence<N...>> : std::true_type {};
-	
-	template <typename T>
-	bool constexpr is_index_sequence_v = is_index_sequence<T>::value;
-
-
-	//! @brief	Ensure type is @c std::index_sequence<> (of any length)
-	template <typename T>
-	concept AnyIndexSequence = is_index_sequence<T>::value;
-
-
 	//! @brief	Tuple with its matching index sequence
-	template <AnyTuple Types, AnyIndexSequence Indicies>
+	template <AnyTuple Types, nstd::AnyIndexSequence Indicies>
 	struct IndexedTuple {};
 
 	//! @brief	An @c IndexedTuple containing an empty tuple and empty indicies sequence
@@ -61,7 +46,7 @@ namespace core::meta
 	template <typename T>
 	metafunc is_indexed_tuple : std::false_type {};
 
-	template <AnyTuple T, AnyIndexSequence I>
+	template <AnyTuple T, nstd::AnyIndexSequence I>
 	metafunc is_indexed_tuple<IndexedTuple<T,I>> : std::true_type {};
 	
 	template <typename T>
