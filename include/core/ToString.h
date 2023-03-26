@@ -5,6 +5,7 @@
 #include "nstd/Concepts.h"
 #include "core/CharacterConversion.h"
 #include "core/EnumNames.h"
+#include "core/ToHexString.h"
 #include "../../src/library/PlatformExport.h"
 
 namespace core
@@ -43,12 +44,8 @@ namespace core
     template <nstd::Enumeration Enum> 
     std::string 
     to_string(Enum&& e) { 
-        for (auto const& def : enumerator_dictionary_v<Enum>) {
-            if (def.second == e)
-                return def.first;
-        }
-
-        return "0x" + std::to_string(static_cast<uintptr_t>(e));
+        std::string_view const name = enumerator_name(e);
+        return !name.empty() ? name : to_hexString(e);
     }
 }
 
@@ -74,7 +71,7 @@ to_string(T** value)
     else if constexpr (core::meta::ToWStringCompatible<T*> || core::meta::ToWStringCompatible<T>)
         return !value ? "nullptr" : '*' + to_string(*value);
     else
-        return !value ? "nullptr" : "0x" + std::to_string(reinterpret_cast<uintptr_t>(value));
+        return !value ? "nullptr" : core::to_hexString(reinterpret_cast<uintptr_t>(value));
 }
 
 template <typename T>
@@ -88,7 +85,7 @@ to_string(T* value) requires (!std::is_integral_v<T>)
     if constexpr (core::meta::ToWStringCompatible<T>)
         return !value ? "nullptr" : '*' + to_string(*value);
     else
-        return !value ? "nullptr" : "0x" + std::to_string(reinterpret_cast<uintptr_t>(value));
+        return !value ? "nullptr" : core::to_hexString(reinterpret_cast<uintptr_t>(value));
 }
 
 std::string 
