@@ -44,6 +44,7 @@
 
 #include "core/CharacterConversion.h"
 #include "core/BitwiseEnum.h"
+#include "core/EnumNames.h"
 #include "core/ToString.h"
 #include "core/ToHexString.h"
 
