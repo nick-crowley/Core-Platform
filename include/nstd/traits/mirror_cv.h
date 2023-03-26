@@ -45,12 +45,12 @@ namespace nstd
 	// clang-format off
 
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
-	* @brief	Type-trait which clones the CV-qualification of another type
-	* @details	Produces the type @e [cv-qual] @c To from the type @e [cv-qual] @c From
-	* @typedef	mirror_cv
+	* @brief	CV-qualify any type with the same qualification already on another type
 	*
-	* @tparam	From	Type whose cv-qualification should be cloned
-	* @tparam	To		Any type
+	* @tparam	From	Source type whose cv-qualification should be cloned
+	* @tparam	To		Type to be adorned
+	* 
+	* @returns	@c To with the CV-qualifiers present upon @c From
 	*/
 	template <typename From, typename To>
 	metafunc mirror_cv : std::type_identity<To> {};
@@ -67,12 +67,7 @@ namespace nstd
 	template <typename From, typename To>
 	metafunc mirror_cv<const volatile From,To> : std::type_identity<const volatile To> {};
 
-	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
-	* @typedef	mirror_cv_t 
-	* 
-	* @tparam	From	Type whose cv-qualification should be cloned
-	* @tparam	To		Any type
-	*/
+
 	template <typename From, typename To>
 	using mirror_cv_t = typename mirror_cv<From,To>::type;
 }

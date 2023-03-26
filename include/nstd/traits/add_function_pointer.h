@@ -44,7 +44,13 @@ namespace nstd
 {
 	// clang-format off
 
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief	Retrieve the function-pointer type required to address a function
+	*
+	* @tparam	F		Function-type
+	*/
     template <typename F>
+		requires std::is_function_v<F>
 	metafunc add_function_pointer : std::type_identity<F> {};
 	
 #if defined _M_IX86
@@ -64,7 +70,9 @@ namespace nstd
 	metafunc add_function_pointer<R (P...)> : std::type_identity<R(*)(P...)> {};
 #endif
 
+	//! @brief	Retrieve the function-pointer type required to address a function
 	template <typename F>
+		requires std::is_function_v<F>
 	using add_function_pointer_t = typename add_function_pointer<F>::type;
 }
 // clang-format on

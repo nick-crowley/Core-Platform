@@ -53,6 +53,10 @@ namespace nstd
 	
 	template <typename T>
 	bool constexpr is_function_pointer_v = is_function_pointer<T>::value;
+
+	//! @brief	Ensure type is function-pointer
+	template <typename T>
+	concept FunctionPointer = is_function_pointer_v<T>;
 }
 // clang-format on
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

@@ -29,6 +29,7 @@
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+#include "nstd/traits/is_function_pointer.h"
 #include "nstd/experimental/Metafunc.h"
 #include "../src/StdLibrary.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -44,8 +45,13 @@ namespace nstd
 {
 	// clang-format off
 
-	template <typename F>
-	metafunc remove_function_pointer : std::type_identity<F> {};
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief	Retrieve the function-type addressed by a function-pointer
+	*
+	* @tparam	FP		Function-pointer type
+	*/
+	template <FunctionPointer FP>
+	metafunc remove_function_pointer : std::type_identity<FP> {};
 	
 #if defined _M_IX86
 	template <typename R, typename... P>
@@ -64,8 +70,9 @@ namespace nstd
 	metafunc remove_function_pointer<R(*)(P...)> : std::type_identity<R (P...)> {};
 #endif
 
-	template <typename F>
-	using remove_function_pointer_t = typename remove_function_pointer<F>::type;
+	//! @brief	Function-type addressed by a function-pointer
+	template <FunctionPointer FP>
+	using remove_function_pointer_t = typename remove_function_pointer<FP>::type;
 }
 // clang-format on
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
