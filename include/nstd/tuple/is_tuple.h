@@ -56,6 +56,9 @@ namespace nstd
 	//! @brief	Ensure type is @c std::tuple<> (of any length)
 	template <typename T>
 	concept Tuple = is_tuple<T>::value;
+	
+	//! @brief	Tag-type representing an invalid argument
+	struct invalid_argument_t {};
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 

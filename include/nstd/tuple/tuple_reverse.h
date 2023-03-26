@@ -42,16 +42,15 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace nstd
 {
-	struct tuple_reverse_invalid_argument;
-	
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 	* @brief	Retrieve type of tuple with its element types in reverse order
 	*
 	* @tparam	T	Source tuple
 	*/
 	template <Tuple T>
-	struct tuple_reverse : std::type_identity<tuple_reverse_invalid_argument> {};
-
+	struct tuple_reverse : std::type_identity<invalid_argument_t> {};
+	
+	// Specialization: Empty tuple : return empty-tuple
 	template <>
 	struct tuple_reverse<std::tuple<>> : std::type_identity<std::tuple<>> {};
 

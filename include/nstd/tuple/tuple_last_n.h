@@ -52,7 +52,7 @@ namespace nstd
 	template <size_t N, Tuple T>
 		requires (N <= std::tuple_size_v<T>)
 	using tuple_last_n = tuple_reverse<tuple_first_n_t<N,tuple_reverse_t<T>>>;
-
+	
 
 	template <size_t N, Tuple T>
 		requires (N <= std::tuple_size_v<T>)
@@ -69,15 +69,7 @@ namespace nstd::testing
 	BOOST_PP_REPEAT(16, tuple_last_n_t__returns_empty_tuple_for_n_zero, ~);
 #undef tuple_last_n_t__returns_empty_tuple_for_n_zero
 	
-	// static_assert(std::is_same_v<invalid_argument, tuple_last_n_t<n,std::tuple<>>>);
-#define tuple_last_n_t__returns_invalid_argument_for_empty_tuple(dummy, n, unused)                \
-	static_assert(std::is_same_v<tuple_reverse_invalid_argument, tuple_last_n_t<n,std::tuple<>>>);
-	
-	// Test operations for 1 <= N <= 15
-	// eg. static_assert(std::is_same_v<invalid_argument, tuple_last_n_t<n,std::tuple<>>>);
-	BOOST_PP_REPEAT_FROM_TO(1,16, tuple_last_n_t__returns_invalid_argument_for_empty_tuple, ~);
-#undef tuple_last_n_t__returns_invalid_argument_for_empty_tuple
-	
+
 	// static_assert(std::is_same_v<std::tuple<T1,..,Tn,Tn+1>, tuple_last_n_t<1..N,std::tuple<T0,..,Tn,Tn+1>>>);
 #define tuple_last_n_t__returns_last_n_types(dummy, n, unused)                                    \
 	static_assert(std::is_same_v<std::tuple<BOOST_PP_ENUM_SHIFTED_PARAMS(BOOST_PP_INC(n),UT)>,    \

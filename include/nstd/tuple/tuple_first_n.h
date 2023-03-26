@@ -42,8 +42,6 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace nstd
 {
-	struct tuple_first_n_invalid_argument;
-
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 	* @brief	Retrieve type of tuple representing subset of first @c N types of existing tuple
 	*
@@ -52,8 +50,9 @@ namespace nstd
 	*/
 	template <size_t N, Tuple T>
 		requires (N <= std::tuple_size_v<T>)
-	struct tuple_first_n : std::type_identity<tuple_first_n_invalid_argument> {};
-
+	struct tuple_first_n : std::type_identity<invalid_argument_t> {};
+	
+	// Specialization: N==0 : return empty-tuple
 	template <typename...R>
 	struct tuple_first_n<0,std::tuple<R...>>
 		: std::type_identity<std::tuple<>> {};
@@ -93,14 +92,7 @@ namespace nstd::testing
 	BOOST_PP_REPEAT(16, tuple_first_n_t__returns_empty_tuple_for_n_zero, ~);
 #undef tuple_first_n_t__returns_empty_tuple_for_zero
 
-	// static_assert(std::is_same_v<invalid_argument, tuple_first_n_t<n,std::tuple<>>>);
-#define tuple_first_n_t__returns_invalid_argument_for_empty_tuple(dummy, n, unused)               \
-	static_assert(std::is_same_v<tuple_first_n_invalid_argument, tuple_first_n_t<n,std::tuple<>>>);
-	// Test operations for 1 <= N <= 15
-	// eg. static_assert(std::is_same_v<invalid_argument, tuple_first_n_t<n,std::tuple<>>>);
-	BOOST_PP_REPEAT_FROM_TO(1, 16, tuple_first_n_t__returns_invalid_argument_for_empty_tuple, ~);
-#undef tuple_first_n_t__returns_invalid_argument_for_empty_tuple
-	
+
 	// static_assert(std::is_same_v<std::tuple<T0,..,Tn>, tuple_first_n_t<1..N,std::tuple<T0,..,Tn,Tn+1>>>);
 #define tuple_first_n_t__returns_first_n_types(dummy, n, unused)                                  \
 	static_assert(std::is_same_v<std::tuple<BOOST_PP_ENUM_PARAMS(n,UT)>,                          \

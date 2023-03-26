@@ -42,8 +42,6 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace nstd
 {
-	struct tuple_transform_invalid_argument;
-
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 	* @brief	Retrieve type of tuple resulting from applying transformation to each element of existing tuple
 	*
@@ -51,7 +49,12 @@ namespace nstd
 	* @tparam	UnaryMetaFunction	Transformation meta-function
 	*/
 	template <Tuple T, template <typename> typename UnaryMetaFunction>
-	struct tuple_transform : std::type_identity<tuple_transform_invalid_argument> {};
+	struct tuple_transform : std::type_identity<invalid_argument_t> {};
+	
+	// Specialization: Empty tuple : return empty-tuple
+	template <template <typename> typename Fx>
+	struct tuple_transform<std::tuple<>, Fx>
+		: std::type_identity<std::tuple<>> {};
 
 	// template <typename T0, ... , typename Tn, template <typename> typename UnaryMetaFunction>
 	// struct tuple_transform<std::tuple<T0,...,Tn>, UnaryMetaFunction> 
