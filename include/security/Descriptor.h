@@ -206,7 +206,7 @@ namespace core::security {
 			{
 				// [ABSOLUTE] Size is fixed
 				if (this->format() == DescriptorFormat::Absolute) {
-					return meta::sizeof_v<::SECURITY_DESCRIPTOR>;
+					return nstd::sizeof_v<::SECURITY_DESCRIPTOR>;
 				}
 				// [SELF-RELATIVE] Calculate dynamically
 				else {
@@ -214,7 +214,7 @@ namespace core::security {
 					using sid_wrapper_t = detail::SidWrapper<MaybeConstSid>;
 
 					//! @todo	Verify alignment of these sub-objects
-					auto n = meta::sizeof_v<::SECURITY_DESCRIPTOR_RELATIVE>;
+					auto n = nstd::sizeof_v<::SECURITY_DESCRIPTOR_RELATIVE>;
 					if (this->Owner)
 						n += sid_wrapper_t{meta::const_pointer_cast<MaybeConstSid*>(this->Owner)}.size();
 					if (this->Group)

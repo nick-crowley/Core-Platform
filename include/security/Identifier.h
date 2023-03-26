@@ -123,8 +123,8 @@ namespace core::security
 			std::size_t
 			size() const
 			{
-				return meta::sizeof_v<::BYTE, ::BYTE, ::SID_IDENTIFIER_AUTHORITY> 
-					 + meta::sizeof_n<::DWORD>(this->SubAuthorityCount);
+				return nstd::sizeof_v<::BYTE, ::BYTE, ::SID_IDENTIFIER_AUTHORITY> 
+					 + nstd::sizeof_n<::DWORD>(this->SubAuthorityCount);
 			}
 	
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o

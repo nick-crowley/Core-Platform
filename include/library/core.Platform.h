@@ -23,10 +23,10 @@
 #include "nstd/Iterator.h"
 #include "nstd/Memory.h"
 #include "nstd/Sequence.h"
+#include "nstd/SizeOf.h"
 #include "nstd/SourceLocation.h"
 #include "nstd/Tuple.h"
 
-#include "meta/SizeOf.h"
 #include "meta/TagTypes.h"
 #include "meta/Settings.h"
 #include "meta/TypeTraits.h"

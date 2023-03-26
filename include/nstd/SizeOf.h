@@ -4,7 +4,7 @@
 #endif
 #include "../src/StdLibrary.h"
 
-namespace core::meta
+namespace nstd
 {
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 	* @brief	Total size of set of types
