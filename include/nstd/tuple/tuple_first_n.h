@@ -43,14 +43,16 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace nstd
 {
-	// tuple_first_n
 	struct tuple_first_n_invalid_argument;
 
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief	Retrieve type of tuple representing subset of first @c N types of existing tuple
+	*
+	* @tparam	N		Length of subset
+	* @tparam	Tuple	Source tuple
+	*/
 	template <size_t N, typename Tuple>
 	struct tuple_first_n : std::type_identity<tuple_first_n_invalid_argument> {};
-
-	template <size_t N, typename Tuple>
-	using tuple_first_n_t = typename tuple_first_n<N,Tuple>::type;
 
 	template <typename...R>
 	struct tuple_first_n<0,std::tuple<R...>>
@@ -66,6 +68,9 @@ namespace nstd
 	// template <typename T0, typename T1, typename... Rest> struct tuple_first_n<2,std::tuple<T0, T1, Rest...>> : std::type_identity<std::tuple<T0, T1>> {};
 	BOOST_PP_REPEAT_FROM_TO(1, 16, tuple_first_n__definition, ~);
 #undef tuple_first_n__definition
+	
+	template <size_t N, typename Tuple>
+	using tuple_first_n_t = typename tuple_first_n<N,Tuple>::type;
 }
 
 namespace nstd::testing 

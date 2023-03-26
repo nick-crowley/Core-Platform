@@ -43,14 +43,15 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace nstd
 {
-	// tuple_reverse
 	struct tuple_reverse_invalid_argument;
-
+	
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief	Retrieve type of tuple with its element types in reverse order
+	*
+	* @tparam	Tuple	Source tuple
+	*/
 	template <typename Tuple>
 	struct tuple_reverse : std::type_identity<tuple_reverse_invalid_argument> {};
-
-	template <typename Tuple>
-	using tuple_reverse_t = typename tuple_reverse<Tuple>::type;
 
 	template <>
 	struct tuple_reverse<std::tuple<>> : std::type_identity<std::tuple<>> {};
@@ -69,6 +70,10 @@ namespace nstd
 	BOOST_PP_REPEAT_FROM_TO(1, 16, tuple_reverse__definition, ~);
 #undef tuple_reverse__definition
 #undef tuple_reverse__decrementing_type
+	
+
+	template <typename Tuple>
+	using tuple_reverse_t = typename tuple_reverse<Tuple>::type;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 

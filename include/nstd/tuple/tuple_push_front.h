@@ -42,8 +42,13 @@
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace nstd
-{
-	// tuple_push_front
+{	
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief	Retrieve type of tuple with an element pre-pended to an existing tuple
+	*
+	* @tparam	Tuple	Source tuple
+	* @tparam	Item	Type of new element
+	*/
 	template <typename Tuple, typename Item>
 	struct tuple_push_front;
 
@@ -51,6 +56,7 @@ namespace nstd
 	struct tuple_push_front<std::tuple<Items...>,Item> : std::type_identity<std::tuple<Item,Items...>>
 	{};
 
+	//! @brief	Retrieve type of tuple with an element pre-pended to an existing tuple
 	template <typename Tuple, typename Item>
 	using tuple_push_front_t = typename tuple_push_front<Tuple,Item>::type;
 }

@@ -43,14 +43,16 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace nstd
 {
-	// tuple_transform
 	struct tuple_transform_invalid_argument;
 
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief	Retrieve type of tuple resulting from applying transformation to each element of existing tuple
+	*
+	* @tparam	Tuple	Source tuple
+	* @tparam	UnaryMetaFunction	Transformation meta-function
+	*/
 	template <typename Tuple, template <typename> typename UnaryMetaFunction>
 	struct tuple_transform : std::type_identity<tuple_transform_invalid_argument> {};
-
-	template <typename Tuple, template <typename> typename UnaryMetaFunction>
-	using tuple_transform_t = typename tuple_transform<Tuple,UnaryMetaFunction>::type;
 
 	// template <typename T0, ... , typename Tn, template <typename> typename UnaryMetaFunction>
 	// struct tuple_transform<std::tuple<T0,...,Tn>, UnaryMetaFunction> 
@@ -68,6 +70,9 @@ namespace nstd
 	BOOST_PP_REPEAT_FROM_TO(1, 16, tuple_transform__definition, ~);
 #undef tuple_transform__functor
 #undef tuple_transform__definition	
+	
+	template <typename Tuple, template <typename> typename UnaryMetaFunction>
+	using tuple_transform_t = typename tuple_transform<Tuple,UnaryMetaFunction>::type;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 

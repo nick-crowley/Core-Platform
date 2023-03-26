@@ -43,7 +43,11 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace nstd
 {
-	// tuple_front
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief	Retrieve type of first element of a tuple 
+	*
+	* @tparam	Tuple	Source tuple
+	*/
 	template <typename Tuple>
 	struct tuple_front : std::type_identity<std::tuple_element_t<0,Tuple>> {};
 	

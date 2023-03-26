@@ -43,13 +43,18 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace nstd
 {
-	// tuple_last_n
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief	Retrieve type of tuple representing subset of final @c N types of existing tuple
+	*
+	* @tparam	N		Length of subset
+	* @tparam	Tuple	Source tuple
+	*/
 	template <size_t N, typename Tuple>
 	using tuple_last_n = tuple_reverse<tuple_first_n_t<N,tuple_reverse_t<Tuple>>>;
 
+
 	template <size_t N, typename Tuple>
 	using tuple_last_n_t = typename tuple_last_n<N,Tuple>::type;
-
 }
 
 namespace nstd::testing 

@@ -43,7 +43,11 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace nstd
 {
-	// tuple_back
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief	Retrieve type of final element of a tuple 
+	*
+	* @tparam	Tuple	Source tuple
+	*/
 	template <typename Tuple>
 	struct tuple_back : std::type_identity<std::tuple_element_t<std::tuple_size_v<Tuple>-1,Tuple>> {};
 	
