@@ -86,6 +86,21 @@ namespace nstd
 	static_assert(sequence_length_v<std::integer_sequence<int>> == 0);
 	static_assert(sequence_length_v<std::integer_sequence<int,1>> == 1);
 
+	
+	//! @brief	Append an item to an integer sequence
+	template <AnyIntegerSequence Sequence, sequence_element_t<Sequence> Element>
+	metafunc push_back;
+
+	template <typename Element, Element... Values, Element NewValue>
+	metafunc push_back<std::integer_sequence<Element,Values...>, NewValue> 
+		: std::type_identity<std::integer_sequence<Element,Values...,NewValue>> 
+	{};
+
+	template <AnyIntegerSequence Sequence, sequence_element_t<Sequence> Element>
+	using push_back_t = typename push_back<Sequence,Element>::type;
+	
+	static_assert(std::same_as<push_back_t<std::integer_sequence<int>, 1>, std::integer_sequence<int,1>>);
+	static_assert(std::same_as<push_back_t<std::integer_sequence<int,1>, 2>, std::integer_sequence<int,1,2>>);
 
 	
 } // namespace nstd
