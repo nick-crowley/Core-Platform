@@ -30,6 +30,10 @@ namespace core::meta
 	{
 		static_cast<To>(f);
 	};
+	
+	//! @brief	Verify type is non-bool, non-character, integral type (signed or unsigned)
+	template <typename T>
+	concept Integer = std::integral<T> && !meta::AnyOf<std::make_signed_t<std::remove_cv_t<T>>, bool,char,wchar_t,char8_t,char16_t,char32_t>;
 
 	template <typename T>
 	concept IntegralOrEnum = std::is_integral_v<T> || Enumeration<T>;
