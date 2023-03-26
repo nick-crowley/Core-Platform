@@ -20,7 +20,7 @@ namespace nstd
 
 	//! @brief	Ensure type is @c std::index_sequence<> (of any length)
 	template <typename T>
-	concept AnyIndexSequence = is_index_sequence<T>::value;
+	concept IndexSequence = is_index_sequence<T>::value;
 
 
 	//! @brief	Query whether type is @c std::integer_sequence<> (of any type and length)

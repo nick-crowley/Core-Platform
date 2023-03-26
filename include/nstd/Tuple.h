@@ -49,7 +49,7 @@
 namespace nstd
 {	
 	//! @brief	Tuple with its matching index sequence
-	template <Tuple Types, nstd::AnyIndexSequence Indicies>
+	template <Tuple Types, nstd::IndexSequence Indicies>
 	struct indexed_tuple {};
 
 	//! @brief	An @c indexed_tuple containing an empty tuple and empty indicies sequence
@@ -70,7 +70,7 @@ namespace nstd
 	template <typename T>
 	metafunc is_indexed_tuple : std::false_type {};
 
-	template <Tuple T, nstd::AnyIndexSequence I>
+	template <Tuple T, nstd::IndexSequence I>
 	metafunc is_indexed_tuple<indexed_tuple<T,I>> : std::true_type {};
 	
 	template <typename T>
