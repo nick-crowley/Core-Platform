@@ -29,13 +29,8 @@
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "nstd/tuple/tuple_back.h"
-#include "nstd/tuple/tuple_first_n.h"
-#include "nstd/tuple/tuple_front.h"
-#include "nstd/tuple/tuple_last_n.h"
-#include "nstd/tuple/tuple_push_front.h"
-#include "nstd/tuple/tuple_reverse.h"
-#include "nstd/tuple/tuple_transform.h"
+#include "../src/StdLibrary.h"
+#include "../src/libBoost.h"
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
@@ -46,7 +41,34 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace nstd
+{
+	// tuple_transform
+	struct tuple_transform_invalid_argument;
 
+	template <typename Tuple, template <typename> typename UnaryMetaFunction>
+	struct tuple_transform : std::type_identity<tuple_transform_invalid_argument> {};
+
+	template <typename Tuple, template <typename> typename UnaryMetaFunction>
+	using tuple_transform_t = typename tuple_transform<Tuple,UnaryMetaFunction>::type;
+
+	// template <typename T0, ... , typename Tn, template <typename> typename UnaryMetaFunction>
+	// struct tuple_transform<std::tuple<T0,...,Tn>, UnaryMetaFunction> 
+	//   : std::type_identity<std::tuple<UnaryMetaFunction<T0>,...,UnaryMetaFunction<Tn>>> {};
+#define tuple_transform__definition(dummy, n, unused)                                             \
+	template <BOOST_PP_ENUM_PARAMS(n,typename T), template <typename> typename UnaryMetaFunction> \
+	struct tuple_transform<std::tuple<BOOST_PP_ENUM_PARAMS(n,T)>,UnaryMetaFunction>               \
+		: std::type_identity<std::tuple<BOOST_PP_REPEAT(n,tuple_transform__functor,unused)>> {};
+	// [, ] UnaryMetaFunction<Tn>
+#define tuple_transform__functor(dummy, n, unused)                                                \
+	BOOST_PP_COMMA_IF(n) UnaryMetaFunction<BOOST_PP_CAT(T,n)>
+	// Define operations for 1 <= N <= 15
+	// eg. template <typename T0, template <typename> typename UnaryMetaFunction> 
+	//     struct tuple_transform<std::tuple<T0>,UnaryMetaFunction> : std::type_identity<std::tuple<UnaryMetaFunction<T0>>> {};
+	BOOST_PP_REPEAT_FROM_TO(1, 16, tuple_transform__definition, ~);
+#undef tuple_transform__functor
+#undef tuple_transform__definition	
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

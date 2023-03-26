@@ -29,13 +29,8 @@
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "nstd/tuple/tuple_back.h"
-#include "nstd/tuple/tuple_first_n.h"
-#include "nstd/tuple/tuple_front.h"
-#include "nstd/tuple/tuple_last_n.h"
-#include "nstd/tuple/tuple_push_front.h"
-#include "nstd/tuple/tuple_reverse.h"
-#include "nstd/tuple/tuple_transform.h"
+#include "../src/StdLibrary.h"
+#include "../src/libBoost.h"
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
@@ -46,7 +41,35 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace nstd
+{
+	// tuple_reverse
+	struct tuple_reverse_invalid_argument;
 
+	template <typename Tuple>
+	struct tuple_reverse : std::type_identity<tuple_reverse_invalid_argument> {};
+
+	template <typename Tuple>
+	using tuple_reverse_t = typename tuple_reverse<Tuple>::type;
+
+	template <>
+	struct tuple_reverse<std::tuple<>> : std::type_identity<std::tuple<>> {};
+
+	// template <typename T0, ..., typename Tn>
+	// struct tuple_reverse<std::tuple<T0,..,Tn>> : std::type_identity<std::tuple<Tn,...,T0>> {};
+#define tuple_reverse__definition(dummy, n, unused)                                               \
+	template <BOOST_PP_ENUM_PARAMS(n,typename T)>                                                 \
+	struct tuple_reverse<std::tuple<BOOST_PP_ENUM_PARAMS(n,T)>>                                   \
+	  : std::type_identity<std::tuple<BOOST_PP_REPEAT(n,tuple_reverse__decrementing_type,BOOST_PP_DEC(n))>> {};
+	// [,] T(idx-n)
+#define tuple_reverse__decrementing_type(dummy, n, count)                                         \
+	BOOST_PP_COMMA_IF(n) BOOST_PP_CAT(T,BOOST_PP_SUB(count,n))
+	// Define operations for 1 <= N <= 15
+	// eg. template <typename T0, typename T1> struct tuple_reverse<std::tuple<T0, T1>> : std::type_identity<std::tuple<T1, T0>> {};
+	BOOST_PP_REPEAT_FROM_TO(1, 16, tuple_reverse__definition, ~);
+#undef tuple_reverse__definition
+#undef tuple_reverse__decrementing_type
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

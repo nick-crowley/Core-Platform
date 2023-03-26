@@ -29,13 +29,8 @@
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "nstd/tuple/tuple_back.h"
-#include "nstd/tuple/tuple_first_n.h"
-#include "nstd/tuple/tuple_front.h"
-#include "nstd/tuple/tuple_last_n.h"
-#include "nstd/tuple/tuple_push_front.h"
-#include "nstd/tuple/tuple_reverse.h"
-#include "nstd/tuple/tuple_transform.h"
+#include "../src/StdLibrary.h"
+#include "../src/libBoost.h"
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
@@ -46,7 +41,19 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace nstd
+{
+	// tuple_push_front
+	template <typename Tuple, typename Item>
+	struct tuple_push_front;
 
+	template <typename... Items, typename Item>
+	struct tuple_push_front<std::tuple<Items...>,Item> : std::type_identity<std::tuple<Item,Items...>>
+	{};
+
+	template <typename Tuple, typename Item>
+	using tuple_push_front_t = typename tuple_push_front<Tuple,Item>::type;
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
