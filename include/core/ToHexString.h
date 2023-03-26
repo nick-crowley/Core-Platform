@@ -1,5 +1,8 @@
 #pragma once
-#include "library/core.Platform.h"
+#ifndef CorePlatform_h_included
+#	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
+#endif
+#include "../../src/StdLibrary.h"
 
 namespace core
 {
@@ -18,9 +21,9 @@ namespace core
 		return buffer;
 	}
 
-	template <unsigned Width = -1, nstd::IntegralOrEnum Value>
-	auto 
-	inline to_hexString(Value const n)
+	template <unsigned Width /*= -1*/, nstd::IntegralOrEnum Value>
+	std::string
+	to_hexString(Value const n)
 	{
 		std::stringstream s; 
 		s << "0x" << std::setfill('0') << std::hex;
