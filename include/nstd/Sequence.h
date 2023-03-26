@@ -72,4 +72,20 @@ namespace nstd
 	using sequence_element_t = typename sequence_element<Sequence>::type;
 	
 	
+	//! @brief	Calculate number of elements in @c std::integer_sequence<> (of any type)
+	template <AnyIntegerSequence Sequence>
+	metafunc sequence_length;
+
+	template <typename T, T... Values>
+	metafunc sequence_length<std::integer_sequence<T,Values...>> : std::integral_constant<size_t,sizeof...(Values)> {};
+	
+	template <AnyIntegerSequence Sequence>
+	size_t constexpr
+	sequence_length_v = sequence_length<Sequence>::value;
+	
+	static_assert(sequence_length_v<std::integer_sequence<int>> == 0);
+	static_assert(sequence_length_v<std::integer_sequence<int,1>> == 1);
+
+
+	
 } // namespace nstd
