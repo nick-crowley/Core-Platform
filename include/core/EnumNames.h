@@ -218,6 +218,39 @@ namespace core
 	enumerator_dictionary_v<E, nstd::enum_sequence<E,Values...>> {
 		EnumName<E>{enumerator_name_v<E,Values>, Values}...
 	};	
+	
+	
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief	Retrieve enumerator string-representation at run-time
+	*
+	* @param	value	Enumerator of any enumeration type
+	* 
+	* @returns	Empty string if @p value is invalid, otherwise its string-representation
+	*/
+	template <nstd::Enumeration E>
+	std::string_view constexpr
+	enumerator_name(E value) {
+		for (auto const& def : enumerator_dictionary_v<E>) {
+            if (def.second == value)
+                return def.first;
+		}
+
+		return {};
+	}
+
+	
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief	Query whether a value is a valid enumerator at run-time
+	*
+	* @param	value	Enumerator of any enumeration type
+	*/
+	template <nstd::Enumeration E>
+	bool constexpr
+	is_valid_enumerator(E value) {
+		return ranges::any_of(enumerator_dictionary_v<E> | views::values, [=](auto e){ 
+			return e == value; 
+		});
+	}
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::testing
@@ -245,7 +278,10 @@ namespace core::testing
 
 	static_assert(enumeration_name_v<E2> == "core::testing::E2");
 	static_assert(enumerator_name_v<E2, E2::Twenty> == "Twenty");
+	static_assert(enumerator_name(E2::Twenty) == "Twenty");
 	static_assert(!is_valid_enumerator_v<E2,5>);
+	static_assert(is_valid_enumerator(E2::Twenty));
+	static_assert(!is_valid_enumerator(E2{21}));
 	static_assert(enumerator_dictionary_v<N1::E1> == std::array<EnumName<N1::E1>,1>{ 
 		EnumName<N1::E1>{"Zero",N1::E1::Zero} 
 	});
