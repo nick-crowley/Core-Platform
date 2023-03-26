@@ -31,6 +31,7 @@
 #include "nstd/SizeOf.h"
 #include "nstd/SourceLocation.h"
 #include "nstd/Tuple.h"
+#include "nstd/Utility.h"
 
 #include "core/Exceptions.h"
 #include "core/ThrowIfEmpty.h"
