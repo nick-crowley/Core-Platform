@@ -9,23 +9,23 @@
 namespace core::meta 
 {
     template <typename F>
-	struct add_function_pointer : std::type_identity<F> {};
+	metafunc add_function_pointer : std::type_identity<F> {};
 	
 #if defined _M_IX86
 	template <typename R, typename... P>
-	struct add_function_pointer<R __cdecl(P...)> : std::type_identity<R(__cdecl*)(P...)> {};
+	metafunc add_function_pointer<R __cdecl(P...)> : std::type_identity<R(__cdecl*)(P...)> {};
 	
 	template <typename R, typename... P>
-	struct add_function_pointer<R __fastcall(P...)> : std::type_identity<R(__fastcall*)(P...)> {};
+	metafunc add_function_pointer<R __fastcall(P...)> : std::type_identity<R(__fastcall*)(P...)> {};
 	
 	template <typename R, typename... P>
-	struct add_function_pointer<R __stdcall(P...)> : std::type_identity<R(__stdcall*)(P...)> {};
+	metafunc add_function_pointer<R __stdcall(P...)> : std::type_identity<R(__stdcall*)(P...)> {};
 	
 	template <typename R, typename... P>
-	struct add_function_pointer<R __vectorcall(P...)> : std::type_identity<R(__vectorcall*)(P...)> {};
+	metafunc add_function_pointer<R __vectorcall(P...)> : std::type_identity<R(__vectorcall*)(P...)> {};
 #elif defined _M_X64
 	template <typename R, typename... P>
-	struct add_function_pointer<R (P...)> : std::type_identity<R(*)(P...)> {};
+	metafunc add_function_pointer<R (P...)> : std::type_identity<R(*)(P...)> {};
 #endif
 
 	template <typename F>
@@ -56,19 +56,19 @@ namespace core::meta
 	* @tparam	To		Any type
 	*/
 	template <typename From, typename To>
-	struct mirror_cv : std::type_identity<To> {};
+	metafunc mirror_cv : std::type_identity<To> {};
 
 	// const From => const To
 	template <typename From, typename To>
-	struct mirror_cv<const From,To> : std::type_identity<const To> {};
+	metafunc mirror_cv<const From,To> : std::type_identity<const To> {};
 
 	// volatile From => volatile To
 	template <typename From, typename To>
-	struct mirror_cv<volatile From,To> : std::type_identity<volatile To> {};
+	metafunc mirror_cv<volatile From,To> : std::type_identity<volatile To> {};
 
 	// const-volatile From => const-volatile To
 	template <typename From, typename To>
-	struct mirror_cv<const volatile From,To> : std::type_identity<const volatile To> {};
+	metafunc mirror_cv<const volatile From,To> : std::type_identity<const volatile To> {};
 
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 	* @typedef	mirror_cv_t 
@@ -81,23 +81,23 @@ namespace core::meta
 
 
 	template <typename F>
-	struct remove_function_pointer : std::type_identity<F> {};
+	metafunc remove_function_pointer : std::type_identity<F> {};
 	
 #if defined _M_IX86
 	template <typename R, typename... P>
-	struct remove_function_pointer<R(__cdecl*)(P...)> : std::type_identity<R __cdecl(P...)> {};
+	metafunc remove_function_pointer<R(__cdecl*)(P...)> : std::type_identity<R __cdecl(P...)> {};
 	
 	template <typename R, typename... P>
-	struct remove_function_pointer<R(__fastcall*)(P...)> : std::type_identity<R __fastcall(P...)> {};
+	metafunc remove_function_pointer<R(__fastcall*)(P...)> : std::type_identity<R __fastcall(P...)> {};
 
 	template <typename R, typename... P>
-	struct remove_function_pointer<R(__stdcall*)(P...)> : std::type_identity<R __stdcall(P...)> {};
+	metafunc remove_function_pointer<R(__stdcall*)(P...)> : std::type_identity<R __stdcall(P...)> {};
 
 	template <typename R, typename... P>
-	struct remove_function_pointer<R(__vectorcall*)(P...)> : std::type_identity<R __vectorcall(P...)> {};
+	metafunc remove_function_pointer<R(__vectorcall*)(P...)> : std::type_identity<R __vectorcall(P...)> {};
 #elif defined _M_X64
 	template <typename R, typename... P>
-	struct remove_function_pointer<R(*)(P...)> : std::type_identity<R (P...)> {};
+	metafunc remove_function_pointer<R(*)(P...)> : std::type_identity<R (P...)> {};
 #endif
 
 	template <typename F>
