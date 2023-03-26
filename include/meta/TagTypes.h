@@ -2,7 +2,6 @@
 #ifndef CorePlatform_h_included
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
-#include "nstd/experimental/Satisfies.h"
 
 namespace core::meta
 {
