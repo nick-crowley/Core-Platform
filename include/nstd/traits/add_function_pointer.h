@@ -29,10 +29,8 @@
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "nstd/traits/add_function_pointer.h"
-#include "nstd/traits/is_function_pointer.h"
-#include "nstd/traits/remove_function_pointer.h"
-#include "nstd/traits/mirror_cv.h"
+#include "nstd/experimental/Metafunc.h"
+#include "../src/StdLibrary.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -46,16 +44,30 @@ namespace nstd
 {
 	// clang-format off
 
-	//! @brief	Query whether a type is one of a particluar subset
-    template <typename T, typename... U>
-    constexpr bool is_any_of_v = (std::is_same_v<T,U> || ...);
+    template <typename F>
+	metafunc add_function_pointer : std::type_identity<F> {};
 	
-	//! @brief	Aliases the type with the opposite const-qualitification to 'T'
-	template <typename T>
-	using toggle_const_t = std::conditional_t<std::is_const_v<T>, std::remove_cv_t<T>, std::add_const_t<T>>;
+#if defined _M_IX86
+	template <typename R, typename... P>
+	metafunc add_function_pointer<R __cdecl(P...)> : std::type_identity<R(__cdecl*)(P...)> {};
 	
-	// clang-format on
+	template <typename R, typename... P>
+	metafunc add_function_pointer<R __fastcall(P...)> : std::type_identity<R(__fastcall*)(P...)> {};
+	
+	template <typename R, typename... P>
+	metafunc add_function_pointer<R __stdcall(P...)> : std::type_identity<R(__stdcall*)(P...)> {};
+	
+	template <typename R, typename... P>
+	metafunc add_function_pointer<R __vectorcall(P...)> : std::type_identity<R(__vectorcall*)(P...)> {};
+#elif defined _M_X64
+	template <typename R, typename... P>
+	metafunc add_function_pointer<R (P...)> : std::type_identity<R(*)(P...)> {};
+#endif
+
+	template <typename F>
+	using add_function_pointer_t = typename add_function_pointer<F>::type;
 }
+// clang-format on
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
