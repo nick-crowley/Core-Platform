@@ -4,6 +4,7 @@
 #endif
 #include "nstd/Concepts.h"
 #include "core/CharacterConversion.h"
+#include "core/EnumNames.h"
 #include "../../src/library/PlatformExport.h"
 
 namespace core
@@ -41,8 +42,13 @@ namespace core
 
     template <nstd::Enumeration Enum> 
     std::string 
-    inline to_string(Enum&& e) { 
-        return "todo"; 
+    to_string(Enum&& e) { 
+        for (auto const& def : enumerator_dictionary_v<Enum>) {
+            if (def.second == e)
+                return def.first;
+        }
+
+        return "0x" + std::to_string(static_cast<uintptr_t>(e));
     }
 }
 
