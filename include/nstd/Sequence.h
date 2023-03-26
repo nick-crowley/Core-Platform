@@ -43,4 +43,20 @@ namespace nstd
 	static_assert(!AnyIntegerSequence<float>);
 
 	
+	//! @brief	Query whether type is an @c std::integer_sequence<> of a particular type
+	template <typename Sequence, typename T>
+	metafunc is_sequence_of : std::false_type {};
+
+	template <typename Value, Value... Values>
+	metafunc is_sequence_of<std::integer_sequence<Value,Values...>, Value> : std::true_type {};
+	
+	//! @brief	Ensure type is an @c std::integer_sequence<> of a particular type
+	template <typename T, typename Element>
+	concept SequenceOf = is_sequence_of<T,Element>::value;
+	
+	static_assert(SequenceOf<std::integer_sequence<int>,int>);
+	static_assert(SequenceOf<std::integer_sequence<int,1>,int>);
+	static_assert(!SequenceOf<std::integer_sequence<float>,int>);
+
+	
 } // namespace nstd
