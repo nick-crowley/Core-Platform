@@ -1,6 +1,11 @@
 #pragma once
 #include <boost/preprocessor/arithmetic/add.hpp>
+#include <boost/preprocessor/list/adt.hpp>
+#include <boost/preprocessor/list/append.hpp>
 #include <boost/preprocessor/list/enum.hpp>
+#include <boost/preprocessor/list/first_n.hpp>
+#include <boost/preprocessor/list/reverse.hpp>
+#include <boost/preprocessor/list/size.hpp>
 #include <boost/preprocessor/list/transform.hpp>
 #include <boost/preprocessor/repetition.hpp>
 #include <boost/preprocessor/seq/enum.hpp>
