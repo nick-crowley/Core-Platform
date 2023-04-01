@@ -52,7 +52,7 @@ namespace core
 namespace core::meta
 {
     template <typename T> 
-    concept ToWStringCompatible = requires(T&& value) 
+    concept ToStringCompatible = requires(T&& value) 
     { 
 	    to_string(value); 
     };
@@ -68,7 +68,7 @@ to_string(T** value)
 
     if constexpr (nstd::AnyOf<std::remove_const_t<T>,char,wchar_t>)
         return !value ? "nullptr" : '\'' + to_string(*value) + '\'';
-    else if constexpr (core::meta::ToWStringCompatible<T*> || core::meta::ToWStringCompatible<T>)
+    else if constexpr (core::meta::ToStringCompatible<T*> || core::meta::ToStringCompatible<T>)
         return !value ? "nullptr" : '*' + to_string(*value);
     else
         return !value ? "nullptr" : core::to_hexString(reinterpret_cast<uintptr_t>(value));
@@ -82,7 +82,7 @@ to_string(T* value) requires (!std::is_integral_v<T>)
     using std::to_string;
     using core::to_string;
 
-    if constexpr (core::meta::ToWStringCompatible<T>)
+    if constexpr (core::meta::ToStringCompatible<T>)
         return !value ? "nullptr" : '*' + to_string(*value);
     else
         return !value ? "nullptr" : core::to_hexString(reinterpret_cast<uintptr_t>(value));
