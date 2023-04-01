@@ -61,6 +61,17 @@ namespace nstd
 	
 	template <typename T>
 	concept RealNumber = std::is_arithmetic_v<T> && !Character<T>;
+	
+	//! @brief	Ensure type is either built-in string or string-like class (of any character type)
+	template <typename T>
+    concept Stringish = AnyOf<std::decay_t<T>,
+                              gsl::zstring,gsl::wzstring,
+                              gsl::czstring,gsl::cwzstring,
+#ifdef HAS_ATL_STRING
+                              ATL::CString,
+#endif
+                              std::string_view,std::wstring_view,
+                              std::string,std::wstring>;
 }
 
 namespace nstd::testing {

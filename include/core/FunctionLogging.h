@@ -74,19 +74,6 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core
 {
-    namespace detail
-    {
-        template <typename T>
-        constexpr bool is_stringish_v = nstd::AnyOf<std::decay_t<T>,
-                                                    gsl::zstring,gsl::wzstring,
-                                                    gsl::czstring,gsl::cwzstring,
-#ifdef HAS_ATL_STRING
-                                                    ATL::CString,
-#endif
-                                                    std::string_view,std::wstring_view,
-                                                    std::string,std::wstring>;
-    }
-
     struct PlatformExport LoggingSentry
     {
         // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -198,12 +185,12 @@ namespace core
             using std::to_string;
             using core::to_string;
         
-            if constexpr (Style == Adorned && detail::is_stringish_v<T>)
+            if constexpr (Style == Adorned && nstd::Stringish<T>)
                 this->lineBuffer << '"';
 
             this->lineBuffer << to_string(arg);
 
-            if constexpr (Style == Adorned && detail::is_stringish_v<T>)
+            if constexpr (Style == Adorned && nstd::Stringish<T>)
                 this->lineBuffer << '"';
         }
     
