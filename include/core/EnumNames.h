@@ -86,7 +86,7 @@ namespace core
 			//           N1::E1,N1::E1::None
 			//           N1::E1,(enum N1::E1)0x16
 			std::string_view name = ParamList;
-			name.remove_prefix(name.find(',')+1);
+			name.remove_prefix(name.find(',')+1);	// BUG: What happens if E1 is within a template T1 with >1 arguments?
 			if (name.starts_with('('))
 				return std::string_view{};
 
