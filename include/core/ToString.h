@@ -93,3 +93,35 @@ PlatformExport to_string(BOOL const* value);
 
 std::string 
 PlatformExport to_string(DWORD const* value);
+
+namespace core::testing
+{
+    enum class E1 {};
+    static_assert(meta::Stringable<char[]>);
+    static_assert(meta::Stringable<wchar_t[]>);
+    static_assert(meta::Stringable<gsl::zstring>);
+    static_assert(meta::Stringable<gsl::czstring>);
+    static_assert(meta::Stringable<gsl::wzstring>);
+    static_assert(meta::Stringable<gsl::cwzstring>);
+    static_assert(meta::Stringable<void*>);
+    static_assert(meta::Stringable<void const*>);
+    static_assert(meta::Stringable<int>);
+    static_assert(meta::Stringable<long>);
+    static_assert(meta::Stringable<long long>);
+    static_assert(meta::Stringable<E1>);
+    static_assert(meta::Stringable<double>);
+    static_assert(meta::Stringable<float>);
+    static_assert(meta::Stringable<bool>);
+    static_assert(meta::Stringable<char>);
+    static_assert(meta::Stringable<wchar_t>);
+    static_assert(meta::Stringable<char8_t>);
+    static_assert(meta::Stringable<char16_t>);
+    static_assert(meta::Stringable<char32_t>);
+    static_assert(meta::Stringable<std::string>);
+    static_assert(meta::Stringable<std::wstring>);
+    static_assert(meta::Stringable<std::string_view>);
+    static_assert(meta::Stringable<std::wstring_view>);
+    static_assert(meta::Stringable<void**>);
+    static_assert(meta::Stringable<gsl::czstring*>);
+    static_assert(meta::Stringable<gsl::cwzstring*>);
+}
