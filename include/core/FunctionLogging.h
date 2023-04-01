@@ -46,7 +46,7 @@
 //! @brief  Log function entry/exit and specified arguments
 //! 
 //! @param[in]  ... Function arguments
-#define logFunction(...)                                                                          \
+#define logFunctionArgs(...)                                                                      \
     ::core::LoggingSentry loggingSentry{clog};                                                    \
     loggingSentry.onEntry(                                                                        \
         __FUNCTION__                                                                              \
