@@ -144,7 +144,7 @@ namespace core
         }
     
         template <std::invocable<LoggingSentry&> Delegate>
-        std::void_t<LoggingSentry&>
+        void
         onExit(Delegate&& fx)
         {
             this->exitFunctor = fx;
