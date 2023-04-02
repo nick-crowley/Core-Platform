@@ -28,7 +28,7 @@ namespace core
 		std::stringstream s; 
 		s << "0x" << std::setfill('0') << std::hex;
 
-		if (Width != -1)
+		if constexpr (Width != -1)
 			s << std::setw(Width) << static_cast<std::make_unsigned_t<Value>>(n);
 		else if (static_cast<unsigned>(n) == 0)
 			s << "00";
