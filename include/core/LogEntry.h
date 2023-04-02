@@ -3,23 +3,8 @@
 
 namespace core
 {
-	enum class Severity {Verbose,Important,Warning,Failure};
+	enum class Severity : unsigned {Verbose,Important,Warning,Failure};
 	
-	std::string_view
-	inline to_string(Severity s) {
-		using enum Severity;
-		switch (s) {
-		default: return "Invalid";
-#define _CaseStringify(value)  \
-			case value: return #value
-		_CaseStringify(Failure);
-		_CaseStringify(Important);
-		_CaseStringify(Warning);
-		_CaseStringify(Verbose);
-#undef _CaseStringify
-		}
-	}
-
 	template <Severity>
 	class LogEntry 
 	{

@@ -177,24 +177,20 @@ namespace core
         }
 
     private:
-        template <OutputStyle Style, typename T>
+        template <OutputStyle Style, meta::Stringable T>
         void 
         write(T const& arg)
         {
-            using ::to_string;
-            using std::to_string;
-            using core::to_string;
-        
             if constexpr (Style == Adorned && nstd::Stringish<T>)
                 this->lineBuffer << '"';
 
-            this->lineBuffer << to_string(arg);
+            this->lineBuffer << as_string(arg);
 
             if constexpr (Style == Adorned && nstd::Stringish<T>)
                 this->lineBuffer << '"';
         }
     
-        template <typename T>
+        template <meta::Stringable T>
         void 
         writeArgs(NameValuePair<T> const& arg) 
         {
@@ -203,7 +199,7 @@ namespace core
             this->write<Adorned>(arg.second);
         }
 
-        template <typename T, typename... Parameters>
+        template <meta::Stringable T, meta::Stringable... Parameters>
         void 
         writeArgs(NameValuePair<T> const& arg, NameValuePair<Parameters> const&... args)
         {

@@ -103,14 +103,14 @@ namespace core
 				*this->outputStream << std::format("[{:%H:%M:%OS}]", chrono::system_clock::now())
 			                        << " P-" << ::GetCurrentProcessId() 
 			                        << " T-" << std::this_thread::get_id()
-			                        << " "   << std::setw(9) << std::left << core::to_string(sev)
+			                        << " "   << std::setw(9) << std::left << as_string(sev)
 			                        << " : " << detail::repeat(LogStream::PaddingChars, LogStream::currentDepth()) << str
 			                        << std::endl;
 		}
 		
 		void
 		write(Severity sev, std::wstring_view wstr) {
-			this->write(sev, core::to_string(wstr));
+			this->write(sev, as_string(wstr));
 		}
 	};
 
