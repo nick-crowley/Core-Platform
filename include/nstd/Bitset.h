@@ -136,13 +136,13 @@ namespace nstd
 		
 		template <core::meta::CompatibleEnumeration<E> E2>
 		bool constexpr
-		operator==(E2 const& rhs) noexcept {
+		operator==(E2 const& rhs) const noexcept {
 			return this->value() == std::underlying_type_t<E2>(rhs);
 		}
 
 		template <core::meta::CompatibleEnumeration<E> E2>
 		bool constexpr
-		operator!=(E2 const& rhs) noexcept {
+		operator!=(E2 const& rhs) const noexcept {
 			return this->value() != std::underlying_type_t<E2>(rhs);
 		}
 		
