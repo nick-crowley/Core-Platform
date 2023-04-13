@@ -124,13 +124,9 @@ to_string(T* value)
 namespace core::meta
 {
     template <typename T>
-    bool constexpr
-    is_stringable_v = !nstd::Enumeration<T> && requires(T&& value) {
-        ::to_string(value);
-    };
-
-    template <typename T>
-    concept Stringable = is_stringable_v<T>; 
+    concept Stringable = requires(T&& value) { to_string(value);      }
+                      || requires(T&& value) { ::to_string(value);    }
+                      || requires(T&& value) { std::to_string(value); };
 }
 
 template <typename T>
@@ -160,7 +156,7 @@ namespace core::testing
     static_assert(meta::Stringable<int>);
     static_assert(meta::Stringable<long>);
     static_assert(meta::Stringable<long long>);
-    static_assert(!meta::Stringable<E1>);
+    static_assert(meta::Stringable<E1>);
     static_assert(meta::Stringable<float>);
     static_assert(meta::Stringable<double>);
     static_assert(meta::Stringable<float*>);
