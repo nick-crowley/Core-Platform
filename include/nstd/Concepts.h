@@ -56,7 +56,7 @@ namespace nstd
 	
 	template <typename T, typename... Types>
 	concept ConvertibleToAnyOf = (std::convertible_to<T,Types> || ...);
-
+	
 	template <typename T>
 	concept Enumeration = std::is_enum_v<T>;
 
