@@ -51,9 +51,7 @@
 namespace ATL
 {
     std::string 
-    inline to_string(CString const& s) { 
-        return s.GetString(); 
-    }
+    to_string(CString const& s);
 }
 #endif
 namespace core
