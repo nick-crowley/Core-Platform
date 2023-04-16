@@ -91,6 +91,17 @@ to_string(Enum e) {
     return !name.empty() ? std::string{name} : to_hexString(e);
 }
 
+namespace core::meta
+{
+    template <typename T>
+    concept Stringable = requires(T&& value) { to_string(value);      }
+                      || requires(T&& value) { ::to_string(value);    }
+#ifdef HAS_ATL_STRING
+                      || requires(T&& value) { ATL::to_string(value); }
+#endif
+                      || requires(T&& value) { std::to_string(value); };
+}
+
 template <typename T>
 std::string 
 as_string(T&& v);
@@ -101,7 +112,7 @@ to_string(T** value)
 {
     if constexpr (nstd::AnyOf<std::remove_const_t<T>,char,wchar_t>)
         return !value ? "nullptr" : '\'' + as_string(*value) + '\'';
-    else if constexpr (requires { to_string(value); })
+    else if constexpr (core::meta::Stringable<T*>)
         return !value ? "nullptr" : '*' + as_string(*value);
     else
         return !value ? "nullptr" : core::to_hexString(reinterpret_cast<uintptr_t>(value));
@@ -112,21 +123,10 @@ template <typename T>
 std::string 
 to_string(T* value) 
 {
-    if constexpr (requires { to_string(*value); })
+    if constexpr (core::meta::Stringable<T>)
         return !value ? "nullptr" : '*' + as_string(*value);
     else
         return !value ? "nullptr" : core::to_hexString(reinterpret_cast<uintptr_t>(value));
-}
-
-namespace core::meta
-{
-    template <typename T>
-    concept Stringable = requires(T&& value) { to_string(value);      }
-                      || requires(T&& value) { ::to_string(value);    }
-#ifdef HAS_ATL_STRING
-                      || requires(T&& value) { ATL::to_string(value); }
-#endif
-                      || requires(T&& value) { std::to_string(value); };
 }
 
 template <core::meta::Stringable T>
