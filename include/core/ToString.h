@@ -102,7 +102,7 @@ namespace core::meta
                       || requires(T&& value) { std::to_string(value); };
 }
 
-template <typename T>
+template <core::meta::Stringable T>
 std::string 
 as_string(T&& v);
 
