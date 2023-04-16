@@ -82,7 +82,6 @@ namespace ATL
         return s.GetString(); 
     }
 }
-using ATL::to_string;
 #endif
 
 template <nstd::Enumeration Enum> 
@@ -95,8 +94,6 @@ to_string(Enum e) {
 template <typename T>
 std::string 
 as_string(T&& v);
-
-using std::to_string;
 
 template <typename T>
 std::string 
