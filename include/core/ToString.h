@@ -47,33 +47,6 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-std::string 
-PlatformExport to_string(gsl::czstring s);
-    
-std::string 
-PlatformExport to_string(std::string_view s);
-    
-nstd::return_t<std::string const&>
-PlatformExport to_string(std::string const& s);
-    
-std::string 
-PlatformExport to_string(gsl::cwzstring ws);
-    
-std::string 
-PlatformExport to_string(std::wstring_view ws); 
-
-std::string 
-PlatformExport to_string(std::wstring const& ws);
-
-std::string 
-PlatformExport to_string(gsl::cwzstring ws, core::meta::noconversion_t);
-    
-std::string 
-PlatformExport to_string(std::wstring_view ws, core::meta::noconversion_t);
-    
-std::string 
-PlatformExport to_string(void const* value); 
-
 #ifdef HAS_ATL_STRING
 namespace ATL
 {
@@ -83,64 +56,92 @@ namespace ATL
     }
 }
 #endif
-
-template <nstd::Enumeration Enum> 
-std::string 
-to_string(Enum e) { 
-    std::string_view const name = enumerator_name(e);
-    return !name.empty() ? std::string{name} : to_hexString(e);
-}
-
-namespace core::meta
+namespace core
 {
+    std::string 
+    PlatformExport to_string(gsl::czstring s);
+    
+    std::string 
+    PlatformExport to_string(std::string_view s);
+    
+    nstd::return_t<std::string const&>
+    PlatformExport to_string(std::string const& s);
+    
+    std::string 
+    PlatformExport to_string(gsl::cwzstring ws);
+    
+    std::string 
+    PlatformExport to_string(std::wstring_view ws); 
+
+    std::string 
+    PlatformExport to_string(std::wstring const& ws);
+
+    std::string 
+    PlatformExport to_string(gsl::cwzstring ws, core::meta::noconversion_t);
+    
+    std::string 
+    PlatformExport to_string(std::wstring_view ws, core::meta::noconversion_t);
+    
+    std::string 
+    PlatformExport to_string(void const* value); 
+    
+    template <nstd::Enumeration Enum> 
+    std::string 
+    to_string(Enum e) { 
+        std::string_view const name = enumerator_name(e);
+        return !name.empty() ? std::string{name} : to_hexString(e);
+    }
+    
+    namespace meta
+    {
+        template <typename T>
+        concept Stringable = requires(T&& value) { to_string(value);       }
+#ifdef HAS_ATL_STRING
+                          || requires(T&& value) { ATL::to_string(value);  }
+#endif
+                          || requires(T&& value) { core::to_string(value); }
+                          || requires(T&& value) { std::to_string(value);  };
+    }
+
+    template <meta::Stringable T>
+    std::string 
+    as_string(T&& v);
+
     template <typename T>
-    concept Stringable = requires(T&& value) { to_string(value);      }
-                      || requires(T&& value) { ::to_string(value);    }
+    std::string 
+    to_string(T** value)
+    {
+        if constexpr (nstd::AnyOf<std::remove_const_t<T>,char,wchar_t>)
+            return !value ? "nullptr" : '\'' + as_string(*value) + '\'';
+        else if constexpr (core::meta::Stringable<T*>)
+            return !value ? "nullptr" : '*' + as_string(*value);
+        else
+            return !value ? "nullptr" : core::to_hexString(reinterpret_cast<uintptr_t>(value));
+    }
+
+    template <typename T>
+        requires (!std::same_as<void,std::remove_cvref_t<T>>)
+    std::string 
+    to_string(T* value) 
+    {
+        if constexpr (core::meta::Stringable<T>)
+            return !value ? "nullptr" : '*' + as_string(*value);
+        else
+            return !value ? "nullptr" : core::to_hexString(reinterpret_cast<uintptr_t>(value));
+    }
+
+    template <core::meta::Stringable T>
+    std::string 
+    as_string(T&& v) {
+        using std::to_string;
+        using core::to_string;
 #ifdef HAS_ATL_STRING
-                      || requires(T&& value) { ATL::to_string(value); }
-#endif
-                      || requires(T&& value) { std::to_string(value); };
-}
-
-template <core::meta::Stringable T>
-std::string 
-as_string(T&& v);
-
-template <typename T>
-std::string 
-to_string(T** value)
-{
-    if constexpr (nstd::AnyOf<std::remove_const_t<T>,char,wchar_t>)
-        return !value ? "nullptr" : '\'' + as_string(*value) + '\'';
-    else if constexpr (core::meta::Stringable<T*>)
-        return !value ? "nullptr" : '*' + as_string(*value);
-    else
-        return !value ? "nullptr" : core::to_hexString(reinterpret_cast<uintptr_t>(value));
-}
-
-template <typename T>
-    requires (!std::same_as<void,std::remove_cvref_t<T>>)
-std::string 
-to_string(T* value) 
-{
-    if constexpr (core::meta::Stringable<T>)
-        return !value ? "nullptr" : '*' + as_string(*value);
-    else
-        return !value ? "nullptr" : core::to_hexString(reinterpret_cast<uintptr_t>(value));
-}
-
-template <core::meta::Stringable T>
-std::string 
-as_string(T&& v) {
-    using ::to_string;
-    using std::to_string;
-#ifdef HAS_ATL_STRING
-    using ATL::to_string;
+        using ATL::to_string;
 #endif
 
-    return to_string(std::forward<T>(v));
+        return to_string(std::forward<T>(v));
+    }
 }
-
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::testing
 {
