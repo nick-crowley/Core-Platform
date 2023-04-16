@@ -123,6 +123,9 @@ namespace core::meta
     template <typename T>
     concept Stringable = requires(T&& value) { to_string(value);      }
                       || requires(T&& value) { ::to_string(value);    }
+#ifdef HAS_ATL_STRING
+                      || requires(T&& value) { ATL::to_string(value); }
+#endif
                       || requires(T&& value) { std::to_string(value); };
 }
 
@@ -131,6 +134,9 @@ std::string
 as_string(T&& v) {
     using ::to_string;
     using std::to_string;
+#ifdef HAS_ATL_STRING
+    using ATL::to_string;
+#endif
 
     return to_string(std::forward<T>(v));
 }
@@ -182,5 +188,8 @@ namespace core::testing
     static_assert(meta::Stringable<void**>);
     static_assert(meta::Stringable<gsl::czstring*>);
     static_assert(meta::Stringable<gsl::cwzstring*>);
+#ifdef HAS_ATL_STRING
+    static_assert(meta::Stringable<ATL::CString>);
+#endif
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
