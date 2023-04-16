@@ -15,7 +15,7 @@ to_string(std::string_view s) {
 	return std::string{s}; 
 }
 
-std::type_identity_t<std::string const&>
+nstd::return_t<std::string const&>
 to_string(std::string const& s) { 
     return s; 
 }

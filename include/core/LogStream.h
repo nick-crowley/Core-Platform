@@ -53,7 +53,7 @@ namespace core
 			{}
 
 		public:
-			std::type_identity_t<std::ostream&>
+			nstd::return_t<std::ostream&>
 			friend operator<<(std::ostream& os, type const& repetition) {
 				for (uint32_t idx = 0; idx < repetition.count; ++idx)
 					os << repetition.value;
@@ -102,7 +102,7 @@ namespace core
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-        std::type_identity_t<int&>
+        nstd::return_t<int&>
         static currentDepth() {
             return LogStream::CallDepth[std::this_thread::get_id()];
         }

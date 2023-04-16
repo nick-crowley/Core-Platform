@@ -97,7 +97,7 @@ namespace core::security
 			*
 			* @throws	std::invalid_argument	Missing argument
 			*/
-			std::type_identity_t<MaybeConstAce*>
+			nstd::return_t<MaybeConstAce*>
 			static next(MaybeConstAce* ace) {
 				return reinterpret_cast<MaybeConstAce*>(
 					reinterpret_cast<MaybeConstByte*>(ace) + ThrowIfNull(ace)->AceSize

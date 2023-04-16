@@ -50,6 +50,10 @@ namespace nstd
     template <typename T, typename... U>
     constexpr bool is_any_of_v = (std::is_same_v<T,U> || ...);
 	
+	//! @brief	Allows functions to declare return-types using & and * modifiers
+	template <typename T>
+	using return_t = std::type_identity_t<T>;
+
 	//! @brief	Aliases the type with the opposite const-qualitification to 'T'
 	template <typename T>
 	using toggle_const_t = std::conditional_t<std::is_const_v<T>, std::remove_cv_t<T>, std::add_const_t<T>>;

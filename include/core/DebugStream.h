@@ -120,7 +120,7 @@ namespace core
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core
 {
-	std::add_lvalue_reference_t<std::wostream>
+	nstd::return_t<std::wostream&>
 	inline operator<<(std::wostream& os, const std::string& s) {
 		return os << s.c_str();
 	}
@@ -131,7 +131,7 @@ namespace core
 		inline cdebug;
 	}
 
-	std::add_lvalue_reference_t<std::wostream>
+	nstd::return_t<std::wostream&>
 	inline cdebug = detail::cdebug;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

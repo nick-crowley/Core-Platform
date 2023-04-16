@@ -53,7 +53,7 @@ PlatformExport to_string(gsl::czstring s);
 std::string 
 PlatformExport to_string(std::string_view s);
     
-std::type_identity_t<std::string const&>
+nstd::return_t<std::string const&>
 PlatformExport to_string(std::string const& s);
     
 std::string 
