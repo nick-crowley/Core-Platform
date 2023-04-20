@@ -3,6 +3,20 @@
 #	define CorePlatform_h_included
 #endif
 
+//C++98: __cplusplus is 199711L
+//C++11: __cplusplus is 201103L
+//C++14: __cplusplus is 201402L
+//C++17: __cplusplus is 201703L
+//C++20: __cplusplus is 202002L
+
+#ifdef _MSVC_LANG
+#	if _MSVC_LANG <= 202002L
+#		error Core-Platform requires C++23
+#	endif
+#elif __cplusplus <= 202002L
+#	error Core-Platform requires C++23
+#endif
+
 #include "../../src/PlatformSdk.h"
 #include "../../src/StdLibrary.h"
 #include "../../src/libBoost.h"
