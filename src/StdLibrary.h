@@ -46,6 +46,10 @@
 #include <cctype>
 #include <cstddef>
 
+#ifndef GSL_THROW_ON_CONTRACT_VIOLATION
+#	error Core-Platform requires GSL_THROW_ON_CONTRACT_VIOLATION be defined
+#endif
+
 #include <gsl/gsl>
 
 namespace core {
