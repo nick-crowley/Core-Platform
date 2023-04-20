@@ -79,6 +79,13 @@ namespace core::win
 		);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+	public:
+		bool
+		friend operator==(::HRESULT value, HResult hr) {
+			return value == hr.m_value;
+		}
+
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		std::string
@@ -299,6 +306,11 @@ namespace core::win
 			}
 		}
 		
+		bool
+		operator==(::HRESULT value) const {
+			return this->m_value == value;
+		}
+
 		explicit operator
 		bool() const {
 			return SUCCEEDED(this->m_value);
