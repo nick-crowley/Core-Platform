@@ -1,4 +1,9 @@
 #pragma once
+
+#ifndef BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE
+#	error Core-Platform requires BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE be defined
+#endif
+
 #include <boost/preprocessor/arithmetic/add.hpp>
 #include <boost/preprocessor/list/adt.hpp>
 #include <boost/preprocessor/list/append.hpp>
