@@ -1,5 +1,9 @@
 #pragma once
 
+#ifndef _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
+#	error Core-Platform requires _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS be defined
+#endif
+
 #include <algorithm>
 #include <atomic>
 #include <chrono>
