@@ -5,6 +5,10 @@
 // set the _WIN32_WINNT macro to the platform you wish to support before including SDKDDKVer.h.
 #include <SDKDDKVer.h>
 
+#ifndef NOMINMAX
+#	error Core-Platform requires NOMINMAX be defined
+#endif
+
 #include <Windows.h>
 
 #include <ntsecapi.h>
