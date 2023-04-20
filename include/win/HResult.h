@@ -78,7 +78,7 @@ namespace core::win
 			NotSortable
 		);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
+		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 	public:
 		bool
@@ -306,6 +306,15 @@ namespace core::win
 			}
 		}
 		
+		template <typename... Params>
+		[[noreturn]]
+		void 
+		throwIfError(std::string_view msg, Params&&... args) const {
+			if (FAILED(this->m_value))
+				throw system_error{this->m_value, 
+				                   std::vformat(msg,std::make_format_args(args...))};
+		}
+		
 		bool
 		operator==(::HRESULT value) const {
 			return this->m_value == value;
@@ -328,7 +337,7 @@ namespace core::win
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 	};
-
+	
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 	* @brief	Windows status-code which throws when assigned a failure value
 	*/
