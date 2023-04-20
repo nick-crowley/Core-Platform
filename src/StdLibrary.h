@@ -8,6 +8,10 @@
 #	error Core-Platform requires _CRT_SECURE_NO_WARNINGS be defined
 #endif
 
+#ifndef _SCL_SECURE_NO_WARNINGS
+#	error Core-Platform requires _SCL_SECURE_NO_WARNINGS be defined
+#endif
+
 #include <algorithm>
 #include <atomic>
 #include <chrono>
