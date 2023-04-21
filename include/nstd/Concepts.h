@@ -83,7 +83,7 @@ namespace nstd
 	//! @brief	Ensure type is a function-object/lambda (of any signature)
 	template <typename T>
 	concept FunctionObject = std::is_class_v<T> && !std::is_abstract_v<T> && requires {
-		T::operator();
+		&T::operator();
 		// BUG: nstd::FunctionObject can't support templated lambdas or overloaded function-call operators
 	};
 	
