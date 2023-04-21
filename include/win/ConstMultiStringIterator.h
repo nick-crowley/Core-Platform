@@ -63,24 +63,12 @@ namespace core::win
 		  : m_source{src}
 		{
 		}
-		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		void
-		increment() 
-		{ 
-			if (this->m_current.front() == L'\0')
-				this->m_current = npos;
-			else
-				this->m_current.remove_prefix(this->m_current.find(L'\0')+1);
-		}
-
 		bool 
 		equal(type const& other) const
 		{
@@ -91,6 +79,16 @@ namespace core::win
 		dereference() const 
 		{ 
 			return this->m_current; 
+		}
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	private:
+		void
+		increment() 
+		{ 
+			if (this->m_current.front() == L'\0')
+				this->m_current = npos;
+			else
+				this->m_current.remove_prefix(this->m_current.find(L'\0')+1);
 		}
 	};
 }
