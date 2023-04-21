@@ -5,6 +5,7 @@
 #include "security/SecurityApi.cpp"
 #include "win/Concurrency.cpp"
 #include "win/LResult.cpp"
+#include "win/HResult.cpp"
 #include "win/RegistryApi.cpp"
 #include "win/RegistryKey.cpp"
 #include "win/RegistryValueProxy.cpp"
