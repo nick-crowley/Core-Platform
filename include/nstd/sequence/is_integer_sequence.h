@@ -60,8 +60,10 @@ namespace nstd
 
 	static_assert(IntegerSequence<std::integer_sequence<int>>);
 	static_assert(IntegerSequence<std::integer_sequence<int,1>>);
+#if defined(__cpp_nontype_template_args) && (__cpp_nontype_template_args >= 201911L)
 	static_assert(IntegerSequence<std::integer_sequence<double,2.0>>);
 	static_assert(!IntegerSequence<float>);
+#endif
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
