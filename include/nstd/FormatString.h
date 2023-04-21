@@ -41,11 +41,19 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace nstd
 {
+#if !defined(__clang__) && (_MSC_FULL_VER < 192623918)
 	template <typename... Args>
 	using format_string = std::_Fmt_string<Args...>;
 	
 	template <typename... Args>
 	using format_wstring = std::_Fmt_wstring<Args...>;
+#else
+	template <typename... Args>
+	using format_string = std::format_string<Args...>;
+	
+	template <typename... Args>
+	using format_wstring = std::wformat_string<Args...>;
+#endif
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
