@@ -17,6 +17,10 @@
 #	error Core-Platform requires C++23
 #endif
 
+#ifdef __clang__
+#	error Core-Platform doesn't yet support clang compiler
+#endif
+
 #include "../../src/PlatformSdk.h"
 #include "../../src/StdLibrary.h"
 #include "../../src/libBoost.h"
@@ -58,8 +62,10 @@
 
 #include "core/CharacterConversion.h"
 #include "core/BitwiseEnum.h"
-#include "core/EnumNames.h"
-#include "core/ThrowIfUndefined.h"
+#ifndef __clang__
+#	include "core/EnumNames.h"
+#	include "core/ThrowIfUndefined.h"
+#endif
 #include "core/ToHexString.h"
 #include "core/ToString.h"
 

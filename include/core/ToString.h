@@ -28,10 +28,15 @@
 #ifndef CorePlatform_h_included
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
+#ifdef __clang__
+#	error Clang doesn't support compiling ToString.h yet
+#endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "nstd/Concepts.h"
 #include "core/CharacterConversion.h"
-#include "core/EnumNames.h"
+#ifndef __clang__
+#   include "core/EnumNames.h"
+#endif
 #include "core/ToHexString.h"
 #include "../../src/library/PlatformExport.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -82,14 +87,16 @@ namespace core
     
     std::string 
     PlatformExport to_string(void const* value); 
-    
+
+#ifndef __clang__
     template <nstd::Enumeration Enum> 
     std::string 
     to_string(Enum e) { 
         std::string_view const name = enumerator_name(e);
         return !name.empty() ? std::string{name} : to_hexString(e);
     }
-    
+#endif
+
     namespace meta
     {
         template <typename T>
@@ -143,7 +150,6 @@ namespace core
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::testing
 {
-    enum class E1 {Zero};
     struct S1 {};
     static_assert(meta::Stringable<char[]>);
     static_assert(meta::Stringable<wchar_t[]>);
@@ -158,7 +164,10 @@ namespace core::testing
     static_assert(meta::Stringable<int>);
     static_assert(meta::Stringable<long>);
     static_assert(meta::Stringable<long long>);
+#ifndef __clang__
+    enum class E1 {Zero};
     static_assert(meta::Stringable<E1>);
+#endif
     static_assert(meta::Stringable<float>);
     static_assert(meta::Stringable<double>);
     static_assert(meta::Stringable<float*>);

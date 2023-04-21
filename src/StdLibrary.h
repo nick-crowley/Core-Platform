@@ -31,7 +31,13 @@
 #include <numeric>
 #include <optional>
 #include <ranges>
-#include <source_location>
+#if defined(__clang__) && !defined(__cpp_consteval)
+#	define __cpp_consteval 202211L
+#	include <source_location>
+#	undef __cpp_consteval 
+#else
+#	include <source_location>
+#endif
 #include <stdexcept>
 #include <thread>
 #include <type_traits>

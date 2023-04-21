@@ -28,6 +28,9 @@
 #ifndef CorePlatform_h_included
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
+#ifdef __clang__
+#	error Clang doesn't support compiling ThrowIfUndefined.h yet
+#endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "core/Exceptions.h"
 #include "core/EnumNames.h"

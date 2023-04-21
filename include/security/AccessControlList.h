@@ -27,6 +27,13 @@
 #ifndef security_AccessControlList_h_included
 #define security_AccessControlList_h_included
 
+#if defined(__clang__) && (!defined(__cpp_explicit_this_parameter) || (__cpp_explicit_this_parameter < 202110L)) 
+#	error Clang doesn't support compiling AccessControlList.h yet
+#	error AccessControlList.h requires explicit 'this' support
+
+#elif !defined(__clang__) && defined(_MSC_VER) && (_MSC_VER < 1932)
+#	error AccessControlList.h requires explicit 'this' support
+#endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.platform.h"
 #include "security/AccessControlListIterator.h"

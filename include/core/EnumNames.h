@@ -28,6 +28,9 @@
 #ifndef CorePlatform_h_included
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
+#ifdef __clang__
+#	error Clang doesn't support compiling EnumNames.h yet
+#endif
 #pragma push_macro("nameof")
 #undef nameof
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

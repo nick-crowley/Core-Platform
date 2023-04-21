@@ -4,8 +4,10 @@
 #	error Core-Platform requires BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE be defined
 #endif
 
-#if !defined(_MSVC_TRADITIONAL) || _MSVC_TRADITIONAL
-#	error Core-Platform requires C99 preprocessor [ie. /Zc:preprocessor]
+#ifndef __clang__
+#	if !defined(_MSVC_TRADITIONAL) || _MSVC_TRADITIONAL
+#		error Core-Platform requires C99 preprocessor [ie. /Zc:preprocessor]
+#	endif
 #endif
 
 #include <boost/preprocessor/arithmetic/add.hpp>

@@ -27,6 +27,13 @@
 #ifndef utility_VarLengthStruct_h_included
 #define utility_VarLengthStruct_h_included
 
+#if defined(__clang__) && (!defined(__cpp_explicit_this_parameter) || (__cpp_explicit_this_parameter < 202110L)) 
+#	error Clang doesn't support compiling VarLengthStructure.h yet
+#	error VarLengthStructure.h requires explicit 'this' support
+
+#elif !defined(__clang__) && defined(_MSC_VER) && (_MSC_VER < 1932)
+#	error VarLengthStructure.h requires explicit 'this' support
+#endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Platform.h"      //
 #include "nstd/experimental/PropagateConst.h"

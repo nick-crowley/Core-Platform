@@ -1,6 +1,10 @@
 #pragma once
 #include "core/SmartHandle.h"
 
+#ifdef __clang__
+#	error Clang doesn't support compiling SharedHandle.h yet
+#endif
+
 namespace core::detail
 {
     template <>
