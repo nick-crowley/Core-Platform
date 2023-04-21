@@ -37,7 +37,6 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Platform.h"      //
 #include "nstd/experimental/PropagateConst.h"
-
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Dependency Management o=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -51,7 +50,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::detail 
 {
-	//! @brief	Const-propagating wrapper-type for any field type
+	//! @brief	Const-propagating wrapper for any field type
 	//!
 	//! @details	Returns @c std::experimental::propagate_const<T> for pointer-types and @c T& for
 	//!				all other types; where @p T has the same cv-qualification as @p value_type
