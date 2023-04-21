@@ -37,9 +37,11 @@
 namespace core::win
 {
 	template <typename Value>
-	constexpr Value Reserved = {};
+	constexpr Value 
+	Reserved {};
 
-	constexpr SECURITY_ATTRIBUTES* Unsecured {};
+	SECURITY_ATTRIBUTES constexpr*
+	Unsecured {};
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
