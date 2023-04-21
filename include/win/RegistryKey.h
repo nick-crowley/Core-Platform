@@ -169,12 +169,7 @@ namespace core::win
 			NotSortable
 		);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		RegistryKey
-		subkey(std::wstring_view child, std::optional<KeyRight> rights = std::nullopt) const;
-
 		template <typename Self>
 		auto
 		operator[](this Self&& self, meta::use_default_t)
@@ -195,6 +190,11 @@ namespace core::win
 				return RegistryValueProxy{self, name};
 		}
 		
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
+		RegistryKey
+		subkey(std::wstring_view child, std::optional<KeyRight> rights = std::nullopt) const;
+
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void
