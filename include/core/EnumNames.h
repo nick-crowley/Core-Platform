@@ -127,7 +127,7 @@ namespace core
 		          std::underlying_type_t<E> Finish,
 		          nstd::EnumSequenceOf<E>   Result = nstd::enum_sequence<E>>
 			requires (Start <= Finish)
-		struct linear_search_impl : std::conditional_t<
+		metafunc linear_search_impl : std::conditional_t<
 			Start == Finish,
 			std::type_identity<push_back_if_valid_t<E, Result, Finish>>,
 			linear_search_impl<E, (Start+1 <= Finish ? Start+1 : Finish), Finish, push_back_if_valid_t<E,Result,Start>>
@@ -142,7 +142,7 @@ namespace core
 			      && (Start <= Finish)
 			      && (nstd::is_pow2(Start))
 			      && (nstd::is_pow2(Finish))
-		struct geometric_search_impl : std::conditional_t<
+		metafunc geometric_search_impl : std::conditional_t<
 			Start == Finish,
 			std::type_identity<push_back_if_valid_t<E, Result, Finish>>,
 			geometric_search_impl<E, (Start<<1 != Finish && Start<<1 != 0 ? Start<<1 : Finish), Finish, push_back_if_valid_t<E,Result,Start>>
