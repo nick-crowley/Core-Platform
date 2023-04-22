@@ -52,11 +52,12 @@ namespace core
 		auto constexpr
 		nameof() noexcept 
 		{
+			using namespace std::string_view_literals;
 			//__FUNCSIG__: auto __cdecl nameof<enum E1>(void) noexcept
 			//           : auto __cdecl nameof<enum N1::E1>(void) noexcept
 			std::string_view constexpr ParamList{
-				__FUNCSIG__+sizeof("auto __cdecl core::detail::nameof<enum ")-1,
-				__FUNCSIG__+(sizeof(__FUNCSIG__)-1)-(sizeof(">(void) noexcept")-1)
+				__FUNCSIG__ + "auto __cdecl core::detail::nameof<enum "sv.length(),
+				__FUNCSIG__ + std::string_view{__FUNCSIG__}.length() - ">(void) noexcept"sv.length()
 			};
 			return ParamList;
 		}
@@ -76,13 +77,14 @@ namespace core
 		auto constexpr
 		__cdecl nameof() noexcept 
 		{
+			using namespace std::string_view_literals;
 			//__FUNCSIG__: auto __cdecl core::detail::nameof<enum E1,E1::None>(void) noexcept
 			//             auto __cdecl core::detail::nameof<enum N1::E1,N1::E1::None>(void) noexcept
 			//             auto __cdecl core::detail::nameof<enum N1::E1,(enum N1::E1)0x16>(void) noexcept
 			
 			std::string_view constexpr ParamList{
-				__FUNCSIG__+sizeof("auto __cdecl core::detail::nameof<enum ")-1,
-				__FUNCSIG__+(sizeof(__FUNCSIG__)-1)-(sizeof(">(void) noexcept")-1)
+				__FUNCSIG__ + "auto __cdecl core::detail::nameof<enum "sv.length(),
+				__FUNCSIG__ + std::string_view{__FUNCSIG__}.length() - ">(void) noexcept"sv.length()
 			};
 
 			//ParamList: E1,E1::None
