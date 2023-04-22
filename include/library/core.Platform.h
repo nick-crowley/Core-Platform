@@ -29,11 +29,6 @@
 #	define CorePlatform_h_included
 #endif
 
-//C++98: __cplusplus is 199711L
-//C++11: __cplusplus is 201103L
-//C++14: __cplusplus is 201402L
-//C++17: __cplusplus is 201703L
-//C++20: __cplusplus is 202002L
 #if (defined(_MSVC_LANG) && _MSVC_LANG <= 202002L)                                                \
  || (defined(__clang__) && __cplusplus <= 202002L)
 #	error Core-Platform requires C++23
