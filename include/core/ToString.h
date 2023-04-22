@@ -52,7 +52,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#ifdef HAS_ATL_STRING
+#ifdef SUPPORT_ATL_STRING
 namespace ATL
 {
     std::string 
@@ -101,7 +101,7 @@ namespace core
     {
         template <typename T>
         concept Stringable = requires(T&& value) { to_string(value);       }
-#ifdef HAS_ATL_STRING
+#ifdef SUPPORT_ATL_STRING
                           || requires(T&& value) { ATL::to_string(value);  }
 #endif
                           || requires(T&& value) { core::to_string(value); }
@@ -140,7 +140,7 @@ namespace core
     as_string(T&& v) {
         using std::to_string;
         using core::to_string;
-#ifdef HAS_ATL_STRING
+#ifdef SUPPORT_ATL_STRING
         using ATL::to_string;
 #endif
 
@@ -196,7 +196,7 @@ namespace core::testing
     static_assert(meta::Stringable<void**>);
     static_assert(meta::Stringable<gsl::czstring*>);
     static_assert(meta::Stringable<gsl::cwzstring*>);
-#ifdef HAS_ATL_STRING
+#ifdef SUPPORT_ATL_STRING
     static_assert(meta::Stringable<ATL::CString>);
 #endif
 }

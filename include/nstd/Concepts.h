@@ -102,7 +102,7 @@ namespace nstd
     concept Stringish = AnyOf<std::decay_t<T>,
                               gsl::zstring,gsl::wzstring,
                               gsl::czstring,gsl::cwzstring,
-#ifdef HAS_ATL_STRING
+#ifdef SUPPORT_ATL_STRING
                               ATL::CString,
 #endif
                               std::string_view,std::wstring_view,

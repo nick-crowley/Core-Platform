@@ -14,7 +14,3 @@
 #include <ntsecapi.h>
 #include <sddl.h>			// SID functions
 #include <Aclapi.h>         // ACL functions
-
-#ifdef __ATLSTR_H__
-#	define HAS_ATL_STRING
-#endif

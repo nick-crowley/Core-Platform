@@ -63,7 +63,7 @@ core::to_string(void const* value)
     return !value ? "nullptr" : to_hexString(reinterpret_cast<uintptr_t>(value));
 }
 
-#ifdef HAS_ATL_STRING
+#ifdef SUPPORT_ATL_STRING
 std::string 
 ATL::to_string(CString const& s) { 
     return s.GetString(); 
