@@ -97,6 +97,10 @@ namespace core
     }
 #endif
 
+    template <typename T, size_t N>
+    std::string 
+    to_string(std::span<T,N> const);
+
     namespace meta
     {
         template <typename T>
@@ -133,6 +137,21 @@ namespace core
             return !value ? "nullptr" : '*' + as_string(*value);
         else
             return !value ? "nullptr" : core::to_hexString(reinterpret_cast<uintptr_t>(value));
+    }
+
+    template <typename T, size_t N>
+    std::string 
+    to_string(std::span<T,N> const values)
+    {
+        if (values.empty())
+            return "{}";
+
+        std::stringstream sb;
+        sb << '{';
+        for (sb << as_string(values.front()); T const& val : values.last(values.size()-1))
+            sb << as_string(val);
+        sb << '}';
+        return sb.str();
     }
 
     template <core::meta::Stringable T>
