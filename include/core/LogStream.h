@@ -100,13 +100,6 @@ namespace core
 			NotSortable
 		);
 
-		LogStream&
-		operator=(std::ostream& out)
-		{
-			this->outputStream = &out;
-			return *this;
-		}
-		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
         nstd::return_t<int&>
@@ -118,6 +111,12 @@ namespace core
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		void
+		attach(std::ostream& out)
+		{
+			this->outputStream = &out;
+		}
+		
 		void
 		indent() {
 			++LogStream::currentDepth();
