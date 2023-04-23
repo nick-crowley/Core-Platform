@@ -86,7 +86,7 @@ namespace core
         
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		std::ostream* outputStream;
+		std::ostream* outputStream = nullptr;
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
@@ -131,6 +131,9 @@ namespace core
 		template <Severity Level>
 		LogStream&
 		operator<<(LogEntry<Level> const& entry) {
+			if (this->outputStream)
+				return *this;
+
 			std::lock_guard lock{LogStream::IsWriting};
 			if (auto* str = std::get_if<std::string>(&entry.Text))
 				this->write(Level, *str);
@@ -141,6 +144,9 @@ namespace core
 		
 		LogStream&
 		operator<<(std::exception const& e) {
+			if (this->outputStream)
+				return *this;
+
 			std::lock_guard lock{LogStream::IsWriting};
 			this->write(Severity::Failure, e.what());
 			return *this;
@@ -150,13 +156,12 @@ namespace core
 		void
 		write(Severity sev, std::string_view str) 
 		{
-			if (this->outputStream)
-				*this->outputStream << std::format("[{:%H:%M:%OS}]", chrono::system_clock::now())
-			                        << " P-" << std::setw(4) << std::left << ::GetCurrentProcessId() 
-			                        << " T-" << std::setw(4) << std::left << std::this_thread::get_id()
-			                        << " "   << std::setw(9) << std::left << as_string(sev)
-			                        << " : " << detail::repeat(LogStream::PaddingChars, LogStream::currentDepth()) << str
-			                        << std::endl;
+			*this->outputStream << std::format("[{:%H:%M:%OS}]", chrono::system_clock::now())
+			                    << " P-" << std::setw(4) << std::left << ::GetCurrentProcessId() 
+			                    << " T-" << std::setw(4) << std::left << std::this_thread::get_id()
+			                    << " "   << std::setw(9) << std::left << as_string(sev)
+			                    << " : " << detail::repeat(LogStream::PaddingChars, LogStream::currentDepth()) << str
+			                    << std::endl;
 		}
 		
 		void
