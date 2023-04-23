@@ -122,16 +122,36 @@ namespace core
             NotSortable
         );
         // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+    private:
+        std::string
+        static prettyFunction(std::string in)
+        {
+	        using enum std::regex_constants::match_flag_type;
 
+	        std::regex const 
+	        static undesiredKeyword{R"((enum|struct|class|union) )"};
+	
+	        std::list<std::ssub_match> matches;
+	        {
+		        std::smatch result;
+		        for (auto pos = in.cbegin(); std::regex_search(pos, in.cend(), result, undesiredKeyword, match_not_null); pos = result[0].second) 
+			        matches.push_back(result[0]);
+	        }
+
+	        for (auto m = matches.rbegin(); m != matches.rend(); ++m)
+		        in.erase(m->first, m->second);
+
+	        return in;
+        }
         // o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
         // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
     public:
         template <typename... Values>
         LoggingSentry& 
-        onEntry(gsl::czstring function, NameValuePair<Values>... args) 
+        onEntry(gsl::czstring context, NameValuePair<Values>... args) 
         {
-            this->print(function, args...);
+            this->print(context, args...);
             this->outputStream.indent();
             return *this;
         }
@@ -152,9 +172,9 @@ namespace core
 
         template <typename... Values>
         void 
-        print(gsl::czstring func, NameValuePair<Values>... args) 
+        print(gsl::czstring context, NameValuePair<Values>... args) 
         {
-            this->write<Bare>(func);
+            this->write<Bare>(prettyFunction(context));
             this->write<Bare>("(");
 
             if constexpr (sizeof...(Values) > 0) 
