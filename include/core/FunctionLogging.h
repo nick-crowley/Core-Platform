@@ -36,7 +36,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 #define _makeNameValuePair(s,d,e)                                                                 \
-    std::make_pair(#e,e)
+    std::make_pair(#e,std::cref(e))
 
 #define _makeNameValuePairSequence(...)                                                           \
     BOOST_PP_LIST_ENUM(                                                                           \
@@ -79,7 +79,7 @@ namespace core
         // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
     private:
         template <typename T>
-        using NameValuePair = std::pair<gsl::czstring,T>;
+        using NameValuePair = std::pair<gsl::czstring,T const&>;
 
         using LoggingDelegate = std::function<void(LoggingSentry&)>;
 
@@ -129,7 +129,7 @@ namespace core
     public:
         template <typename... Values>
         LoggingSentry& 
-        onEntry(gsl::czstring function, NameValuePair<Values> const&... args) 
+        onEntry(gsl::czstring function, NameValuePair<Values>... args) 
         {
             this->print(function, args...);
             this->outputStream.indent();
@@ -152,7 +152,7 @@ namespace core
 
         template <typename... Values>
         void 
-        print(gsl::czstring func, NameValuePair<Values> const&... args) 
+        print(gsl::czstring func, NameValuePair<Values>... args) 
         {
             this->write<Bare>(func);
             this->write<Bare>("(");
@@ -167,7 +167,7 @@ namespace core
     
         template <typename... Values>
         void 
-        print(NameValuePair<Values> const&... args) 
+        print(NameValuePair<Values>... args) 
         {
             if constexpr (sizeof...(Values) > 0) {
                 this->write<Bare>(LoggingSentry::ReturnMarker);
