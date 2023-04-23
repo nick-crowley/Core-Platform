@@ -78,7 +78,11 @@ namespace core
         inline static IsWriting;
 		
         char constexpr
+#ifdef SUPPORT_UTF8_LOGFILE
         inline static PaddingChars[] = "\xe2\x95\x91\x20"; // UTF-8 encoded "║ "
+#else
+        inline static PaddingChars[] = "| ";
+#endif
         
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:

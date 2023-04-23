@@ -87,7 +87,11 @@ namespace core
 
     private:
         char constexpr
+#ifdef SUPPORT_UTF8_LOGFILE
         inline static ReturnMarker[] = "\xe2\x95\x9a\xe2\x95\x90\xe2\x96\xba\x20";  // UTF-8 encoded "╚═► "
+#else
+        inline static ReturnMarker[] = "+-> ";
+#endif
         
         // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
     private:
