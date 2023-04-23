@@ -148,8 +148,8 @@ namespace core
 		{
 			if (this->outputStream)
 				*this->outputStream << std::format("[{:%H:%M:%OS}]", chrono::system_clock::now())
-			                        << " P-" << ::GetCurrentProcessId() 
-			                        << " T-" << std::this_thread::get_id()
+			                        << " P-" << std::setw(4) << std::left << ::GetCurrentProcessId() 
+			                        << " T-" << std::setw(4) << std::left << std::this_thread::get_id()
 			                        << " "   << std::setw(9) << std::left << as_string(sev)
 			                        << " : " << detail::repeat(LogStream::PaddingChars, LogStream::currentDepth()) << str
 			                        << std::endl;
