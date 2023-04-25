@@ -130,7 +130,7 @@ namespace core
 		template <Severity Level>
 		LogStream&
 		operator<<(LogEntry<Level> const& entry) {
-			if (this->outputStream)
+			if (!this->outputStream)
 				return *this;
 
 			std::lock_guard lock{LogStream::IsWriting};
@@ -143,7 +143,7 @@ namespace core
 		
 		LogStream&
 		operator<<(std::exception const& e) {
-			if (this->outputStream)
+			if (!this->outputStream)
 				return *this;
 
 			std::lock_guard lock{LogStream::IsWriting};
