@@ -135,17 +135,7 @@ namespace core
 	        std::regex const 
 	        static undesiredKeyword{R"((enum|struct|class|union) )"};
 	
-	        std::list<std::ssub_match> matches;
-	        {
-		        std::smatch result;
-		        for (auto pos = in.cbegin(); std::regex_search(pos, in.cend(), result, undesiredKeyword, match_not_null); pos = result[0].second) 
-			        matches.push_back(result[0]);
-	        }
-
-	        for (auto m = matches.rbegin(); m != matches.rend(); ++m)
-		        in.erase(m->first, m->second);
-
-	        return in;
+            return std::regex_replace(in, undesiredKeyword, "", match_not_null);
         }
         // o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
