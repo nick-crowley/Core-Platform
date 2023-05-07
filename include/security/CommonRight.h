@@ -41,8 +41,6 @@
 namespace core::win 
 {
 enum class GenericRight : access_mask_t;
-enum class StandardRight : access_mask_t;
-enum class KeyRight : access_mask_t;
 
 /* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 * @brief	Common access rights for securable objects
@@ -63,8 +61,6 @@ namespace core::meta
 {
 	metadata bool Settings<bitwise_enum, core::win::CommonRight> = true;
 	metadata bool Settings<compatible_enum, core::win::CommonRight, core::win::GenericRight> = true;
-	metadata bool Settings<compatible_enum, core::win::CommonRight, core::win::StandardRight> = true;
-	metadata bool Settings<compatible_enum, core::win::CommonRight, core::win::KeyRight> = true;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 

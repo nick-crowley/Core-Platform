@@ -93,7 +93,7 @@ namespace core::meta
 	template <typename E1, typename E2>
 	concept CompatibleEnumeration = nstd::Enumeration<E1> 
 	                             && nstd::Enumeration<E2> 
-	                             && Settings<compatible_enum,E1,E2>;
+	                             && (Settings<compatible_enum,E1,E2> || Settings<compatible_enum,E2,E1>);
 
 	template <nstd::Enumeration E>
 	bool constexpr inline Settings<compatible_enum, E, E> = true;
