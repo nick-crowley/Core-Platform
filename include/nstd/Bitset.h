@@ -114,19 +114,19 @@ namespace nstd
 		template <core::meta::CompatibleEnumeration<E> E2>
 		type constexpr 
 		operator|(E2 const& r) const noexcept {
-			return static_cast<value_type>(this->value() | std::underlying_type_t<E2>(r));
+			return static_cast<value_type>(this->value() | std::to_underlying(r));
 		}
 
 		template <core::meta::CompatibleEnumeration<E> E2>
 		type constexpr 
 		operator&(E2 const& r) const noexcept {
-			return static_cast<value_type>(this->value() & std::underlying_type_t<E2>(r));
+			return static_cast<value_type>(this->value() & std::to_underlying(r));
 		}
 	
 		template <core::meta::CompatibleEnumeration<E> E2>
 		type constexpr 
 		operator^(E2 const& r) const noexcept {
-			return static_cast<value_type>(this->value() ^ std::underlying_type_t<E2>(r));
+			return static_cast<value_type>(this->value() ^ std::to_underlying(r));
 		}
 	
 		type constexpr 
@@ -137,13 +137,13 @@ namespace nstd
 		template <core::meta::CompatibleEnumeration<E> E2>
 		bool constexpr
 		operator==(E2 const& rhs) const noexcept {
-			return this->value() == std::underlying_type_t<E2>(rhs);
+			return this->value() == std::to_underlying(rhs);
 		}
 
 		template <core::meta::CompatibleEnumeration<E> E2>
 		bool constexpr
 		operator!=(E2 const& rhs) const noexcept {
-			return this->value() != std::underlying_type_t<E2>(rhs);
+			return this->value() != std::to_underlying(rhs);
 		}
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -151,21 +151,21 @@ namespace nstd
 		template <core::meta::CompatibleEnumeration<E> E2>
 		reference constexpr 
 		operator|=(E2 const& r) noexcept {
-			this->Value = static_cast<value_type>(this->value() | std::underlying_type_t<E2>(r));
+			this->Value = static_cast<value_type>(this->value() | std::to_underlying(r));
 			return *this;
 		}
 		
 		template <core::meta::CompatibleEnumeration<E> E2>
 		reference constexpr 
 		operator&=(E2 const& r) noexcept {
-			this->Value = static_cast<value_type>(this->value() & std::underlying_type_t<E2>(r));
+			this->Value = static_cast<value_type>(this->value() & std::to_underlying(r));
 			return *this;
 		}
 			
 		template <core::meta::CompatibleEnumeration<E> E2>
 		reference constexpr 
 		operator^=(E2 const& r) noexcept {
-			this->Value = static_cast<value_type>(this->value() ^ std::underlying_type_t<E2>(r));
+			this->Value = static_cast<value_type>(this->value() ^ std::to_underlying(r));
 			return *this;
 		}
 	};
