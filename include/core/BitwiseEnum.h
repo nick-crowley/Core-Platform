@@ -58,7 +58,7 @@ operator&(E lhs, E rhs) {
 	return static_cast<E>(
 		std::to_underlying(lhs) & std::to_underlying(rhs)
 	);
-};
+}
 
 template <core::meta::BitwiseEnumeration E>
 E constexpr
@@ -66,7 +66,7 @@ operator|(E lhs, E rhs) {
 	return static_cast<E>(
 		std::to_underlying(lhs) | std::to_underlying(rhs)
 	);
-};
+}
 
 template <core::meta::BitwiseEnumeration E>
 E constexpr
@@ -74,7 +74,7 @@ operator^(E lhs, E rhs) {
 	return static_cast<E>(
 		std::to_underlying(lhs) ^ std::to_underlying(rhs)
 	);
-};
+}
 
 template <core::meta::BitwiseEnumeration E>
 E constexpr
@@ -82,7 +82,7 @@ operator~(E lhs) {
 	return static_cast<E>(
 		~std::to_underlying(lhs)
 	);
-};
+}
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::meta 
