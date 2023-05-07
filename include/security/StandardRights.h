@@ -40,32 +40,52 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::win 
 {
-enum class CommonRight : access_mask_t;
-enum class GenericRight : access_mask_t;
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief	Common access rights for securable objects
+	*/
+	enum class CommonRight : access_mask_t {
+		Delete = DELETE,						//!< Delete the object
+		Synchronize = SYNCHRONIZE,				//!< Wait upon the oject
+		ReadDac = READ_CONTROL,					//!< Read the discretionary ACL
+		WriteDac = WRITE_DAC,					//!< Modify the discretionary ACL
+		WriteOwner = WRITE_OWNER,				//!< Change object's owner
+	};
 
-/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
-* @brief	Standard access-rights for securable objects
-*
-* @details	Defines standard access-rights which correspond to operations common to most securable 
-*			object types
-*/
-// clang-format off
-enum class StandardRight : access_mask_t {
-	All = STANDARD_RIGHTS_ALL,				//!< Delete, Wait, Read/modify DACL, Modify Owner
-	Execute = STANDARD_RIGHTS_EXECUTE,		//!< Read the discretionary ACL
-	Read = STANDARD_RIGHTS_READ,			//!< Read the discretionary ACL
-	Required = STANDARD_RIGHTS_REQUIRED,	//!< Delete, Read/modify DACL, Modify Owner
-	Write = STANDARD_RIGHTS_WRITE,			//!< Read the discretionary ACL (NB: Not a mistake)
-};
-// clang-format on
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief	Generic access-rights for securable objects
+	*
+	* @details	Defines generic access-rights which each type of securable object maps to a combination
+	*			of standard- and object-specific access-rights
+	*/
+	enum class GenericRight : access_mask_t {
+		All = GENERIC_ALL,						//!< All possible rights
+		Execute = GENERIC_EXECUTE,				//!< Execute access
+		Read = GENERIC_READ,					//!< Read access
+		Write = GENERIC_WRITE,					//!< Write access
+	};
+
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief	Standard access-rights for securable objects
+	*
+	* @details	Defines standard access-rights which correspond to operations common to most securable 
+	*			object types
+	*/
+	enum class StandardRight : access_mask_t {
+		All = STANDARD_RIGHTS_ALL,				//!< Delete, Wait, Read/modify DACL, Modify Owner
+		Execute = STANDARD_RIGHTS_EXECUTE,		//!< Read the discretionary ACL
+		Read = STANDARD_RIGHTS_READ,			//!< Read the discretionary ACL
+		Required = STANDARD_RIGHTS_REQUIRED,	//!< Delete, Read/modify DACL, Modify Owner
+		Write = STANDARD_RIGHTS_WRITE,			//!< Read the discretionary ACL (NB: Not a mistake)
+	};
 
 }      // namespace core::win
-
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::meta 
 {
 	metadata bool Settings<bitwise_enum, core::win::StandardRight> = true;
 	metadata bool Settings<compatible_enum, core::win::StandardRight, core::win::CommonRight> = true;
 	metadata bool Settings<compatible_enum, core::win::StandardRight, core::win::GenericRight> = true;
+	metadata bool Settings<compatible_enum, core::win::GenericRight, core::win::CommonRight> = true;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
