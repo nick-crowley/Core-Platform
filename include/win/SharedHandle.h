@@ -66,4 +66,7 @@ namespace core::win
     //! @brief  Shared @c ::HANDLE released using @c ::CloseHandle()
     using SharedThread = SharedHandle;
     
+    //! @brief  Shared @c ::HANDLE released using @c ::CloseHandle()
+    using SharedToken = SharedHandle;    
+
 } // namespace core::win

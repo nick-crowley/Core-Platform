@@ -28,7 +28,8 @@
 #define interface_SecurityApi_h_included
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "library/core.Platform.h"		
+#include "library/core.Platform.h"
+#include "win/SharedHandle.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -69,6 +70,10 @@ namespace core::security
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 	public:
+		[[nodiscard]]
+		bool
+		checkMembership(win::SharedToken token, std::span<std::byte const> sid) const;
+
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 		* @brief		Compares (all sub-authorities) of two security identifiers for equality
 		*
@@ -219,6 +224,22 @@ namespace core::security
 		[[nodiscard]]
 		std::vector<std::byte>
 		stringToSid(std::wstring_view sid) const;
+		
+		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+		* @brief		Retrieve a property of an access token
+		*
+		* @param[in]	token	Handle to an access token
+		* @param[in]	info	Token property
+		*
+		* @returns		Byte-representation of property-specific data-structure
+		*
+		* @throws		std::invalid_argument	Missing argument
+		* @throws		std::system_error		Operation failed
+		*/
+		[[nodiscard]]
+		std::vector<std::byte>
+		tokenInformation(win::SharedToken token, ::TOKEN_INFORMATION_CLASS info) const;
+
 #if 0
 	private:
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!

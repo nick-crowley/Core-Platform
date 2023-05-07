@@ -46,6 +46,9 @@ security::security_api()
 // o~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~o Local Definitions o-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~o
 
 auto constexpr
+intern checkTokenMembership = win::function<1>(::CheckTokenMembership);
+
+auto constexpr
 intern convertSidToStringSid = win::function<1>(::ConvertSidToStringSidW);
 
 auto constexpr
@@ -57,6 +60,9 @@ intern convertDescriptorToStringW = win::function<2>(::ConvertSecurityDescriptor
 auto constexpr
 intern convertStringToDescriptorW = win::function<2>(::ConvertStringSecurityDescriptorToSecurityDescriptorW);
 
+auto constexpr
+intern getTokenInformation = win::function<1>(::GetTokenInformation);
+
 // o~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~o Construction & Destruction o~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~o
 
 // o~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-o Copy & Move Semantics o~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~o
@@ -64,6 +70,16 @@ intern convertStringToDescriptorW = win::function<2>(::ConvertStringSecurityDesc
 // o~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~o Static Methods o~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~o
 
 // o~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-o Instance Methods & Operators o+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~o
+
+// ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ //
+bool
+SecurityApi::checkMembership(win::SharedToken token, std::span<std::byte const> sid) const
+{
+	ThrowIfEmpty(token);
+	ThrowIfEmpty(sid);
+
+	return ::checkTokenMembership(*token, const_cast<std::byte*>(sid.data())) != FALSE;
+}
 
 // ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ //
 bool
@@ -379,6 +395,19 @@ SecurityApi::_get_descriptor(HandleOrPath ident, ::SE_OBJECT_TYPE type, Informat
 	return {bytes.begin(), bytes.end()};
 }
 #endif
+
+// ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ //
+[[nodiscard]]
+std::vector<std::byte>
+SecurityApi::tokenInformation(win::SharedToken token, ::TOKEN_INFORMATION_CLASS info) const
+{
+	ThrowIfEmpty(token);
+	
+	std::vector<std::byte> buffer{::getTokenInformation(*token, info, nullptr, 0)};
+	::getTokenInformation(*token, info, buffer.data(), buffer.size());
+	return buffer;
+}
+
 // o~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~o Non-member Methods & Operators o~-~+~-~+~-~+~-~+~-~+~-~+~-~+~o
 
 // o~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-o End of File o~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~o
