@@ -106,7 +106,7 @@ operator&(E1 lhs, E2 rhs) {
 	return static_cast<E1>(
 		std::underlying_type_t<E1>(lhs) & std::underlying_type_t<E2>(rhs)
 	);
-};
+}
 
 template <core::meta::BitwiseEnumeration E1, core::meta::CompatibleEnumeration<E1> E2>
 E1 constexpr
@@ -114,7 +114,7 @@ operator|(E1 lhs, E2 rhs) {
 	return static_cast<E1>(
 		std::underlying_type_t<E1>(lhs) | std::underlying_type_t<E2>(rhs)
 	);
-};
+}
 
 template <core::meta::BitwiseEnumeration E1, core::meta::CompatibleEnumeration<E1> E2>
 E1 constexpr
@@ -122,5 +122,5 @@ operator^(E1 lhs, E2 rhs) {
 	return static_cast<E1>(
 		std::underlying_type_t<E1>(lhs) ^ std::underlying_type_t<E2>(rhs)
 	);
-};
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
