@@ -69,7 +69,7 @@ namespace core::win
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		Process
-		static fromPid(uint32_t pid, ProcessRight rights, std::optional<meta::inherits_t> inheritance)
+		static fromPid(uint32_t pid, ProcessRight rights, std::optional<meta::inherits_t> inheritance = std::nullopt)
 		{
 			if (SharedProcess handle{::OpenProcess(std::to_underlying(rights), Boolean{!!inheritance}, pid)}; !handle)
 				LastError{}.throwAlways("OpenProcess() failed");
