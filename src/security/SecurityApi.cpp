@@ -397,7 +397,6 @@ SecurityApi::_get_descriptor(HandleOrPath ident, ::SE_OBJECT_TYPE type, Informat
 #endif
 
 // ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ //
-[[nodiscard]]
 std::unique_ptr<std::byte[]>
 SecurityApi::tokenInformation(win::SharedToken token, TokenProperty info) const
 {
