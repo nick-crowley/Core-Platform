@@ -399,12 +399,13 @@ SecurityApi::_get_descriptor(HandleOrPath ident, ::SE_OBJECT_TYPE type, Informat
 // ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ //
 [[nodiscard]]
 std::vector<std::byte>
-SecurityApi::tokenInformation(win::SharedToken token, ::TOKEN_INFORMATION_CLASS info) const
+SecurityApi::tokenInformation(win::SharedToken token, TokenProperty info) const
 {
 	ThrowIfEmpty(token);
 	
-	std::vector<std::byte> buffer{::getTokenInformation(*token, info, nullptr, 0)};
-	::getTokenInformation(*token, info, buffer.data(), buffer.size());
+	auto const _info = static_cast<::TOKEN_INFORMATION_CLASS>(info);
+	std::vector<std::byte> buffer{::getTokenInformation(*token, _info, nullptr, 0)};
+	::getTokenInformation(*token, _info, buffer.data(), buffer.size());
 	return buffer;
 }
 

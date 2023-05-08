@@ -30,6 +30,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Platform.h"
 #include "win/SharedHandle.h"
+#include "security/TokenProperty.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -238,7 +239,7 @@ namespace core::security
 		*/
 		[[nodiscard]]
 		std::vector<std::byte>
-		tokenInformation(win::SharedToken token, ::TOKEN_INFORMATION_CLASS info) const;
+		tokenInformation(win::SharedToken token, TokenProperty info) const;
 
 #if 0
 	private:

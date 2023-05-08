@@ -77,7 +77,7 @@ namespace core::security
 		Identifier
 		user() const {
 			return Identifier{
-				this->api->tokenInformation(this->token, static_cast<::TOKEN_INFORMATION_CLASS>(TokenProperty::User))
+				this->api->tokenInformation(this->token, TokenProperty::User)
 			};
 		}
 
