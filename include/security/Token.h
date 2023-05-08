@@ -76,8 +76,12 @@ namespace core::security
 		
 		Identifier
 		user() const {
-			return Identifier{
+			auto const data = boost::reinterpret_pointer_cast<::SID_AND_ATTRIBUTES>(
 				this->api->tokenInformation(this->token, TokenProperty::User)
+			);
+			
+			return Identifier{
+				ConstSidWrapper{static_cast<::SID const*>(data->Sid)}.bytes()
 			};
 		}
 

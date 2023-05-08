@@ -238,7 +238,7 @@ namespace core::security
 		* @throws		std::system_error		Operation failed
 		*/
 		[[nodiscard]]
-		std::vector<std::byte>
+		std::unique_ptr<std::byte[]>
 		tokenInformation(win::SharedToken token, TokenProperty info) const;
 
 #if 0
