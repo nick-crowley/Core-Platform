@@ -29,6 +29,7 @@
 #include "library/core.platform.h"			
 #include "security/Identifier.h"
 #include "security/SecurityApi.h" 
+#include "security/TokenProperty.h"
 #include "win/SharedHandle.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
@@ -37,59 +38,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-namespace core::security
-{
-	enum class TokenProperty {
-		User                                = ::TokenUser,
-		Groups                              = ::TokenGroups,
-		Privileges                          = ::TokenPrivileges,
-		Owner                               = ::TokenOwner,
-		PrimaryGroup                        = ::TokenPrimaryGroup,
-		DefaultDacl                         = ::TokenDefaultDacl,
-		Source                              = ::TokenSource,
-		Type                                = ::TokenType,
-		ImpersonationLevel                  = ::TokenImpersonationLevel,
-		Statistics                          = ::TokenStatistics,
-		RestrictedSids                      = ::TokenRestrictedSids,
-		SessionId                           = ::TokenSessionId,
-		GroupsAndPrivileges                 = ::TokenGroupsAndPrivileges,
-		SessionReference                    = ::TokenSessionReference,
-		SandBoxInert                        = ::TokenSandBoxInert,
-		AuditPolicy                         = ::TokenAuditPolicy,
-		Origin                              = ::TokenOrigin,
-		ElevationType                       = ::TokenElevationType,
-		LinkedToken                         = ::TokenLinkedToken,
-		Elevation                           = ::TokenElevation,
-		HasRestrictions                     = ::TokenHasRestrictions,
-		AccessInformation                   = ::TokenAccessInformation,
-		VirtualizationAllowed               = ::TokenVirtualizationAllowed,
-		VirtualizationEnabled               = ::TokenVirtualizationEnabled,
-		IntegrityLevel                      = ::TokenIntegrityLevel,
-		UIAccess                            = ::TokenUIAccess,
-		MandatoryPolicy                     = ::TokenMandatoryPolicy,
-		LogonSid                            = ::TokenLogonSid,
-		IsAppContainer                      = ::TokenIsAppContainer,
-		Capabilities                        = ::TokenCapabilities,
-		AppContainerSid                     = ::TokenAppContainerSid,
-		AppContainerNumber                  = ::TokenAppContainerNumber,
-		UserClaimAttributes                 = ::TokenUserClaimAttributes,
-		DeviceClaimAttributes               = ::TokenDeviceClaimAttributes,
-		RestrictedUserClaimAttributes       = ::TokenRestrictedUserClaimAttributes,
-		RestrictedDeviceClaimAttributes     = ::TokenRestrictedDeviceClaimAttributes,
-		DeviceGroups                        = ::TokenDeviceGroups,
-		RestrictedDeviceGroups              = ::TokenRestrictedDeviceGroups,
-		SecurityAttributes                  = ::TokenSecurityAttributes,
-		IsRestricted                        = ::TokenIsRestricted,
-		ProcessTrustLevel                   = ::TokenProcessTrustLevel,
-		PrivateNameSpace                    = ::TokenPrivateNameSpace,
-		SingletonAttributes                 = ::TokenSingletonAttributes,
-		BnoIsolation                        = ::TokenBnoIsolation,
-		ChildProcessFlags                   = ::TokenChildProcessFlags,
-		IsLessPrivilegedAppContainer        = ::TokenIsLessPrivilegedAppContainer,
-		IsSandboxed                         = ::TokenIsSandboxed,
-		IsAppSilo                           = ::TokenIsAppSilo,
-	};
-}
+
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::security
 {
