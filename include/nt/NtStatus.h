@@ -49,10 +49,11 @@ namespace core::nt
 		template <typename... Params>
 		void 
 		throwIfError(std::string_view msg, Params&&... args) const {
-			// BUG: this will result in the wrong error category
-			throw std::system_error{this->m_value, 
-			                        std::system_category(),
-			                        std::vformat(msg,std::make_format_args(args...)) + ". " + this->str()};
+			if (this->m_value < 0)
+				// BUG: this will result in the wrong error category
+				throw std::system_error{this->m_value, 
+										std::system_category(),
+										std::vformat(msg,std::make_format_args(args...)) + ". " + this->str()};
 		}
 
 		explicit operator
