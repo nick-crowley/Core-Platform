@@ -31,15 +31,17 @@ namespace core::nt
 			return detail::formatMessage(this->m_value);
 		}
 		
+		[[noreturn]] 
 		void 
-		throwAlways [[noreturn]]() const {
+		throwAlways() const {
 			// BUG: this will result in the wrong error category
 			throw std::system_error{this->m_value, std::system_category(), this->str()};
 		}
 		
 		template <typename... Params> 
+		[[noreturn]] 
 		void 
-		throwAlways [[noreturn]](std::string_view msg, Params&&... args) const {
+		throwAlways(std::string_view msg, Params&&... args) const {
 			// BUG: this will result in the wrong error category
 			throw std::system_error{this->m_value, 
 			                        std::system_category(),

@@ -81,14 +81,16 @@ namespace core::win
 			return detail::formatMessage(this->m_value);
 		}
 		
+		[[noreturn]] 
 		void 
-		throwAlways [[noreturn]]() const {
+		throwAlways() const {
 			throw system_error{this->m_value};
 		}
 		
 		template <typename... Params>
+		[[noreturn]] 
 		void 
-		throwAlways [[noreturn]](std::string_view msg, Params&&... args) const {
+		throwAlways(std::string_view msg, Params&&... args) const {
 			throw system_error{this->m_value, 
 			                   std::vformat(msg,std::make_format_args(args...))};
 		}
