@@ -92,7 +92,6 @@ namespace core::win
 		str() const;
 		
 		template <typename... Params>
-		[[noreturn]]
 		void 
 		throwIfError(std::string_view msg, Params&&... args) const {
 			if (FAILED(this->m_value))

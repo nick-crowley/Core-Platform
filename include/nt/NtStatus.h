@@ -48,7 +48,7 @@ namespace core::nt
 		
 		template <typename... Params>
 		void 
-		throwIfError [[noreturn]](std::string_view msg, Params&&... args) const {
+		throwIfError(std::string_view msg, Params&&... args) const {
 			// BUG: this will result in the wrong error category
 			throw std::system_error{this->m_value, 
 			                        std::system_category(),

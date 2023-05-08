@@ -95,7 +95,7 @@ namespace core::win
 		
 		template <typename... Params>
 		void 
-		throwIfError [[noreturn]](std::string_view msg, Params&&... args) const {
+		throwIfError(std::string_view msg, Params&&... args) const {
 			if (this->m_value != ERROR_SUCCESS)
 				throw system_error{this->m_value, 
 				                   std::vformat(msg,std::make_format_args(args...))};
