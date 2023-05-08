@@ -25,9 +25,11 @@
 */
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Preprocessor Directives o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #pragma once
-#ifndef CorePlatform_h_included
-#	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
-#endif
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+#include "library/core.Platform.h"
+#include "security/ProcessRight.h"
+#include "win/Boolean.h"
+#include "win/SharedHandle.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -35,92 +37,56 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-namespace core::meta
-{
-	struct adopt_t {} constexpr 
-	inline adopt;
-	
-	struct bitwise_enum_t {} constexpr 
-	inline bitwise_enum;
-	
-	struct compatible_enum_t {} constexpr 
-	inline compatible_enum;
 
-	struct create_new_t {} constexpr 
-	inline create_new;
-
-	struct hidden_t {} constexpr  
-	inline hidden;
-	
-	struct inherits_t {} constexpr  
-	inline inherits;
-	
-	struct noconversion_t {} constexpr 
-	inline noconversion;
-
-	struct noformat_t {} constexpr 
-	inline noformat;
-
-	struct open_existing_t {} constexpr 
-	inline open_existing;
-
-	struct undefined_t {} constexpr 
-	inline undefined;
-	
-    struct use_default_t {} constexpr 
-    inline use_default;
-	
-	struct weakref_t {} constexpr 
-	inline weakref;
-}
-
-namespace core
-{
-	//using adopt_t = meta::adopt_t;
-	//using create_new_t = meta::create_new_t;
-	//using hidden_t = meta::hidden_t;
-	//using open_existing_t = meta::open_existing_t;
-	//using undefined_t = meta::undefined_t;
-	//using use_default_t = meta::use_default_t;
-
-	auto constexpr 
-	inline adopt = meta::adopt;
-	
-	auto constexpr 
-	inline bitwise_enum = meta::bitwise_enum;
-
-	auto constexpr 
-	inline compatible_enum = meta::compatible_enum;
-
-	auto constexpr 
-	inline create_new = meta::create_new;
-
-	auto constexpr 
-	inline hidden = meta::hidden;
-	
-	auto constexpr 
-	inline inherits = meta::inherits;
-	
-	auto constexpr 
-	inline noconversion = meta::noconversion;
-
-	auto constexpr 
-	inline noformat = meta::noformat;
-
-	auto constexpr 
-	inline open_existing = meta::open_existing;
-	
-	auto constexpr 
-	inline undefined = meta::undefined;
-
-	auto constexpr 
-	inline use_default = meta::use_default;
-	
-	auto constexpr 
-	inline weakref = meta::weakref;
-}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace core::win
+{
+	class Process
+	{
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	private:
+		SharedProcess  handle;
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
+		explicit
+		Process(SharedProcess p)
+		  : handle{ThrowIfEmpty(p)}
+		{
+		}
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
+		satisfies(Process,
+			NotDefaultConstructible,
+			NotCopyable,
+			IsMovable,
+			NotEqualityComparable,
+			NotSortable
+		);
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
+		Process
+		static fromPid(uint32_t pid, ProcessRight rights, std::optional<meta::inherits_t> inheritance)
+		{
+			if (SharedProcess handle{::OpenProcess(std::to_underlying(rights), Boolean{!!inheritance}, pid)}; !handle)
+				LastError{}.throwAlways("OpenProcess() failed");
+			else
+				return Process{handle};
+		}
+		
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
+		uint32_t
+		id() const {
+			return ::GetProcessId(*this->handle);
+		}
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	};
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

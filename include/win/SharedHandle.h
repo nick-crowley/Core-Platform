@@ -64,6 +64,9 @@ namespace core::win
     using SharedModule = SmartHandle<::HMODULE>;
     
     //! @brief  Shared @c ::HANDLE released using @c ::CloseHandle()
+    using SharedProcess = SharedHandle;
+
+    //! @brief  Shared @c ::HANDLE released using @c ::CloseHandle()
     using SharedThread = SharedHandle;
     
     //! @brief  Shared @c ::HANDLE released using @c ::CloseHandle()

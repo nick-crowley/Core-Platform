@@ -25,9 +25,9 @@
 */
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Preprocessor Directives o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #pragma once
-#ifndef CorePlatform_h_included
-#	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
-#endif
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+#include "library/core.platform.h"
+#include "security/AccessRight.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -35,89 +35,42 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-namespace core::meta
-{
-	struct adopt_t {} constexpr 
-	inline adopt;
-	
-	struct bitwise_enum_t {} constexpr 
-	inline bitwise_enum;
-	
-	struct compatible_enum_t {} constexpr 
-	inline compatible_enum;
+namespace core::win {
 
-	struct create_new_t {} constexpr 
-	inline create_new;
-
-	struct hidden_t {} constexpr  
-	inline hidden;
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief	Access-rights for process objects
+	*/
+	enum class ProcessRight : access_mask_t {
+		All = PROCESS_ALL_ACCESS,                         //!< All possible rights
+		SpawnProcess = PROCESS_CREATE_PROCESS,            //!< Create process
+		SpawnThread = PROCESS_CREATE_THREAD,              //!< Create thread
+		Duplicate = PROCESS_DUP_HANDLE,                   //!< Duplicate handle
+		FullQuery = PROCESS_QUERY_INFORMATION,            //!< Retrieve access-token and properties
+		LimitedQuery = PROCESS_QUERY_LIMITED_INFORMATION, //!< Retrieve exit-code, priorty, etc.
+		SetInformation = PROCESS_SET_INFORMATION,         //!< Set properties
+		SetQuota = PROCESS_SET_QUOTA,                     //!< Set memory limits
+		SuspendResume = PROCESS_SUSPEND_RESUME,           //!< Suspend/resume process
+		Terminate = PROCESS_TERMINATE,                    //!< Terminate process
+		AdjustMemory = PROCESS_VM_OPERATION,              //!< Operate on process address space
+		ReadMemory = PROCESS_VM_READ,                     //!< Read from process memory
+		WriteMemory = PROCESS_VM_WRITE,                   //!< Write to process memory
+		Synchronize = SYNCHRONIZE,                        //!< Wait for process to terminate
+	};
 	
-	struct inherits_t {} constexpr  
-	inline inherits;
-	
-	struct noconversion_t {} constexpr 
-	inline noconversion;
-
-	struct noformat_t {} constexpr 
-	inline noformat;
-
-	struct open_existing_t {} constexpr 
-	inline open_existing;
-
-	struct undefined_t {} constexpr 
-	inline undefined;
-	
-    struct use_default_t {} constexpr 
-    inline use_default;
-	
-	struct weakref_t {} constexpr 
-	inline weakref;
+	enum class CommonRight : access_mask_t;
+	enum class GenericRight : access_mask_t;
+	enum class StandardRight : access_mask_t;
 }
-
-namespace core
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace core::meta 
 {
-	//using adopt_t = meta::adopt_t;
-	//using create_new_t = meta::create_new_t;
-	//using hidden_t = meta::hidden_t;
-	//using open_existing_t = meta::open_existing_t;
-	//using undefined_t = meta::undefined_t;
-	//using use_default_t = meta::use_default_t;
+	//! @brief	@c core::win::ProcessRight is a bitflag
+	metadata bool Settings<bitwise_enum, core::win::ProcessRight> = true;
 
-	auto constexpr 
-	inline adopt = meta::adopt;
-	
-	auto constexpr 
-	inline bitwise_enum = meta::bitwise_enum;
-
-	auto constexpr 
-	inline compatible_enum = meta::compatible_enum;
-
-	auto constexpr 
-	inline create_new = meta::create_new;
-
-	auto constexpr 
-	inline hidden = meta::hidden;
-	
-	auto constexpr 
-	inline inherits = meta::inherits;
-	
-	auto constexpr 
-	inline noconversion = meta::noconversion;
-
-	auto constexpr 
-	inline noformat = meta::noformat;
-
-	auto constexpr 
-	inline open_existing = meta::open_existing;
-	
-	auto constexpr 
-	inline undefined = meta::undefined;
-
-	auto constexpr 
-	inline use_default = meta::use_default;
-	
-	auto constexpr 
-	inline weakref = meta::weakref;
+	//! @brief	@c core::win::ProcessRight can be combined with common/standard/generic rights
+	metadata bool Settings<compatible_enum, core::win::ProcessRight, core::win::CommonRight> = true;
+	metadata bool Settings<compatible_enum, core::win::ProcessRight, core::win::GenericRight> = true;
+	metadata bool Settings<compatible_enum, core::win::ProcessRight, core::win::StandardRight> = true;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
