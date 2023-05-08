@@ -87,6 +87,16 @@ namespace core::win
 			return ::GetProcessId(*this->handle);
 		}
 
+		filesystem::path
+		path() const {
+			auto constexpr queryImageName = function<1>(::QueryFullProcessImageNameW);
+			auto constexpr usermodeFormat = 0;
+
+			std::wstring buffer{MAX_PATH, L'\0'};
+			buffer.resize(queryImageName(*this->handle, usermodeFormat, buffer.data()));
+			return buffer;
+		}
+
 		security::Token
 		token(TokenRight rights) const {
 			auto const openProcessToken = function<1>(::OpenProcessToken);
