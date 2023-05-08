@@ -26,13 +26,8 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Preprocessor Directives o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #pragma once
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "library/core.Platform.h"
-#include "security/ProcessRight.h"
-#include "security/Token.h"
-#include "security/TokenRight.h"
-#include "win/Boolean.h"
-#include "win/Function.h"
-#include "win/SharedHandle.h"
+#include "library/core.platform.h"
+#include "security/AccessRight.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -40,64 +35,46 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace core::win {
 
-// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-namespace core::win
-{
-	class Process
-	{
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief	Access-rights for process objects
+	*/
+	enum class TokenRight : access_mask_t {
+		All = TOKEN_ALL_ACCESS,                         //!< All possible rights
+		Duplicate = TOKEN_DUPLICATE,                    //!< Duplicate handle
 
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	private:
-		SharedProcess  handle;
+		Execute = TOKEN_EXECUTE,                        //!< Retrieve access-token, attach impersonation token
+		Impersonate = TOKEN_IMPERSONATE,                //!< Attach impersonation token to process
+		Query = TOKEN_QUERY,                            //!< Retrieve access-token
+		QuerySource = TOKEN_QUERY_SOURCE,               //!< Retrieve authenticator which produced the token
+		Read = TOKEN_READ,                              //!< Retrieve access-token and DACL
+		Write = TOKEN_WRITE,                            //!< Modify DACL, default-owner, primary-group, group-attrs, privileges
 
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		explicit
-		Process(SharedProcess p)
-		  : handle{ThrowIfEmpty(p)}
-		{
-		}
-
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		satisfies(Process,
-			NotDefaultConstructible,
-			NotCopyable,
-			IsMovable,
-			NotEqualityComparable,
-			NotSortable
-		);
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		Process
-		static fromPid(uint32_t pid, ProcessRight rights, std::optional<meta::inherits_t> inheritance = std::nullopt)
-		{
-			if (SharedProcess handle{::OpenProcess(std::to_underlying(rights), Boolean{!!inheritance}, pid)}; !handle)
-				LastError{}.throwAlways("OpenProcess() failed");
-			else
-				return Process{handle};
-		}
-		
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		uint32_t
-		id() const {
-			return ::GetProcessId(*this->handle);
-		}
-
-		security::Token
-		token(TokenRight rights) const {
-			auto const openProcessToken = function<1>(::OpenProcessToken);
-
-			SharedToken handle{openProcessToken(*this->handle, std::to_underlying(rights))};
-			return security::Token{handle};
-		}
-
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+		AdjustDefault = TOKEN_ADJUST_DEFAULT,           //!< Modify default owner, primary group, DACL
+		AdjustGroups = TOKEN_ADJUST_GROUPS,             //!< Modify group attributes
+		AdjustPrivileges = TOKEN_ADJUST_PRIVILEGES,     //!< Modify privileges in token
+		AdjustSessionId = TOKEN_ADJUST_SESSIONID,       //!< Modify session ID of token
+		AssignPrimary = TOKEN_ASSIGN_PRIMARY,           //!< Assign primary token to process
 	};
+	
+	enum class CommonRight : access_mask_t;
+	enum class GenericRight : access_mask_t;
+	enum class StandardRight : access_mask_t;
 }
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace core::meta 
+{
+	//! @brief	@c core::win::TokenRight is a bitflag
+	metadata bool Settings<bitwise_enum, core::win::TokenRight> = true;
+
+	//! @brief	@c core::win::TokenRight can be combined with common/standard/generic rights
+	metadata bool Settings<compatible_enum, core::win::TokenRight, core::win::CommonRight> = true;
+	metadata bool Settings<compatible_enum, core::win::TokenRight, core::win::GenericRight> = true;
+	metadata bool Settings<compatible_enum, core::win::TokenRight, core::win::StandardRight> = true;
+}
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
