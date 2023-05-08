@@ -404,9 +404,11 @@ SecurityApi::tokenInformation(win::SharedToken token, TokenProperty info) const
 	ThrowIfEmpty(token);
 	
 	auto const _info = static_cast<::TOKEN_INFORMATION_CLASS>(info);
-	auto const capacity = ::getTokenInformation(*token, _info, nullptr, 0);
+	::DWORD capacity{};
+	if (::GetTokenInformation(*token, _info, nullptr, 0, &capacity); !capacity)
+		win::LastError{}.throwAlways("GetTokenInformation() failed");
 	auto buffer = std::make_unique<std::byte[]>(capacity);
-	std::ignore = ::getTokenInformation(*token, _info, buffer.get(), capacity);
+	::getTokenInformation(*token, _info, buffer.get(), capacity);
 	return buffer;
 }
 
