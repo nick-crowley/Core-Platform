@@ -42,29 +42,6 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core
 {
-	namespace detail {
-		template <typename WritableValue>
-		class repeat {
-			using type = repeat<WritableValue>;
-
-		private:
-			WritableValue  value;
-			uint32_t       count;
-
-		public:
-			repeat(WritableValue val, uint32_t num) : value{val}, count{num}
-			{}
-
-		public:
-			nstd::return_t<std::ostream&>
-			friend operator<<(std::ostream& os, type const& repetition) {
-				for (uint32_t idx = 0; idx < repetition.count; ++idx)
-					os << repetition.value;
-				return os;
-			}
-		};
-	}
-
 	class PlatformExport LogStream
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -159,7 +136,7 @@ namespace core
 			                    << " P-" << std::setw(4) << std::left << ::GetCurrentProcessId() 
 			                    << " T-" << std::setw(4) << std::left << std::this_thread::get_id()
 			                    << " "   << std::setw(9) << std::left << as_string(sev)
-			                    << " : " << detail::repeat(LogStream::PaddingChars, LogStream::currentDepth()) << str
+			                    << " : " << nstd::repeat(LogStream::PaddingChars, LogStream::currentDepth()) << str
 			                    << std::endl;
 		}
 		
