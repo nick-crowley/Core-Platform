@@ -40,36 +40,34 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::win 
 {
-enum class CommonRight : access_mask_t;
-enum class GenericRight : access_mask_t;
-enum class StandardRight : access_mask_t;
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief		Defines access rights for registry key objects.
+	*/
+	enum class KeyRight : access_mask_t { 
+		All = KEY_ALL_ACCESS,				    //!< Combines the STANDARD_RIGHTS_REQUIRED, KEY_QUERY_VALUE, KEY_SET_VALUE, KEY_CREATE_SUB_KEY, KEY_ENUMERATE_SUB_KEYS, KEY_NOTIFY, and KEY_CREATE_LINK access rights.
 
-/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
-* @brief		Defines access rights for registry key objects.
-*/
-// clang-format off
-enum class KeyRight : access_mask_t { 
-	All = KEY_ALL_ACCESS,				    //!< Combines the STANDARD_RIGHTS_REQUIRED, KEY_QUERY_VALUE, KEY_SET_VALUE, KEY_CREATE_SUB_KEY, KEY_ENUMERATE_SUB_KEYS, KEY_NOTIFY, and KEY_CREATE_LINK access rights.
+		EnumKeys = KEY_ENUMERATE_SUB_KEYS,		//!< Required to enumerate the subkeys of a registry key.
+		NotifyChange = KEY_NOTIFY,				//!< Required to request change notifications for a registry key or for subkeys of a registry key.
 
-	EnumKeys = KEY_ENUMERATE_SUB_KEYS,		//!< Required to enumerate the subkeys of a registry key.
-	NotifyChange = KEY_NOTIFY,				//!< Required to request change notifications for a registry key or for subkeys of a registry key.
+		ReadAll = KEY_READ,						//!< Combines the STANDARD_RIGHTS_READ, KEY_QUERY_VALUE, KEY_ENUMERATE_SUB_KEYS, and KEY_NOTIFY values.
+		ReadValue = KEY_QUERY_VALUE,			//!< Required to query the values of a registry key.
 
-	ReadAll = KEY_READ,						//!< Combines the STANDARD_RIGHTS_READ, KEY_QUERY_VALUE, KEY_ENUMERATE_SUB_KEYS, and KEY_NOTIFY values.
-	ReadValue = KEY_QUERY_VALUE,			//!< Required to query the values of a registry key.
-
-	WriteAll = KEY_WRITE,					//!< Combines the STANDARD_RIGHTS_WRITE, KEY_SET_VALUE, and KEY_CREATE_SUB_KEY access rights.
-	WriteKey = KEY_CREATE_SUB_KEY,			//!< Required to create a subkey of a registry key.
-	WriteLink = KEY_CREATE_LINK,			//!< Reserved for system use.
-	WriteValue = KEY_SET_VALUE,				//!< Required to create, delete, or set a registry value.
+		WriteAll = KEY_WRITE,					//!< Combines the STANDARD_RIGHTS_WRITE, KEY_SET_VALUE, and KEY_CREATE_SUB_KEY access rights.
+		WriteKey = KEY_CREATE_SUB_KEY,			//!< Required to create a subkey of a registry key.
+		WriteLink = KEY_CREATE_LINK,			//!< Reserved for system use.
+		WriteValue = KEY_SET_VALUE,				//!< Required to create, delete, or set a registry value.
 	
-	Virtualize32 = KEY_WOW64_32KEY,			//!< Indicates that an application on 64-bit Windows should operate on the 32-bit registry view. This flag is ignored by 32-bit Windows.
-											//!< This flag must be combined using the OR operator with the other flags in this table that either query or access registry values.
-	Virtualize64 = KEY_WOW64_64KEY,			//!< Indicates that an application on 64-bit Windows should operate on the 64-bit registry view. This flag is ignored by 32-bit Windows.
-											//!< This flag must be combined using the OR operator with the other flags in this table that either query or access registry values.
-};
-// clang-format on
-}      // namespace core::win
-
+		Virtualize32 = KEY_WOW64_32KEY,			//!< Indicates that an application on 64-bit Windows should operate on the 32-bit registry view. This flag is ignored by 32-bit Windows.
+												//!< This flag must be combined using the OR operator with the other flags in this table that either query or access registry values.
+		Virtualize64 = KEY_WOW64_64KEY,			//!< Indicates that an application on 64-bit Windows should operate on the 64-bit registry view. This flag is ignored by 32-bit Windows.
+												//!< This flag must be combined using the OR operator with the other flags in this table that either query or access registry values.
+	};
+	
+	enum class CommonRight : access_mask_t;
+	enum class GenericRight : access_mask_t;
+	enum class StandardRight : access_mask_t;
+}
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::meta 
 {
 	//! @brief	@c core::win::KeyRight is a bitflag
