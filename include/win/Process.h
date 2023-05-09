@@ -89,11 +89,13 @@ namespace core::win
 
 		filesystem::path
 		path() const {
-			auto constexpr queryImageName = function<1>(::QueryFullProcessImageNameW);
 			auto constexpr usermodeFormat = 0;
 
-			std::wstring buffer{MAX_PATH, L'\0'};
-			buffer.resize(queryImageName(*this->handle, usermodeFormat, buffer.data()));
+			::DWORD      capacity{MAX_PATH};
+			std::wstring buffer(capacity, L'\0');
+			if (!::QueryFullProcessImageNameW(*this->handle, usermodeFormat, buffer.data(), &capacity))
+				LastError{}.throwAlways("QueryFullProcessImageNameW() failed");
+			buffer.resize(capacity);
 			return buffer;
 		}
 
