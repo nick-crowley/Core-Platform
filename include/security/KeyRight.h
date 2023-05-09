@@ -72,7 +72,10 @@ enum class KeyRight : access_mask_t {
 
 namespace core::meta 
 {
+	//! @brief	@c core::win::KeyRight is a bitflag
 	metadata bool Settings<bitwise_enum, core::win::KeyRight> = true;
+	
+	//! @brief	@c core::win::KeyRight can be combined with common/standard/generic rights
 	metadata bool Settings<compatible_enum, core::win::KeyRight, core::win::CommonRight> = true;
 	metadata bool Settings<compatible_enum, core::win::KeyRight, core::win::GenericRight> = true;
 	metadata bool Settings<compatible_enum, core::win::KeyRight, core::win::StandardRight> = true;
