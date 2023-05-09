@@ -1,5 +1,5 @@
-/* o~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~o */ /*!
-* @copyright	Copyright (c) 2018, Nick Crowley. All rights reserved.
+/* o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o */ /*!
+* @copyright	Copyright (c) 2023, Nick Crowley. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are permitted
 * provided that the following conditions are met:
@@ -23,6 +23,7 @@
 * and should not be interpreted as representing official policies, either expressed or implied, of
 * the projects which contain it.
 */
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "security/SecurityApi.h"
 #include "security/Identifier.h"
 #include "security/Descriptor.h"
