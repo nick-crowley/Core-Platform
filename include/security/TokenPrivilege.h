@@ -27,12 +27,8 @@
 #pragma once
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.platform.h"
-#include "security/Identifier.h"
-#include "security/SecurityApi.h" 
-#include "security/Group.h"
-#include "security/TokenPrivilege.h"
-#include "security/TokenProperty.h"
-#include "win/SharedHandle.h"
+#include "security/PrivilegeFlag.h"
+#include "win/Function.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -44,84 +40,44 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::security
 {
-	class Token 
+	class TokenPrivilege
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	private:
-		win::SharedToken  token;
-		SharedSecurityApi api;          //!< Security API implementation
-
+	public:
+		::LUID         LocalId;
+		PrivilegeFlag  Flags;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		Token(win::SharedToken existing, SharedSecurityApi api = security_api()) 
-		  : token{std::move(ThrowIfEmpty(existing))},
-		    api{std::move(ThrowIfEmpty(api))}
+		TokenPrivilege(::LUID id, PrivilegeFlag f) : LocalId{id}, Flags{f}
+		{}
+
+		TokenPrivilege(gsl::cwzstring name, PrivilegeFlag f) 
+		  : LocalId{win::function<1>(::LookupPrivilegeValueW)(nullptr, ThrowIfEmpty(name))}, 
+			Flags{f}
 		{}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
+	public:
+		satisfies(TokenPrivilege,
+			NotDefaultConstructible,
+			IsCopyable,
+			IsMovable,
+			IsEqualityComparable,
+			NotSortable
+		);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		std::vector<Group>
-		groups() const {
-			auto const data = boost::reinterpret_pointer_cast<::TOKEN_GROUPS>(
-				this->api->tokenInformation(this->token, TokenProperty::Groups)
-			);
-			
-			auto const makeGroup = [](::SID_AND_ATTRIBUTES const& in) -> Group {
-				return Group{
-					static_cast<GroupFlag>(in.Attributes),
-					Identifier{ConstSidWrapper{static_cast<::SID const*>(in.Sid)}.bytes()}
-				};
-			};
-
-			return {
-				std::from_range,
-				views::transform(std::span{data->Groups, data->GroupCount}, makeGroup) 
-			};
+		std::string
+		str() const {
+			char name[64] {};	// Longest is 42-chars (@c SeDelegateSessionUserImpersonate...)
+			::DWORD capacity = lengthof(name);
+			::LookupPrivilegeNameA(nullptr, const_cast<::LUID*>(&this->LocalId), name, &capacity);
+			return {name, name+capacity};
 		}
-
-		win::SharedToken 
-		handle() const {
-			return this->token;
-		}
-
-		bool
-		memberOf(Identifier group) const {
-			return this->api->checkMembership(this->token, group.bytes());
-		}
-		
-		std::vector<TokenPrivilege>
-		privileges() const {
-			auto const data = boost::reinterpret_pointer_cast<::TOKEN_PRIVILEGES>(
-				this->api->tokenInformation(this->token, TokenProperty::Privileges)
-			);
-			
-			auto const makePrivilege = [](::LUID_AND_ATTRIBUTES const& in) -> TokenPrivilege {
-				return TokenPrivilege{in.Luid, static_cast<PrivilegeFlag>(in.Attributes)};
-			};
-
-			return {
-				std::from_range,
-				views::transform(std::span{&data->Privileges[0], data->PrivilegeCount}, makePrivilege)
-			};
-		}
-
-		Identifier
-		user() const {
-			auto const data = boost::reinterpret_pointer_cast<::SID_AND_ATTRIBUTES>(
-				this->api->tokenInformation(this->token, TokenProperty::User)
-			);
-			
-			return Identifier{
-				ConstSidWrapper{static_cast<::SID const*>(data->Sid)}.bytes()
-			};
-		}
-
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};
 }
