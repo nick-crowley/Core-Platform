@@ -37,6 +37,7 @@
 namespace core::security
 {
 	enum class PrivilegeFlag : uint32_t {
+		None = 0,
 		Enabled = SE_PRIVILEGE_ENABLED,                     //!< Enabled
 		EnabledByDefault = SE_PRIVILEGE_ENABLED_BY_DEFAULT, //!< Enabled by default
 		Removed = SE_PRIVILEGE_REMOVED,                     //!< Used to remove a privilege

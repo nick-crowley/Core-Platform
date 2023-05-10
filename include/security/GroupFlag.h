@@ -37,6 +37,7 @@
 namespace core::security
 {
 	enum class GroupFlag : uint32_t {
+		None = 0,
 		Enabled = SE_GROUP_ENABLED,                     //!< Used for access checks [ignored otherwise unless @c UseForDenyOnly set]
 		EnabledByDefault = SE_GROUP_ENABLED_BY_DEFAULT, //!< Enabled by default.
 		Integrity = SE_GROUP_INTEGRITY,                 //!< Mandatory integrity SID.
