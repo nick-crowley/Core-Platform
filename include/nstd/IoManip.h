@@ -59,7 +59,7 @@ namespace nstd {
 		{}
 
 	public:
-		nstd::return_t<std::ostream&>
+		return_t<std::ostream&>
 		friend operator<<(std::ostream& os, type const& repetition) {
 			for (uint32_t idx = 0; idx < repetition.count; ++idx)
 				os << repetition.value;
