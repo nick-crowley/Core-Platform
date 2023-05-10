@@ -27,11 +27,8 @@
 #pragma once
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.platform.h"
+#include "security/GroupFlag.h"			
 #include "security/Identifier.h"
-#include "security/SecurityApi.h" 
-#include "security/TokenGroup.h"
-#include "security/TokenProperty.h"
-#include "win/SharedHandle.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -43,67 +40,31 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::security
 {
-	class Token 
+	class TokenGroup
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	private:
-		win::SharedToken  token;
-		SharedSecurityApi api;          //!< Security API implementation
-
+	public:
+		GroupFlag  Flags;
+		Identifier Id;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		Token(win::SharedToken existing, SharedSecurityApi api = security_api()) 
-		  : token{std::move(ThrowIfEmpty(existing))},
-		    api{std::move(ThrowIfEmpty(api))}
+		TokenGroup(GroupFlag f, Identifier i) : Flags{f}, Id{std::move(i)}
 		{}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
+	public:
+		satisfies(TokenGroup,
+			NotDefaultConstructible,
+			IsCopyable,
+			IsMovable,
+			IsEqualityComparable,
+			NotSortable
+		);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		std::vector<TokenGroup>
-		groups() const {
-			auto const data = boost::reinterpret_pointer_cast<::TOKEN_GROUPS>(
-				this->api->tokenInformation(this->token, TokenProperty::Groups)
-			);
-			
-			auto const makeTokenGroup = [](::SID_AND_ATTRIBUTES const& in) -> TokenGroup {
-				return TokenGroup{
-					static_cast<GroupFlag>(in.Attributes),
-					Identifier{ConstSidWrapper{static_cast<::SID const*>(in.Sid)}.bytes()}
-				};
-			};
-
-			return {
-				std::from_range,
-				views::transform(std::span{data->Groups, data->GroupCount}, makeTokenGroup) 
-			};
-		}
-
-		win::SharedToken 
-		handle() const {
-			return this->token;
-		}
-
-		bool
-		memberOf(Identifier group) const {
-			return this->api->checkMembership(this->token, group.bytes());
-		}
-		
-		Identifier
-		user() const {
-			auto const data = boost::reinterpret_pointer_cast<::SID_AND_ATTRIBUTES>(
-				this->api->tokenInformation(this->token, TokenProperty::User)
-			);
-			
-			return Identifier{
-				ConstSidWrapper{static_cast<::SID const*>(data->Sid)}.bytes()
-			};
-		}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};
