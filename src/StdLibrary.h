@@ -106,6 +106,12 @@ namespace core {
 namespace core::filesystem {
 	using namespace std::filesystem;
 }
+
+namespace nstd {
+	namespace ranges = std::ranges;
+	namespace views = std::ranges::views;
+	namespace chrono = std::chrono;
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

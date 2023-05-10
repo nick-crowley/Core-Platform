@@ -31,7 +31,7 @@
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "nstd/TypeTraits.h"
+#include "nstd/Concepts.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -42,6 +42,32 @@
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace nstd {
+
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief	Inserts a range of elements separated by a delimiter [if more than one element]
+	*/
+	template <ranges::forward_range ForwardRange, Character Delimiter>
+	class delimit {
+		using type = delimit<ForwardRange,Delimiter>;
+
+	private:
+		ForwardRange     source;
+		Delimiter const* delimiter;
+
+	public:
+		delimit(ForwardRange in, Delimiter const* str) : source{in}, delimiter{str}
+		{}
+
+	public:
+		return_t<std::basic_ostream<Delimiter>&>
+		friend operator<<(std::basic_ostream<Delimiter>& os, type const& io) {
+			if (!ranges::empty(io.source)) 
+				for (os << *ranges::begin(io.source); auto& elem : views::drop(io.source,1))
+					os << io.delimiter << elem;
+			return os;
+		}
+	};
+
 
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 	* @brief	Repeatedly inserts a value [without any delimiter]
