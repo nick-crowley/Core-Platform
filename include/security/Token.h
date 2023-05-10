@@ -29,7 +29,7 @@
 #include "library/core.platform.h"
 #include "security/Identifier.h"
 #include "security/SecurityApi.h" 
-#include "security/Group.h"
+#include "security/TokenGroup.h"
 #include "security/TokenPrivilege.h"
 #include "security/TokenProperty.h"
 #include "win/SharedHandle.h"
@@ -66,16 +66,16 @@ namespace core::security
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		std::vector<Group>
+		std::vector<TokenGroup>
 		groups() const {
 			auto const data = boost::reinterpret_pointer_cast<::TOKEN_GROUPS>(
 				this->api->tokenInformation(this->token, TokenProperty::Groups)
 			);
 			
-			auto const makeGroup = [](::SID_AND_ATTRIBUTES const& in) -> Group {
-				return Group{
-					static_cast<GroupFlag>(in.Attributes),
-					Identifier{ConstSidWrapper{static_cast<::SID const*>(in.Sid)}.bytes()}
+			auto const makeGroup = [](::SID_AND_ATTRIBUTES const& in) -> TokenGroup {
+				return TokenGroup{
+					Identifier{ConstSidWrapper{static_cast<::SID const*>(in.Sid)}.bytes()},
+					static_cast<GroupFlag>(in.Attributes)
 				};
 			};
 
