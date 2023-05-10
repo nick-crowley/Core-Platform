@@ -40,7 +40,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::security
 {
-	class TokenGroup
+	class Group
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
@@ -50,12 +50,12 @@ namespace core::security
 		Identifier Id;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		TokenGroup(GroupFlag f, Identifier i) : Flags{f}, Id{std::move(i)}
+		Group(GroupFlag f, Identifier i) : Flags{f}, Id{std::move(i)}
 		{}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		satisfies(TokenGroup,
+		satisfies(Group,
 			NotDefaultConstructible,
 			IsCopyable,
 			IsMovable,

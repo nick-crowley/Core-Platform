@@ -29,7 +29,7 @@
 #include "library/core.platform.h"
 #include "security/Identifier.h"
 #include "security/SecurityApi.h" 
-#include "security/TokenGroup.h"
+#include "security/Group.h"
 #include "security/TokenProperty.h"
 #include "win/SharedHandle.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -65,14 +65,14 @@ namespace core::security
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		std::vector<TokenGroup>
+		std::vector<Group>
 		groups() const {
 			auto const data = boost::reinterpret_pointer_cast<::TOKEN_GROUPS>(
 				this->api->tokenInformation(this->token, TokenProperty::Groups)
 			);
 			
-			auto const makeTokenGroup = [](::SID_AND_ATTRIBUTES const& in) -> TokenGroup {
-				return TokenGroup{
+			auto const makeGroup = [](::SID_AND_ATTRIBUTES const& in) -> Group {
+				return Group{
 					static_cast<GroupFlag>(in.Attributes),
 					Identifier{ConstSidWrapper{static_cast<::SID const*>(in.Sid)}.bytes()}
 				};
@@ -80,7 +80,7 @@ namespace core::security
 
 			return {
 				std::from_range,
-				views::transform(std::span{data->Groups, data->GroupCount}, makeTokenGroup) 
+				views::transform(std::span{data->Groups, data->GroupCount}, makeGroup) 
 			};
 		}
 
