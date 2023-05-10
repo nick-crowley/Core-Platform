@@ -37,6 +37,7 @@
 #ifndef __clang__
 #   include "core/EnumNames.h"
 #endif
+#include "core/BitwiseEnum.h"
 #include "core/ToHexString.h"
 #include "../../src/library/PlatformExport.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -89,13 +90,58 @@ namespace core
     PlatformExport to_string(void const* value); 
 
 #ifndef __clang__
-    template <nstd::Enumeration Enum> 
+    template <nstd::Enumeration Enum>
+        requires (!meta::BitwiseEnumeration<Enum>)
     std::string 
     to_string(Enum e) { 
         std::string_view const name = enumerator_name(e);
         return !name.empty() ? std::string{name} : to_hexString(e);
     }
 #endif
+    
+    /* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+    * @brief		Stringify individual enumerators present in any @c BitwiseEnumeration value
+    *
+    * @param[in]	value		Any combination of valid enumerators
+    * 
+    * @return		String representation of non-zero flags (possibly empty); eg. 'flag1|flag2|flag5'
+    */
+    template <meta::BitwiseEnumeration BitFlag>
+    std::string constexpr
+    to_string(BitFlag const value)
+    {
+        // Whether there exists an enumerator equal to zero representing 'no flags'
+        bool constexpr hasNoneEnumerator = is_valid_enumerator_v<BitFlag, 0>;
+
+	    // Predicate: Tests whether a flag is present (using bitwise-AND)
+	    auto const isPresent = [value](const EnumName<BitFlag>& n) -> bool {
+		    return (n.second & value) != static_cast<BitFlag>(0);
+	    };
+
+	    // Write pipe-delimited sequence of the first (N-1) flags
+	    std::stringstream out;
+#if STD_RANGES_C2872_ITER_MOVE_AMBIGOUS_SYMBOL_FIX
+        auto const flags = views::keys(enumerator_dictionary_v<BitFlag> | views::filter(isPresent));
+        if (!ranges::empty(flags))
+            out << nstd::delimit(flags, "|");
+#else
+        if (auto n = ranges::find_if(enumerator_dictionary_v<BitFlag>, isPresent);
+             n != enumerator_dictionary_v<BitFlag>.end())
+        {   
+            out << n->first;
+            for (++n; n != enumerator_dictionary_v<BitFlag>.end(); ++n) {
+                if (isPresent(*n))
+                    out << '|' << n->first;
+            }
+        }
+#endif
+	    // [NONE] Some bitflags provide an explicit enumerator for 'no-flags'
+	    else if (hasNoneEnumerator) 
+		    out << enumerator_name_v<BitFlag, static_cast<BitFlag>(0)>;
+
+	    // Return (possibly empty) string
+	    return out.str();
+    }
 
     template <typename T, size_t N>
     std::string 
