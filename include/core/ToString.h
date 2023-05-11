@@ -119,7 +119,7 @@ namespace core
 	    };
 
 	    // Write pipe-delimited sequence of the first (N-1) flags
-	    std::stringstream out;
+	    std::string out;
 #if STD_RANGES_C2872_ITER_MOVE_AMBIGOUS_SYMBOL_FIX
         auto const flags = views::keys(enumerator_dictionary_v<BitFlag> | views::filter(isPresent));
         if (!ranges::empty(flags))
@@ -128,19 +128,19 @@ namespace core
         if (auto n = ranges::find_if(enumerator_dictionary_v<BitFlag>, isPresent);
              n != enumerator_dictionary_v<BitFlag>.end())
         {   
-            out << n->first;
+            out = n->first;
             for (++n; n != enumerator_dictionary_v<BitFlag>.end(); ++n) {
                 if (isPresent(*n))
-                    out << '|' << n->first;
+                    (out += '|') += n->first;
             }
         }
 #endif
 	    // [NONE] Some bitflags provide an explicit enumerator for 'no-flags'
 	    else if (hasNoneEnumerator) 
-		    out << enumerator_name_v<BitFlag, static_cast<BitFlag>(0)>;
+		    out = enumerator_name_v<BitFlag, static_cast<BitFlag>(0)>;
 
 	    // Return (possibly empty) string
-	    return out.str();
+	    return out;
     }
 
     template <typename T, size_t N>
