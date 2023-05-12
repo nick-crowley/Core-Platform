@@ -123,6 +123,27 @@ namespace core::security
 		}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
+		void
+		privileges(std::vector<TokenPrivilege> privs) {
+			ThrowIfEmpty(privs);
+
+			size_t const capacity = nstd::sizeof_v<::DWORD> 
+			                      + nstd::sizeof_n<::LUID_AND_ATTRIBUTES>(privs.size());
+
+			auto const data = boost::reinterpret_pointer_cast<::TOKEN_PRIVILEGES>(
+				std::make_unique<std::byte[]>(capacity)
+			);
+			
+			auto const makeLuidAttribute = [](TokenPrivilege const& in) -> ::LUID_AND_ATTRIBUTES {
+				return {in.LocalId, std::to_underlying(in.Flags)};
+			};
+
+			data->PrivilegeCount = win::DWord{privs.size()};
+			ranges::transform(privs, std::begin(data->Privileges), makeLuidAttribute);
+			if (!::AdjustTokenPrivileges(*this->token, FALSE, data.get(), NULL, nullptr, nullptr))
+				win::LastError{}.throwAlways("::AdjustTokenPrivileges() failed");
+		}
 	};
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
