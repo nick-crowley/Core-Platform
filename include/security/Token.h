@@ -111,6 +111,15 @@ namespace core::security
 			};
 		}
 
+		uint32_t
+		sessionId() const {
+			auto const data = boost::reinterpret_pointer_cast<::DWORD>(
+				this->api->tokenInformation(this->token, TokenProperty::SessionId)
+			);
+
+			return *data;
+		}
+
 		Identifier
 		user() const {
 			auto const data = boost::reinterpret_pointer_cast<::SID_AND_ATTRIBUTES>(
