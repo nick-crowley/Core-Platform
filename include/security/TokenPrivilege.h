@@ -28,6 +28,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.platform.h"
 #include "security/PrivilegeFlag.h"
+#include "security/PrivilegeName.h"
 #include "win/Function.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
@@ -55,6 +56,15 @@ namespace core::security
 
 		TokenPrivilege(gsl::cwzstring name, PrivilegeFlag f) 
 		  : LocalId{win::function<1>(::LookupPrivilegeValueW)(nullptr, ThrowIfEmpty(name))}, 
+			Flags{f}
+		{}
+		
+		TokenPrivilege(PrivilegeName name, PrivilegeFlag f)
+		  : LocalId{
+				win::function<1>(::LookupPrivilegeValueA)(
+					nullptr, ("Se" + as_string(ThrowIfUndefined(name)) + "Privilege").c_str()
+				)
+			},
 			Flags{f}
 		{}
 
