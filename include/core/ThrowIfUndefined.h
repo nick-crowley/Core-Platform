@@ -55,7 +55,8 @@ namespace core
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::detail
 {
-	template <nstd::Enumeration E> 
+	template <typename E> 
+		requires nstd::Enumeration<std::remove_cvref_t<E>>
 	decltype(auto) 
 	ThrowIfUndefinedImpl(E&& value, char const* argName, std::source_location loc = std::source_location::current())
 	{
