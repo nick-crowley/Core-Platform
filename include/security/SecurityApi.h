@@ -240,6 +240,19 @@ namespace core::security
 		[[nodiscard]]
 		std::unique_ptr<std::byte[]>
 		tokenInformation(win::SharedToken token, TokenProperty info) const;
+		
+		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+		* @brief		Modify a property of an access token
+		*
+		* @param[in]	token	Handle to an access token
+		* @param[in]	info	Token property
+		* @param[in]	data	New value
+		*
+		* @throws		std::invalid_argument	Missing argument
+		* @throws		std::system_error		Operation failed
+		*/
+		void
+		tokenInformation(win::SharedToken token, TokenProperty info, std::span<std::byte const> value) const;
 
 #if 0
 	private:

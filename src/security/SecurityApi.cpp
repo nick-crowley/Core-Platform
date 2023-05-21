@@ -412,6 +412,18 @@ SecurityApi::tokenInformation(win::SharedToken token, TokenProperty info) const
 	return buffer;
 }
 
+// ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ //
+void
+SecurityApi::tokenInformation(win::SharedToken token, TokenProperty info, std::span<std::byte const> value) const
+{
+	ThrowIfEmpty(token);
+	ThrowIfEmpty(value);
+	
+	auto const _info = static_cast<::TOKEN_INFORMATION_CLASS>(info);
+	if (!::SetTokenInformation(*token, _info, const_cast<std::byte*>(value.data()), win::DWord{value.size()}))
+		win::LastError{}.throwAlways("SetTokenInformation() failed");
+}
+
 // o~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~o Non-member Methods & Operators o~-~+~-~+~-~+~-~+~-~+~-~+~-~+~o
 
 // o~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-o End of File o~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~o

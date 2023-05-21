@@ -134,6 +134,12 @@ namespace core::security
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void
+		sessionId(uint32_t id) {
+			auto const data = std::as_writable_bytes(std::span{&id,1});
+			this->api->tokenInformation(this->token, TokenProperty::SessionId, data);
+		}
+
+		void
 		privileges(std::vector<TokenPrivilege> privs) {
 			ThrowIfEmpty(privs);
 
