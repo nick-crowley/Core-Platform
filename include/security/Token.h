@@ -47,6 +47,19 @@ namespace core::security
 	class Token 
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	private:
+		auto const 
+		inline static makeGroup = [](::SID_AND_ATTRIBUTES const& in) -> TokenGroup {
+			return TokenGroup{
+				Identifier{ConstSidWrapper{static_cast<::SID const*>(in.Sid)}.bytes()},
+				static_cast<GroupFlag>(in.Attributes)
+			};
+		};
+		
+		auto const
+		inline static makePrivilege = [](::LUID_AND_ATTRIBUTES const& in) -> TokenPrivilege {
+			return TokenPrivilege{in.Luid, static_cast<PrivilegeFlag>(in.Attributes)};
+		};
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
@@ -72,16 +85,9 @@ namespace core::security
 				this->api->tokenInformation(this->token, TokenProperty::Groups)
 			);
 			
-			auto const makeGroup = [](::SID_AND_ATTRIBUTES const& in) -> TokenGroup {
-				return TokenGroup{
-					Identifier{ConstSidWrapper{static_cast<::SID const*>(in.Sid)}.bytes()},
-					static_cast<GroupFlag>(in.Attributes)
-				};
-			};
-
 			return {
 				std::from_range,
-				views::transform(std::span{data->Groups, data->GroupCount}, makeGroup) 
+				views::transform(std::span{data->Groups, data->GroupCount}, Token::makeGroup) 
 			};
 		}
 
@@ -101,13 +107,9 @@ namespace core::security
 				this->api->tokenInformation(this->token, TokenProperty::Privileges)
 			);
 			
-			auto const makePrivilege = [](::LUID_AND_ATTRIBUTES const& in) -> TokenPrivilege {
-				return TokenPrivilege{in.Luid, static_cast<PrivilegeFlag>(in.Attributes)};
-			};
-
 			return {
 				std::from_range,
-				views::transform(std::span{&data->Privileges[0], data->PrivilegeCount}, makePrivilege)
+				views::transform(std::span{&data->Privileges[0], data->PrivilegeCount}, Token::makePrivilege)
 			};
 		}
 
