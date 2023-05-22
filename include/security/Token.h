@@ -56,6 +56,11 @@ namespace core::security
 			};
 		};
 		
+		auto const 
+		inline static makeLuidAttribute = [](TokenPrivilege const& in) -> ::LUID_AND_ATTRIBUTES {
+			return {in.LocalId, std::to_underlying(in.Flags)};
+		};
+
 		auto const
 		inline static makePrivilege = [](::LUID_AND_ATTRIBUTES const& in) -> TokenPrivilege {
 			return TokenPrivilege{in.Luid, static_cast<PrivilegeFlag>(in.Attributes)};
@@ -152,12 +157,8 @@ namespace core::security
 				std::make_unique<std::byte[]>(capacity)
 			);
 			
-			auto const makeLuidAttribute = [](TokenPrivilege const& in) -> ::LUID_AND_ATTRIBUTES {
-				return {in.LocalId, std::to_underlying(in.Flags)};
-			};
-
 			data->PrivilegeCount = win::DWord{privs.size()};
-			ranges::transform(privs, std::begin(data->Privileges), makeLuidAttribute);
+			ranges::transform(privs, std::begin(data->Privileges), Token::makeLuidAttribute);
 			if (!::AdjustTokenPrivileges(*this->token, FALSE, data.get(), NULL, nullptr, nullptr))
 				win::LastError{}.throwAlways("::AdjustTokenPrivileges() failed");
 		}
