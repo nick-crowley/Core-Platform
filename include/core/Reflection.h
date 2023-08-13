@@ -68,6 +68,16 @@ namespace core
 				Signature.length() - ">(void) noexcept"sv.length() - initialOffset
 			);
 		}
+		
+		template <nstd::Class C>
+		auto constexpr
+		unqualified_nameof() noexcept 
+		{
+			auto qualified = nameof<C>();
+			if (auto firstChar = qualified.rfind(':'); firstChar != qualified.npos)
+				return qualified.substr(++firstChar);
+			return qualified;
+		}
 	}
 
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
@@ -76,6 +86,13 @@ namespace core
 	template <nstd::Class C>
 	std::string_view constexpr
 	class_name_v = detail::nameof<C>();
+	
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief	Retrieve unqualified name of any class type
+	*/
+	template <nstd::Class C>
+	std::string_view constexpr
+	unqualified_class_name_v = detail::unqualified_nameof<C>();
 
 
 	namespace detail
