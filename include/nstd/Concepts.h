@@ -46,6 +46,9 @@ namespace nstd
 
 	template <typename T>
 	concept Character = AnyOf<T,char,wchar_t,char8_t,char16_t,char32_t>;
+	
+	template <typename T>
+	concept Class = std::is_class_v<T> || std::is_union_v<T>;
 
 	template <typename T>
 	concept Clock = std::chrono::is_clock_v<T>;

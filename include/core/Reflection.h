@@ -48,6 +48,38 @@ namespace core
 {
 	namespace detail
 	{
+		template <nstd::Class C>
+		auto constexpr
+		nameof() noexcept 
+		{
+			using namespace std::string_view_literals;
+			std::string_view constexpr Signature{__FUNCSIG__};
+			size_t initialOffset = 0;
+
+			//__FUNCSIG__: auto __cdecl nameof<class C>(void) noexcept
+			//           : auto __cdecl nameof<class N::C>(void) noexcept
+			if constexpr (Signature.starts_with("auto __cdecl core::detail::nameof<struct "))
+				initialOffset = "auto __cdecl core::detail::nameof<struct "sv.length();
+			else 
+				initialOffset = "auto __cdecl core::detail::nameof<class "sv.length();
+			
+			return Signature.substr(
+				initialOffset,
+				Signature.length() - ">(void) noexcept"sv.length() - initialOffset
+			);
+		}
+	}
+
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief	Retrieve name of any class type
+	*/
+	template <nstd::Class C>
+	std::string_view constexpr
+	class_name_v = detail::nameof<C>();
+
+
+	namespace detail
+	{
 		template <nstd::Enumeration E>
 		auto constexpr
 		nameof() noexcept 
