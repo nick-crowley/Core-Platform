@@ -53,20 +53,23 @@ namespace core
 		nameof() noexcept 
 		{
 			using namespace std::string_view_literals;
-			std::string_view constexpr Signature{__FUNCSIG__};
-			size_t initialOffset = 0;
-
+			
+			std::string_view constexpr Signature{__FUNCSIG__, sizeof(__FUNCSIG__)-1};
+			static_assert(Signature.starts_with("auto __cdecl core::detail::nameof<"));
+			static_assert(Signature.ends_with(">(void) noexcept"));
+			
 			//__FUNCSIG__: auto __cdecl nameof<class C>(void) noexcept
 			//           : auto __cdecl nameof<class N::C>(void) noexcept
-			if constexpr (Signature.starts_with("auto __cdecl core::detail::nameof<struct "))
-				initialOffset = "auto __cdecl core::detail::nameof<struct "sv.length();
+			std::string_view::const_iterator start;
+			if constexpr (Signature.substr("auto __cdecl core::detail::nameof<"sv.length(), 6) == "struct")
+				start = Signature.begin() + "auto __cdecl core::detail::nameof<struct "sv.length();
 			else 
-				initialOffset = "auto __cdecl core::detail::nameof<class "sv.length();
+				start = Signature.begin() + "auto __cdecl core::detail::nameof<class "sv.length();
 			
-			return Signature.substr(
-				initialOffset,
-				Signature.length() - ">(void) noexcept"sv.length() - initialOffset
-			);
+			return std::string_view{
+				start, 
+				Signature.end() - ">(void) noexcept"sv.length()
+			};
 		}
 		
 		template <nstd::Class C>
@@ -102,13 +105,17 @@ namespace core
 		nameof() noexcept 
 		{
 			using namespace std::string_view_literals;
+
+			std::string_view constexpr Signature{__FUNCSIG__, sizeof(__FUNCSIG__)-1};
+			static_assert(Signature.starts_with("auto __cdecl core::detail::nameof<enum "));
+			static_assert(Signature.ends_with(">(void) noexcept"));
+
 			//__FUNCSIG__: auto __cdecl nameof<enum E1>(void) noexcept
 			//           : auto __cdecl nameof<enum N1::E1>(void) noexcept
-			std::string_view constexpr ParamList{
-				__FUNCSIG__ + "auto __cdecl core::detail::nameof<enum "sv.length(),
-				__FUNCSIG__ + std::string_view{__FUNCSIG__}.length() - ">(void) noexcept"sv.length()
+			return std::string_view {
+				Signature.begin() + "auto __cdecl core::detail::nameof<enum "sv.length(),
+				Signature.end() - ">(void) noexcept"sv.length()
 			};
-			return ParamList;
 		}
 	}
 
@@ -127,13 +134,17 @@ namespace core
 		__cdecl nameof() noexcept 
 		{
 			using namespace std::string_view_literals;
-			//__FUNCSIG__: auto __cdecl core::detail::nameof<enum E1,E1::None>(void) noexcept
-			//             auto __cdecl core::detail::nameof<enum N1::E1,N1::E1::None>(void) noexcept
-			//             auto __cdecl core::detail::nameof<enum N1::E1,(enum N1::E1)0x16>(void) noexcept
+			//__FUNCSIG__: auto __cdecl nameof<enum E1,E1::None>(void) noexcept
+			//             auto __cdecl nameof<enum N1::E1,N1::E1::None>(void) noexcept
+			//             auto __cdecl nameof<enum N1::E1,(enum N1::E1)0x16>(void) noexcept
 			
+			std::string_view constexpr Signature{__FUNCSIG__, sizeof(__FUNCSIG__)-1};
+			static_assert(Signature.starts_with("auto __cdecl core::detail::nameof<"));
+			static_assert(Signature.ends_with(">(void) noexcept"));
+
 			std::string_view constexpr ParamList{
-				__FUNCSIG__ + "auto __cdecl core::detail::nameof<enum "sv.length(),
-				__FUNCSIG__ + std::string_view{__FUNCSIG__}.length() - ">(void) noexcept"sv.length()
+				Signature.begin() + "auto __cdecl core::detail::nameof<enum "sv.length(),
+				Signature.end() - ">(void) noexcept"sv.length()
 			};
 
 			//ParamList: E1,E1::None
@@ -192,7 +203,9 @@ namespace core::testing
 
 	static_assert(enumeration_name_v<E2> == "core::testing::E2");
 	static_assert(enumerator_name_v<E2, E2::Twenty> == "Twenty");
+	static_assert(is_valid_enumerator_v<E2,E2::Zero>);
 	static_assert(!is_valid_enumerator_v<E2,5>);
+	static_assert(is_valid_enumerator_v<E2,E2::Six>);
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
