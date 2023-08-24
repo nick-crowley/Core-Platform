@@ -59,9 +59,9 @@ namespace core
 		using const_reference = Character const&;
 		using const_pointer = Character const*;
 		using const_iterator = const_pointer;
-		using reference = const_reference;
-		using pointer = const_pointer;
-		using iterator = const_iterator;
+		using reference = Character&;
+		using pointer = Character*;
+		using iterator = pointer;
 		using difference_type = ptrdiff_t;
 		using size_type = size_t;
 		using value_type = Character;
