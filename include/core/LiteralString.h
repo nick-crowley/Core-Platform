@@ -53,6 +53,7 @@ namespace core
 
 		using type = LiteralString<Character,Capacity>;
 		using char_t = Character;
+		using other_char_t = std::conditional_t<std::is_same_v<char_t,char>, wchar_t, char>;
 
 	public:
 		using const_reference = Character const&;
@@ -189,6 +190,10 @@ namespace core
 			return {this->begin(), this->end()};
 		}
 	
+		constexpr
+		implicit operator 
+		std::basic_string_view<other_char_t>() const noexcept = delete;
+		
 	public:
 		void constexpr
 		swap(type& r) noexcept
