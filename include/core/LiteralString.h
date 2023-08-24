@@ -156,6 +156,13 @@ namespace core
 			return std::begin(this->m_text);
 		}
 
+		LiteralString<wchar_t,Capacity> constexpr
+		wstr() const noexcept
+		{
+			std::wstring ws{this->begin(), this->end()};
+			return LiteralString<wchar_t,Capacity>{ws.c_str()};
+		}
+
 		size_type constexpr
 		size() const noexcept
 		{
