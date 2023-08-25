@@ -119,27 +119,6 @@ namespace core
 			--LogStream::currentDepth();
 		}
 		
-		template <meta::lazy_t = lazy>
-		void
-		startupBanner() {
-			if (!meta::Settings<program_name>.empty()) {
-				size_t length {};
-				if (meta::Settings<program_version>.empty()) {
-					clog << Important{meta::Settings<program_name>};
-					length = meta::Settings<program_name>.length();
-				}
-				else {
-					using namespace std::literals;
-					clog << Important{"{} (Ver: {})", meta::Settings<program_name>, meta::Settings<program_version>};
-					length = meta::Settings<program_name>.length() + meta::Settings<program_version>.length() + " (Ver: )"sv.length();
-				}
-				clog << Important{std::string(length, '-')};
-			}
-
-			clog << Verbose{"Built using _WIN32_WINNT = v{}.{}", HIBYTE(_WIN32_WINNT), LOBYTE(_WIN32_WINNT)};
-			clog << Verbose{"Built using _WIN32_IE = v{}.{}", HIBYTE(_WIN32_IE), LOBYTE(_WIN32_IE)};
-		}
-
 		template <Severity Level>
 		LogStream&
 		operator<<(LogEntry<Level> const& entry) {
@@ -185,5 +164,28 @@ namespace core
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace core
+{
+	template <meta::lazy_t = lazy>
+	void
+	startupBanner() 
+	{
+		if (!meta::Settings<program_name>.empty()) {
+			size_t length {};
+			if (meta::Settings<program_version>.empty()) {
+				clog << Important{meta::Settings<program_name>};
+				length = meta::Settings<program_name>.length();
+			}
+			else {
+				using namespace std::literals;
+				clog << Important{"{} (Ver: {})", meta::Settings<program_name>, meta::Settings<program_version>};
+				length = meta::Settings<program_name>.length() + meta::Settings<program_version>.length() + " (Ver: )"sv.length();
+			}
+			clog << Important{std::string(length, '-')};
+		}
 
+		clog << Verbose{"Built using _WIN32_WINNT = v{}.{}", HIBYTE(_WIN32_WINNT), LOBYTE(_WIN32_WINNT)};
+		clog << Verbose{"Built using _WIN32_IE = v{}.{}", HIBYTE(_WIN32_IE), LOBYTE(_WIN32_IE)};
+	}
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
