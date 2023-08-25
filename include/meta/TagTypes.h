@@ -63,6 +63,9 @@ namespace core::meta
 
 	struct open_existing_t {} constexpr 
 	inline open_existing;
+	
+	struct program_name_t {} constexpr 
+	inline program_name;
 
 	struct undefined_t {} constexpr 
 	inline undefined;
@@ -110,6 +113,9 @@ namespace core
 	auto constexpr 
 	inline open_existing = meta::open_existing;
 	
+	auto constexpr 
+	inline program_name = meta::program_name;
+
 	auto constexpr 
 	inline undefined = meta::undefined;
 
