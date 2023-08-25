@@ -55,6 +55,9 @@ namespace core::meta
 	struct inherits_t {} constexpr  
 	inline inherits;
 	
+	struct lazy_t {} constexpr 
+	inline lazy;
+
 	struct noconversion_t {} constexpr 
 	inline noconversion;
 
@@ -103,6 +106,9 @@ namespace core
 	
 	auto constexpr 
 	inline inherits = meta::inherits;
+	
+	auto constexpr 
+	inline lazy = meta::lazy;
 	
 	auto constexpr 
 	inline noconversion = meta::noconversion;
