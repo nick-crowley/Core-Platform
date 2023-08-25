@@ -123,8 +123,17 @@ namespace core
 		void
 		startupBanner() {
 			if (!meta::Settings<program_name>.empty()) {
-				clog << Important{meta::Settings<program_name>};
-				clog << Important{std::string(meta::Settings<program_name>.length(), '-')};
+				size_t length {};
+				if (meta::Settings<program_version>.empty()) {
+					clog << Important{meta::Settings<program_name>};
+					length = meta::Settings<program_name>.length();
+				}
+				else {
+					using namespace std::literals;
+					clog << Important{"{} (Ver: {})", meta::Settings<program_name>, meta::Settings<program_version>};
+					length = meta::Settings<program_name>.length() + meta::Settings<program_version>.length() + " (Ver: )"sv.length();
+				}
+				clog << Important{std::string(length, '-')};
 			}
 
 			clog << Verbose{"Built using _WIN32_WINNT = v{}.{}", HIBYTE(_WIN32_WINNT), LOBYTE(_WIN32_WINNT)};
