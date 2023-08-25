@@ -37,7 +37,7 @@
 namespace core 
 {
 	class PlatformExport LogStream;
-
+	
 	//! @brief	Line-orientated log-file (symbol must be provided by consuming module)
 	LogStream constinit
     extern PlatformExport clog;
@@ -103,7 +103,7 @@ namespace core
 		attach(std::ostream& out)
 		{
 			if (out)
-			this->outputStream = &out;
+				this->outputStream = &out;
 		}
 		
 		void
@@ -114,6 +114,18 @@ namespace core
 		void
 		outdent() {
 			--LogStream::currentDepth();
+		}
+		
+		template <typename = void>
+		void
+		startupBanner() {
+			if (!meta::Settings<program_name>.empty()) {
+				clog << Important{meta::Settings<program_name>};
+				clog << Important{std::string(meta::Settings<program_name>.length(), '-')};
+			}
+
+			clog << Verbose{"Built using _WIN32_WINNT = v{}.{}", HIBYTE(_WIN32_WINNT), LOBYTE(_WIN32_WINNT)};
+			clog << Verbose{"Built using _WIN32_IE = v{}.{}", HIBYTE(_WIN32_IE), LOBYTE(_WIN32_IE)};
 		}
 
 		template <Severity Level>
