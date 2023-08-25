@@ -28,4 +28,4 @@
 using namespace core;
 
 LogStream constinit
-core::clog;
+PlatformExport core::clog;

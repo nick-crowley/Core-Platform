@@ -38,7 +38,7 @@ namespace core
 {
 	class PlatformExport LogStream;
 	
-	//! @brief	Line-orientated log-file (symbol must be provided by consuming module)
+	//! @brief	Line-orientated log-file
 	LogStream constinit
     extern PlatformExport clog;
 }
