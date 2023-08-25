@@ -113,8 +113,9 @@ file(GLOB_RECURSE PROJECT_INCLUDE_FILES
     )
 
 # Define macro controlling dllexport/import specifier
-set(PROJECT_DLL_MACRO "BuildCorePlatformDLL")
-set(PROJECT_LIB_MACRO "BuildCorePlatformStaticLib")
+set(PROJECT_EXPORT_MACRO "CorePlatformExport")
+set(PROJECT_IMPORT_MACRO "CorePlatformImport")
+set(PROJECT_STATIC_MACRO "CorePlatformStatic")
 
 ##############################################################################
 #         _________ __          __  .__         .____    ._____.             #
@@ -143,9 +144,14 @@ target_include_directories(libCorePlatform BEFORE
 
 # Link against CRT statically
 set_target_properties(libCorePlatform PROPERTIES
-					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS} /MTd -D${PROJECT_LIB_MACRO}"
-					  #COMPILE_FLAGS_DEBUG   "${GLOBAL_COMPILER_OPTIONS} /MTd -D${PROJECT_LIB_MACRO}"
-					  #COMPILE_FLAGS_RELEASE "${GLOBAL_COMPILER_OPTIONS} /MT  -D${PROJECT_LIB_MACRO}"
+					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS} /MTd"
+					  #COMPILE_FLAGS_DEBUG   "${GLOBAL_COMPILER_OPTIONS} /MTd -D${PROJECT_STATIC_MACRO}"
+					  #COMPILE_FLAGS_RELEASE "${GLOBAL_COMPILER_OPTIONS} /MT  -D${PROJECT_STATIC_MACRO}"
+)
+
+# Set export macros to 'static library'
+target_compile_definitions(libCorePlatform
+	PUBLIC ${PROJECT_STATIC_MACRO}
 )
 
 #############################################################################
@@ -177,7 +183,12 @@ target_include_directories(dllCorePlatform BEFORE
 # Differentiate the filename of the import library
 set_target_properties(dllCorePlatform PROPERTIES
 					  OUTPUT_NAME "CorePlatform"
-					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS} -D${PROJECT_DLL_MACRO}"
+					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS}"
+)
+
+# Set export macros to 'export DLL'
+target_compile_definitions(dllCorePlatform
+	PUBLIC ${PROJECT_EXPORT_MACRO}
 )
 
 # Set project dependencies
@@ -216,7 +227,7 @@ target_link_libraries(appCorePlatform
 
 # Set compiler & linker flags
 set_target_properties(appCorePlatform PROPERTIES
-					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS} -D${PROJECT_LIB_MACRO}"
+					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS} -D${PROJECT_STATIC_MACRO}"
 					  LINK_FLAGS "${GLOBAL_LINKER_OPTIONS} /SUBSYSTEM:CONSOLE"
 					  OUTPUT_NAME "appCorePlatform")
 

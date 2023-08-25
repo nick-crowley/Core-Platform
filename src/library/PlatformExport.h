@@ -32,15 +32,17 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#if defined(BuildCorePlatformStaticLib)
+#if defined(CorePlatformStatic)
 	//! @brief	Core-Platform symbol
 #	define PlatformExport 
-#elif defined(BuildCorePlatformDLL)
+#elif defined(CorePlatformExport)
 	//! @brief	Core-Platform exported symbol
 #	define PlatformExport __declspec(dllexport)
-#else
+#elif defined(CorePlatformImport)
 	//! @brief	Core-Platform imported symbol
 #	define PlatformExport __declspec(dllimport)
+#else
+#	error Cannot build Core-Platform without specifying import-lib, dynamic-lib, or static-lib
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
