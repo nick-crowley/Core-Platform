@@ -116,7 +116,7 @@ namespace core
 			--LogStream::currentDepth();
 		}
 		
-		template <typename = void>
+		template <meta::lazy_t = lazy>
 		void
 		startupBanner() {
 			if (!meta::Settings<program_name>.empty()) {
