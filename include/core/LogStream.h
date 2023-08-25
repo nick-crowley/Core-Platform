@@ -98,6 +98,7 @@ namespace core
 		void
 		attach(std::ostream& out)
 		{
+			if (out)
 			this->outputStream = &out;
 		}
 		
