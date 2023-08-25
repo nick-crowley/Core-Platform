@@ -69,6 +69,9 @@ namespace core::meta
 	
 	struct program_name_t {} constexpr 
 	inline program_name;
+	
+	struct program_version_t {} constexpr 
+	inline program_version;
 
 	struct undefined_t {} constexpr 
 	inline undefined;
@@ -121,6 +124,9 @@ namespace core
 	
 	auto constexpr 
 	inline program_name = meta::program_name;
+	
+	auto constexpr 
+	inline program_version = meta::program_version;
 
 	auto constexpr 
 	inline undefined = meta::undefined;

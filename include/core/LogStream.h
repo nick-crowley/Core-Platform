@@ -49,6 +49,9 @@ namespace core::meta
 {	
 	template <>
 	struct DataType<program_name> : std::type_identity<std::string_view> {};
+
+	template <>
+	struct DataType<program_version> : std::type_identity<std::string_view> {};
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core
