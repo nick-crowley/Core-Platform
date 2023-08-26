@@ -32,13 +32,13 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#if defined(CorePlatformStatic)
+#if defined(CORE_PLATFORM_STATIC)
 	//! @brief	Core-Platform symbol
 #	define PlatformExport 
-#elif defined(CorePlatformExport)
+#elif defined(CORE_PLATFORM_EXPORT)
 	//! @brief	Core-Platform exported symbol
 #	define PlatformExport __declspec(dllexport)
-#elif defined(CorePlatformImport)
+#elif defined(CORE_PLATFORM_IMPORT)
 	//! @brief	Core-Platform imported symbol
 #	define PlatformExport __declspec(dllimport)
 #else

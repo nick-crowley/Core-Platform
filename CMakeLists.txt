@@ -113,9 +113,9 @@ file(GLOB_RECURSE PROJECT_INCLUDE_FILES
     )
 
 # Define macro controlling dllexport/import specifier
-set(PROJECT_EXPORT_MACRO "CorePlatformExport")
-set(PROJECT_IMPORT_MACRO "CorePlatformImport")
-set(PROJECT_STATIC_MACRO "CorePlatformStatic")
+set(PROJECT_EXPORT_MACRO "CORE_PLATFORM_EXPORT")
+set(PROJECT_IMPORT_MACRO "CORE_PLATFORM_IMPORT")
+set(PROJECT_STATIC_MACRO "CORE_PLATFORM_STATIC")
 
 ##############################################################################
 #         _________ __          __  .__         .____    ._____.             #
