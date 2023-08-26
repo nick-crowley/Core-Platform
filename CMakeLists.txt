@@ -144,14 +144,18 @@ target_include_directories(libCorePlatform BEFORE
 
 # Link against CRT statically
 set_target_properties(libCorePlatform PROPERTIES
-					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS} /MTd"
-					  #COMPILE_FLAGS_DEBUG   "${GLOBAL_COMPILER_OPTIONS} /MTd -D${PROJECT_STATIC_MACRO}"
-					  #COMPILE_FLAGS_RELEASE "${GLOBAL_COMPILER_OPTIONS} /MT  -D${PROJECT_STATIC_MACRO}"
+					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS}"
 )
 
 # Set export macros to 'static library'
 target_compile_definitions(libCorePlatform
 	PUBLIC ${PROJECT_STATIC_MACRO}
+)
+
+# Link CRT statically
+target_compile_options(libCorePlatform
+	PRIVATE $<$<CONFIG:Release>:/MT>
+	PRIVATE $<$<CONFIG:Debug>:/MTd>
 )
 
 #############################################################################
@@ -189,6 +193,12 @@ set_target_properties(dllCorePlatform PROPERTIES
 # Set export macros to 'export DLL'
 target_compile_definitions(dllCorePlatform
 	PUBLIC ${PROJECT_EXPORT_MACRO}
+)
+
+# Link CRT dynamically
+target_compile_options(dllCorePlatform
+	PRIVATE $<$<CONFIG:Release>:/MD>
+	PRIVATE $<$<CONFIG:Debug>:/MDd>
 )
 
 # Set project dependencies
@@ -230,6 +240,12 @@ set_target_properties(appCorePlatform PROPERTIES
 					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS} -D${PROJECT_STATIC_MACRO}"
 					  LINK_FLAGS "${GLOBAL_LINKER_OPTIONS} /SUBSYSTEM:CONSOLE"
 					  OUTPUT_NAME "appCorePlatform")
+
+# Link CRT dynamically
+target_compile_options(appCorePlatform
+	PRIVATE $<$<CONFIG:Release>:/MD>
+	PRIVATE $<$<CONFIG:Debug>:/MDd>
+)
 
 # Set project dependencies
 add_dependencies(appCorePlatform
