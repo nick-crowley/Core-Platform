@@ -73,6 +73,7 @@ namespace core::security
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		explicit
 		Token(win::SharedToken existing, SharedSecurityApi api = security_api()) 
 		  : token{std::move(ThrowIfEmpty(existing))},
 		    api{std::move(ThrowIfEmpty(api))}
