@@ -64,6 +64,7 @@ set(GLOBAL_LINKER_OPTIONS "${GLOBAL_LINKER_OPTIONS} /SAFESEH:NO")
 # _SCL_SECURE_NO_WARNINGS					: Disable warnings about documented behaviour of C++ library functions
 # GSL_ASSERTION_BEHAVIOUR 					: Globally set the contract-violation behaviour of GSL
 # _UNICODE 									: Build everything in the UNICODE character set
+# NOMINMAX                                  : Undefine the Windows SDK `min()` and `max()` macros
 add_definitions(
 	-DBOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE 
 	-D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
