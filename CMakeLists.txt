@@ -373,11 +373,6 @@ file(GLOB_RECURSE PROJECT_EXTRA_FILES
     "${PROJECT_EXTRA_FOLDER}*.cpp"
     )
 	
-# Resource files
-#file(GLOB_RECURSE PROJECT_RESOURCE_FILES
-#	"${PROJECT_RESOURCE_FOLDER}*.*"
-#    )
-
 # Project file groups
 source_group(TREE ${PROJECT_SOURCE_FOLDER}    PREFIX "Build Files"    FILES ${PROJECT_SOURCE_CC_FILES}})
 source_group(TREE ${PROJECT_EXTRA_FOLDER}     PREFIX "Extra Files"    FILES ${PROJECT_EXTRA_FILES})
