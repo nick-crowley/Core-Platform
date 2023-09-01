@@ -63,9 +63,11 @@ namespace nstd
 		template <std::invocable<> Callable>
 		implicit 
 		FinalAction(Callable&& fx) : m_action{fx}
-		{}
+		{
+			static_assert(std::is_nothrow_invocable_v<Callable>);
+		}
 
-		~FinalAction() {
+		~FinalAction() noexcept {
 			this->m_action();
 		}
 		

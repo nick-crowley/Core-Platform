@@ -82,7 +82,7 @@ namespace nstd
 				if (!this->m_valid)
 					throw std::runtime_error("Not ready");
 
-				final_act(&) { this->m_value.reset(); };
+				final_act(&) noexcept { this->m_value.reset(); };
 				if (std::holds_alternative<value_type>(*this->m_value))
 					return std::get<value_type>(*this->m_value);
 				else

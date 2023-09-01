@@ -335,7 +335,7 @@ SecurityApi::sidToString(std::span<std::byte const> bytes) const
 
 	// Generate string representation
 	wchar_t* const str = convertSidToStringSid(ConstSidWrapper{bytes}.as_mutable()); 
-	final_act(&) { ::LocalFree(str); };
+	final_act(&) noexcept { ::LocalFree(str); };
 
 	return {str};
 }
@@ -348,7 +348,7 @@ SecurityApi::stringToSid(std::wstring_view str) const
 
 	// Generate binary representation
 	::PSID sid = convertStringSidToSidW(str.data());
-	final_act(&) { ::LocalFree(sid); };
+	final_act(&) noexcept { ::LocalFree(sid); };
 
 	auto const bytes = SidWrapper{static_cast<::SID*>(sid)}.bytes();
 	return {bytes.begin(), bytes.end()};
