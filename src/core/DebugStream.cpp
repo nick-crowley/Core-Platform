@@ -24,19 +24,17 @@
 * the projects which contain it.
 */
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "core/CharacterConversion.cpp"
-#include "core/DebugStream.cpp"
-#include "core/LogStream.cpp"
-#include "core/ToString.cpp"
-#include "nt/NtStatus.cpp"
-#include "security/SecurityApi.cpp"
-#include "win/Concurrency.cpp"
-#include "win/LResult.cpp"
-#include "win/HResult.cpp"
-#include "win/Module.cpp"
-#include "win/RegistryApi.cpp"
-#include "win/RegistryKey.cpp"
-#include "win/RegistryValueProxy.cpp"
-#include "win/ResourceId.cpp"
+#include "core/DebugStream.h"
+using namespace core;
 
-#include "core/FunctionLogging.h"
+namespace core
+{
+	namespace detail
+	{
+		DebugStream
+		cdebugger;
+	}
+
+	nstd::return_t<std::wostream&>
+	PlatformExport cdebugger = detail::cdebugger;
+}

@@ -128,13 +128,7 @@ namespace core
 		return os << s.c_str();
 	}
 	
-	namespace detail 
-	{
-		DebugStream
-		inline cdebugger;
-	}
-
 	nstd::return_t<std::wostream&>
-	inline cdebugger = detail::cdebugger;
+	extern PlatformExport cdebugger;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
