@@ -131,10 +131,10 @@ namespace core
 	namespace detail 
 	{
 		DebugStream
-		inline cdebug;
+		inline cdebugger;
 	}
 
 	nstd::return_t<std::wostream&>
-	inline cdebug = detail::cdebug;
+	inline cdebugger = detail::cdebugger;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
