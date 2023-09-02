@@ -32,8 +32,10 @@
 #include "win/Concurrency.cpp"
 #include "win/LResult.cpp"
 #include "win/HResult.cpp"
+#include "win/Module.cpp"
 #include "win/RegistryApi.cpp"
 #include "win/RegistryKey.cpp"
 #include "win/RegistryValueProxy.cpp"
+#include "win/ResourceId.cpp"
 
 #include "core/FunctionLogging.h"
