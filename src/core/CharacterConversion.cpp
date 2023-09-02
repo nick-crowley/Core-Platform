@@ -41,7 +41,7 @@ core::narrow(std::wstring_view wstr, CodePage destination)
 
 	else if (size_t capacity = ::WideCharToMultiByte(std::to_underlying(destination), 
 		                                        flags, 
-		                                        wstr.data(), wstr.size(), 
+					                            wstr.data(), win::DWord{wstr.size()}, 
 		                                        nullptr, 0, 
 		                                        NoDefaultChar, UsedDefaultChar); !capacity) 
 		ThrowInvalidArg(wstr, win::LastError{}.str());
@@ -49,8 +49,8 @@ core::narrow(std::wstring_view wstr, CodePage destination)
 		std::string result(capacity, L'\0');
 		if (!::WideCharToMultiByte(std::to_underlying(destination), 
 			                        flags, 
-			                        wstr.data(), wstr.size(), 
-			                        result.data(), capacity,
+			                        wstr.data(), win::DWord{wstr.size()}, 
+			                        result.data(), win::DWord{capacity},
 			                        NoDefaultChar, UsedDefaultChar))
 			ThrowInvalidArg(wstr, win::LastError{}.str());
 		
@@ -68,15 +68,15 @@ core::widen(std::string_view str, CodePage source)
 
 	else if (size_t capacity = ::MultiByteToWideChar(std::to_underlying(source), 
 		                                        flags, 
-		                                        str.data(), str.size(), 
+			                                    str.data(), win::DWord{str.size()}, 
 		                                        nullptr, 0); !capacity) 
 		ThrowInvalidArg(str, win::LastError{}.str());
 	else {
 		std::wstring result(capacity, L'\0');
 		if (!::MultiByteToWideChar(std::to_underlying(source), 
 			                        flags, 
-			                        str.data(), str.size(), 
-			                        result.data(), capacity))
+			                        str.data(), win::DWord{str.size()}, 
+			                        result.data(), win::DWord{capacity}))
 			ThrowInvalidArg(str, win::LastError{}.str());
 		
 		return result;
