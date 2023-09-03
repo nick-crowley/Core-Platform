@@ -29,11 +29,7 @@
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "nstd/traits/add_function_pointer.h"
-#include "nstd/traits/is_function_pointer.h"
-#include "nstd/traits/remove_function_pointer.h"
 #include "nstd/traits/mirror_cv.h"
-#include "nstd/traits/mirror_cv_ref.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -45,24 +41,26 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace nstd
 {
-	// clang-format off
-
-	//! @brief	Query whether a type is one of a particluar subset
-    template <typename T, typename... U>
-    constexpr bool is_any_of_v = (std::is_same_v<T,U> || ...);
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief	CV-qualify any type with the same qualification on another type, ignoring reference
+	*
+	* @tparam	From	Source type whose cv-qualification should be cloned (reference ignored)
+	* @tparam	To		Type to be adorned
+	* 
+	* @returns	@c To with the CV-qualifiers present upon @c std::remove_reference_t<From>
+	*/
+	template <typename From, typename To>
+		requires std::is_reference_v<From>
+	metafunc mirror_cv_ref : nstd::mirror_cv<std::remove_reference_t<From>, To> {};
 	
-	//! @brief	Allows functions to declare return-types using & and * modifiers
-	template <typename T>
-	using return_t = std::type_identity_t<T>;
-
-	//! @brief	Aliases the type with the opposite const-qualitification to 'T'
-	template <typename T>
-	using toggle_const_t = std::conditional_t<std::is_const_v<T>, std::remove_cv_t<T>, std::add_const_t<T>>;
-	
-	// clang-format on
+	template <typename From, typename To>
+		requires std::is_reference_v<From>
+	using mirror_cv_ref_t = typename mirror_cv_ref<From, To>::type;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+// o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Separator o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
