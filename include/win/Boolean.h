@@ -68,6 +68,7 @@ namespace core::win
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		constexpr
 		implicit operator 
 		BOOL() const 
 		{
