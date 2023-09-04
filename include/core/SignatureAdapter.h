@@ -189,8 +189,8 @@ namespace core::detail
 		static_assert(nstd::FunctionObject<T>);
 
 		using type = StripMethodSignature_t<
-			typename DeduceSignature<decltype(&T::operator())
-		>::type>;
+			typename DeduceSignature<decltype(&T::operator())>::type
+		>;
 	};
 	
 	//! @brief	Ensure signature of @c T can be deduced
