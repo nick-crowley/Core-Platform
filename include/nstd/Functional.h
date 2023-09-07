@@ -85,6 +85,7 @@ namespace nstd
 		{
 			CallType  m_type;
 
+			explicit
 			Callable(CallType t) : m_type{t}
 			{}
 
@@ -101,6 +102,7 @@ namespace nstd
 			CallableTarget  m_object;
 
 		public:
+			explicit
 			FunctionObject(CallableTarget&& fx) 
 			  : Callable{CallType::Object}, 
 				m_object{std::move(fx)}
@@ -132,6 +134,7 @@ namespace nstd
 			signature_t  m_address;
 
 		public:
+			explicit
 			FunctionPointer(signature_t pfx) 
 			  : Callable{CallType::Function}, 
 				m_address{pfx}
