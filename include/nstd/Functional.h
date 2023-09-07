@@ -226,7 +226,7 @@ namespace nstd
 			requires (std::is_class_v<CallableTarget> && std::is_invocable_v<CallableTarget,Parameters...>)
 		explicit 
 		function(CallableTarget&& t)
-		  : m_callable{std::make_shared<FunctionObject>(std::move(t))}
+		  : m_callable{std::make_shared<FunctionObject<CallableTarget>>(std::move(t))}
 		{}
 	
 		//! Prevent accidental construction from const-object to a non-const method
