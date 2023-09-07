@@ -277,12 +277,6 @@ namespace nstd
 			return *this->m_callable == *r.m_callable;
 		}
 	
-		bool
-		operator!=(type const& r) const
-		{
-			return !(*this == r);
-		}
-	
 		template <typename Other> bool operator==(function<Other> const&) const = delete;
 		template <typename Other> bool operator!=(function<Other> const&) const = delete;
 		
