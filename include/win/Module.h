@@ -40,7 +40,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::win
 {
-	class Module 
+	class PlatformExport Module 
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
@@ -83,14 +83,25 @@ namespace core::win
 				return { data, data + size };
 			}
 		}
+
+		filesystem::path
+		path() const {
+			wchar_t modulePath[MAX_PATH] {};
+			auto const n = ::GetModuleFileNameW(this->handle(), modulePath, DWord{lengthof(modulePath)});
+			if (LastError err{}; n == 0)
+				err.throwIfError("GetModuleFileName() failed");
+			else if (n == lengthof(modulePath) && err == ERROR_INSUFFICIENT_BUFFER)
+				err.throwIfError("GetModuleFileName() returned ERROR_INSUFFICIENT_BUFFER");
+			return {&modulePath[0], &modulePath[n]};
+		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};
 
 	Module const
-	inline static ProcessModule {SharedModule{::GetModuleHandleW(nullptr), weakref}};
+	extern PlatformExport ProcessModule;
 	
 	Module const
-	inline static SystemResource {SharedModule{nullptr, weakref}};
+	extern PlatformExport SystemResource;
 
 }	// namespace core::win
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
