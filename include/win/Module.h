@@ -32,7 +32,14 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+#ifdef CORE_BUILDING_DLL
 
+//! @brief Expose the Microsoft linker pseudo-variable
+extern "C"
+::IMAGE_DOS_HEADER 
+__ImageBase;
+
+#endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -96,6 +103,13 @@ namespace core::win
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};
+
+#ifdef CORE_BUILDING_DLL
+	//! @brief  Library module loaded by the current process
+	//! @remarks  This symbol only exists when building a DLL
+	Module const
+	inline DllModule {SharedModule{reinterpret_cast<::HMODULE>(&::__ImageBase), weakref}};
+#endif
 
 	Module const
 	extern PlatformExport ProcessModule;
