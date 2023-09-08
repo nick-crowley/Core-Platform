@@ -111,9 +111,11 @@ namespace core::win
 	inline DllModule {SharedModule{reinterpret_cast<::HMODULE>(&::__ImageBase), weakref}};
 #endif
 
+	//! @brief  Module of the currently executing process
 	Module const
 	extern PlatformExport ProcessModule;
 	
+	//! @brief  Sentinel value representing the currently executing process
 	Module const
 	extern PlatformExport SystemResource;
 
