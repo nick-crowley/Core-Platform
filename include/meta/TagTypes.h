@@ -48,7 +48,10 @@ namespace core::meta
 
 	struct create_new_t {} constexpr 
 	inline create_new;
-
+	
+	struct destroy_t {} constexpr  
+	inline destroy;
+	
 	struct hidden_t {} constexpr  
 	inline hidden;
 	
@@ -103,7 +106,10 @@ namespace core
 
 	auto constexpr 
 	inline create_new = meta::create_new;
-
+	
+	auto constexpr 
+	inline destroy = meta::destroy;
+	
 	auto constexpr 
 	inline hidden = meta::hidden;
 	
