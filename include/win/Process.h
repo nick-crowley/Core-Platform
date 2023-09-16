@@ -225,13 +225,13 @@ namespace core::win
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		SharedProcess  handle;
+		SharedProcess  Handle;
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		explicit
 		Process(SharedProcess p)
-		  : handle{ThrowIfEmpty(p)}
+		  : Handle{ThrowIfEmpty(p)}
 		{
 		}
 
@@ -266,7 +266,7 @@ namespace core::win
 	public:
 		uint32_t
 		id() const {
-			return ::GetProcessId(*this->handle);
+			return ::GetProcessId(*this->Handle);
 		}
 
 		filesystem::path
@@ -275,7 +275,7 @@ namespace core::win
 
 			::DWORD      capacity{MAX_PATH};
 			std::wstring buffer(capacity, L'\0');
-			if (!::QueryFullProcessImageNameW(*this->handle, usermodeFormat, buffer.data(), &capacity))
+			if (!::QueryFullProcessImageNameW(*this->Handle, usermodeFormat, buffer.data(), &capacity))
 				LastError{}.throwAlways("QueryFullProcessImageNameW() failed");
 			buffer.resize(capacity);
 			return buffer;
@@ -285,7 +285,7 @@ namespace core::win
 		token(TokenRight rights) const {
 			auto const openProcessToken = function<1>(::OpenProcessToken);
 
-			SharedToken tokenHandle{openProcessToken(*this->handle, std::to_underlying(rights))};
+			SharedToken tokenHandle{openProcessToken(*this->Handle, std::to_underlying(rights))};
 			return security::Token{tokenHandle};
 		}
 
