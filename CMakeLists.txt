@@ -152,7 +152,7 @@ set_target_properties(libCorePlatform PROPERTIES
 
 # Set export macros to 'static library'
 target_compile_definitions(libCorePlatform
-	PUBLIC ${PROJECT_STATIC_MACRO}
+	PRIVATE ${PROJECT_STATIC_MACRO}
 )
 
 # Link CRT statically
@@ -195,7 +195,7 @@ set_target_properties(dllCorePlatform PROPERTIES
 
 # Set export macros to 'export DLL'
 target_compile_definitions(dllCorePlatform
-	PUBLIC ${PROJECT_EXPORT_MACRO}
+	PRIVATE ${PROJECT_EXPORT_MACRO}
 )
 
 # Link CRT dynamically
