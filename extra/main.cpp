@@ -38,6 +38,11 @@ try {
 	for (win::Process const& process : win::Process::ExistingProcesses)
 		std::cout << "-> " << process.path() << "\n";
 	std::cout << std::endl;
+
+	std::cout << "Currently loaded modules:\n";
+	for (win::Module const& module : win::currentProcess.modules())
+		std::cout << "-> " << module.path() << "\n";
+	std::cout << std::endl;
 }
 catch (std::exception const& e) {
 	clog << e;
