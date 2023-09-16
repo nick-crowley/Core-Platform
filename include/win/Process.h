@@ -33,6 +33,7 @@
 #include "win/Boolean.h"
 #include "win/Function.h"
 #include "win/SharedHandle.h"
+#include "win/Module.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -222,6 +223,91 @@ namespace core::win
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		};
 
+		//! @brief
+		class PlatformExport LoadedModulesCollection : private std::vector<::HMODULE> {
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		private:
+			using base = std::vector<::HMODULE>;
+
+			auto constexpr
+			static asWeakRefModule = [](::HMODULE h) { return Module{SharedModule{h, weakref}}; };
+
+		public:
+			using const_iterator = boost::transform_iterator<decltype(asWeakRefModule), base::const_iterator>;
+			using iterator = const_iterator;
+			using reference = Module&;
+			using const_reference = Module const&;
+			using value_type = Module;
+			using size_type = std::size_t;
+			using difference_type = std::ptrdiff_t;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			LoadedModulesCollection(SharedProcess process, Architecture arch)
+			  : base(size_t{16}, nullptr)
+			{
+				auto constexpr
+				static enumProcessModulesEx = [](SharedProcess process, std::vector<::HMODULE> modules, ::DWORD& bytesRequired, Architecture arch) {
+					auto constexpr
+					static convertFlags = [](Architecture a) {
+						switch (a) {
+						case Architecture::x64:  return LIST_MODULES_64BIT;
+						case Architecture::x86:  return LIST_MODULES_32BIT;
+						case Architecture::Both: return LIST_MODULES_ALL;
+						default:                 return LIST_MODULES_DEFAULT;
+						}
+					};
+
+					return EnumProcessModulesEx(
+						*process, 
+						modules.data(), 
+						win::DWord{nstd::sizeof_n<::HMODULE>(modules.size())}, 
+						&bytesRequired, 
+						convertFlags(arch)
+					);
+				};
+
+				::DWORD bytesRequired = 0;
+				for (::BOOL result = enumProcessModulesEx(ThrowIfEmpty(process), *this, bytesRequired, arch); !result; /*no-op*/) {
+					if (win::LastError err{}; err != ERROR_MORE_DATA)
+						err.throwAlways("EnumProcessModulesEx() failed");
+
+					this->resize(2 * this->size());
+					result = enumProcessModulesEx(process, *this, bytesRequired, arch);
+				}
+				this->resize(bytesRequired / sizeof(::HMODULE));
+			}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			satisfies(LoadedModulesCollection,
+				NotDefaultConstructible,
+				IsCopyable,
+				IsMovable,
+				NotEqualityComparable,
+				NotSortable
+			);
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			template <typename Self>
+			const_iterator
+			begin(this Self&& self) {
+				return boost::make_transform_iterator(self.cbegin(), LoadedModulesCollection::asWeakRefModule);
+			}
+
+			template <typename Self>
+			const_iterator
+			end(this Self&& self) {
+				return boost::make_transform_iterator(self.cend(), LoadedModulesCollection::asWeakRefModule);
+			}
+
+			using base::empty;
+			using base::size;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+		};
+
 	public:
 		ExistingProcessCollection const
 		static ExistingProcesses;
@@ -270,6 +356,11 @@ namespace core::win
 		uint32_t
 		id() const {
 			return ::GetProcessId(*this->Handle);
+		}
+
+		LoadedModulesCollection
+		modules() const {
+			return LoadedModulesCollection{this->Handle, Architecture::x86|Architecture::x64};
 		}
 
 		filesystem::path
