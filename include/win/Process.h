@@ -126,8 +126,8 @@ namespace core::win
 				    Index{this->Idents->empty() ? npos : 0},
 					Properties{rights, inheritance}
 				{
-					if (this->Index != npos)
-						this->Index = this->findNext();
+					if (this->Index != ConstIterator::npos)
+						this->Index = this->findNext(0);
 				}
 				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~o
 			public:
@@ -151,21 +151,30 @@ namespace core::win
 				// o~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
 			private:
 				uint32_t 
-				findNext() {
-					for (uint32_t idx = this->Index; idx < this->Idents->size(); ++idx) 
-						if (SharedProcess tryOpen{::OpenProcess(std::to_underlying(this->Properties.AccessRights), 
-										                        Boolean{this->Properties.Inheritability.has_value()}, 
-										                        (*this->Idents)[this->Index])}; tryOpen) {
-							this->Value = std::make_optional(tryOpen);
+				findNext(uint32_t initialIndex) {
+					auto constexpr
+					static notSystemIdleProcess = [](::DWORD id){ return id != 0; };
+					
+					uint32_t idx = initialIndex;
+					for (::DWORD pid : views::drop(*this->Idents, initialIndex) 
+						             | views::filter(notSystemIdleProcess))
+						if (SharedProcess tryOpen = Process::handleFromPid(pid, 
+						                                                   this->Properties.AccessRights, 
+						                                                   this->Properties.Inheritability); !tryOpen) {
+							++idx;
+						}
+						else {
+							this->Value = tryOpen;
 							return idx;
 						}
-					return npos;
+
+					return ConstIterator::npos;
 				}
 
 				void 
 				increment() {
-					if (this->Index != npos)
-						this->Index = this->findNext();
+					if (this->Index != ConstIterator::npos)
+						this->Index = this->findNext(this->Index + 1);
 				}
 			};
 
@@ -240,10 +249,17 @@ namespace core::win
 		Process
 		static fromPid(uint32_t pid, ProcessRight rights, std::optional<meta::inherits_t> inheritance = std::nullopt)
 		{
-			if (SharedProcess handle{::OpenProcess(std::to_underlying(rights), Boolean{!!inheritance}, pid)}; !handle)
+			if (SharedProcess handle = Process::handleFromPid(pid,rights,inheritance); !handle)
 				LastError{}.throwAlways("OpenProcess() failed");
 			else
 				return Process{handle};
+		}
+	
+	private:
+		SharedProcess
+		static handleFromPid(uint32_t pid, ProcessRight rights, std::optional<meta::inherits_t> inheritance = std::nullopt)
+		{
+			return SharedProcess{::OpenProcess(std::to_underlying(rights), Boolean{inheritance.has_value()}, pid)};
 		}
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
