@@ -44,12 +44,12 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::win
 {
-	class Process
+	class PlatformExport Process
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		//! @brief	Snapshot of (the PIDs of) the currently executing processes
-		class ExistingProcessIdCollection : private std::vector<::DWORD> {
+		class PlatformExport ExistingProcessIdCollection : private std::vector<::DWORD> {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			using base = std::vector<::DWORD>;
@@ -97,7 +97,7 @@ namespace core::win
 		};
 
 		//! @brief	Limited query handles to currently accessible executing processes
-		class ExistingProcessCollection {
+		class PlatformExport ExistingProcessCollection {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			class ConstIterator : public boost::iterator_facade<ConstIterator, Process, std::forward_iterator_tag, Process>
@@ -269,8 +269,8 @@ namespace core::win
 		token(TokenRight rights) const {
 			auto const openProcessToken = function<1>(::OpenProcessToken);
 
-			SharedToken handle{openProcessToken(*this->handle, std::to_underlying(rights))};
-			return security::Token{handle};
+			SharedToken tokenHandle{openProcessToken(*this->handle, std::to_underlying(rights))};
+			return security::Token{tokenHandle};
 		}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
