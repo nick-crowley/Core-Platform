@@ -40,6 +40,14 @@
 #include <ntsecapi.h>
 #include <sddl.h>			// SID functions
 #include <Aclapi.h>         // ACL functions
+
+#if _WIN32_WINNT <= _WIN32_WINNT_WIN7
+	// @remarks  Windows 7 and earlier store process functions in psapi.lib instead of kernel32.lib
+	// @see https://learn.microsoft.com/en-us/windows/win32/api/psapi/nf-psapi-enumprocesses
+	#define PSAPI_VERSION 1
+	#pragma comment(lib, "psapi")
+#endif
+#include <psapi.h>          // Process functions
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

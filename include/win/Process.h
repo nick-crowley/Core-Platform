@@ -47,6 +47,172 @@ namespace core::win
 	class Process
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
+		//! @brief	Snapshot of (the PIDs of) the currently executing processes
+		class ExistingProcessIdCollection : private std::vector<::DWORD> {
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		private:
+			using base = std::vector<::DWORD>;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			ExistingProcessIdCollection() : base{static_cast<size_t>(256), 0} {
+				auto const
+				static enumProcesses = [](std::vector<::DWORD>& storage, ::DWORD& bytesReturned) {
+					return ::EnumProcesses(storage.data(), 
+				                           win::DWord{nstd::sizeof_n<::DWORD>(storage.size())}, 
+				                           &bytesReturned);
+				};
+				
+				::DWORD bytesReturned{};
+				for (::BOOL result = enumProcesses(*this, bytesReturned); !result; /*no-op*/) {
+					if (win::LastError err{}; err != ERROR_MORE_DATA)
+						err.throwAlways("EnumProcesses() failed");
+
+					this->resize(2 * this->size());
+					result = enumProcesses(*this, bytesReturned); 
+				}
+				this->resize(bytesReturned / sizeof(::DWORD));
+			}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			satisfies(ExistingProcessIdCollection,
+				IsMovable,
+				NotEqualityComparable,
+				NotSortable
+			);
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			using base::begin;
+			using base::end;
+			using base::cbegin;
+			using base::cend;
+			using base::empty;
+			using base::size;
+			using base::operator[];
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+		};
+
+		//! @brief	Limited query handles to currently accessible executing processes
+		class ExistingProcessCollection {
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		private:
+			class ConstIterator : public boost::iterator_facade<ConstIterator, Process, std::forward_iterator_tag, Process>
+			{
+				friend class boost::iterator_core_access;
+				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			private:
+				const uint32_t
+				static npos = static_cast<uint32_t>(-1);
+
+				struct ProcessHandleProperties {
+					ProcessRight                    AccessRights;
+					std::optional<meta::inherits_t> Inheritability;
+				};
+				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			private:
+				std::optional<ExistingProcessIdCollection> Idents;
+				uint32_t                                   Index = npos;
+				ProcessHandleProperties                    Properties;
+				std::optional<SharedProcess>               Value;
+				// o~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~o
+			public:
+				explicit
+				ConstIterator(ProcessRight rights, std::optional<meta::inherits_t> inheritance = std::nullopt) 
+				  : Idents{std::make_optional<ExistingProcessIdCollection>()},
+				    Index{this->Idents->empty() ? npos : 0},
+					Properties{rights, inheritance}
+				{
+					if (this->Index != npos)
+						this->Index = this->findNext();
+				}
+				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			public:
+				satisfies(ConstIterator,
+					IsSemiRegular,
+					NotSortable
+				);
+				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+
+				// o~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
+			private:
+				Process
+				dereference() const {
+					return Process{*this->Value};
+				}
+				
+				bool 
+				equal(ConstIterator const& other) const {
+					return this->Index == other.Index;
+				}
+				// o~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
+			private:
+				uint32_t 
+				findNext() {
+					for (uint32_t idx = this->Index; idx < this->Idents->size(); ++idx) 
+						if (SharedProcess tryOpen{::OpenProcess(std::to_underlying(this->Properties.AccessRights), 
+										                        Boolean{this->Properties.Inheritability.has_value()}, 
+										                        (*this->Idents)[this->Index])}; tryOpen) {
+							this->Value = std::make_optional(tryOpen);
+							return idx;
+						}
+					return npos;
+				}
+
+				void 
+				increment() {
+					if (this->Index != npos)
+						this->Index = this->findNext();
+				}
+			};
+
+		public:
+			using const_iterator = ConstIterator;
+			using iterator = const_iterator;
+			using reference = Process&;
+			using const_reference = Process const&;
+			using value_type = Process;
+			using size_type = std::size_t;
+			using difference_type = std::ptrdiff_t;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
+			
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			satisfies(ExistingProcessCollection,
+				IsDefaultConstructible,
+				NotCopyable,
+				NotEqualityComparable,
+				NotSortable
+			);
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			template <typename Self>
+			const_iterator
+			begin(this Self&&, ProcessRight rights = ProcessRight::LimitedQuery, 
+			                   std::optional<meta::inherits_t> inheritance = std::nullopt) {
+				return const_iterator{rights, inheritance};
+			}
+
+			template <typename Self>
+			const_iterator
+			end(this Self&&) {
+				return const_iterator{};
+			}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			size_type
+			size() const = delete;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+		};
+
+	public:
+		ExistingProcessCollection const
+		static ExistingProcesses;
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
@@ -64,8 +230,8 @@ namespace core::win
 	public:
 		satisfies(Process,
 			NotDefaultConstructible,
-			NotCopyable,
-			IsMovable,
+			IsCopyable,
+			IsMovable noexcept,
 			NotEqualityComparable,
 			NotSortable
 		);
