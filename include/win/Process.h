@@ -392,6 +392,12 @@ namespace core::win
 		}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
+		void
+		terminate(::DWORD exitCode) {
+			if (!::TerminateProcess(*this->Handle, exitCode))
+				LastError{}.throwAlways("TerminateProcess() failed");
+		}
 	};
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
