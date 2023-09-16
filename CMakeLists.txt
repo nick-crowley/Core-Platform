@@ -240,9 +240,14 @@ target_link_libraries(appCorePlatform
 
 # Set compiler & linker flags
 set_target_properties(appCorePlatform PROPERTIES
-					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS} -D${PROJECT_STATIC_MACRO}"
+					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS}"
 					  LINK_FLAGS "${GLOBAL_LINKER_OPTIONS} /SUBSYSTEM:CONSOLE"
 					  OUTPUT_NAME "appCorePlatform")
+
+# Set macros to 'import DLL'
+target_compile_definitions(appCorePlatform
+	PRIVATE ${PROJECT_IMPORT_MACRO}
+)
 
 # Link CRT dynamically
 target_compile_options(appCorePlatform
