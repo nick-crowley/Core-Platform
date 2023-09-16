@@ -229,11 +229,17 @@ namespace core::win
 		private:
 			using base = std::vector<::HMODULE>;
 
-			auto constexpr
-			static asWeakRefModule = [](::HMODULE h) { return Module{SharedModule{h, weakref}}; };
+			struct MakeNonOwningModule {
+				SharedProcess  Owner;
+				
+				Module
+				operator()(::HMODULE h) const {
+					return Module{this->Owner, SharedModule{h, weakref}};
+				}
+			};
 
 		public:
-			using const_iterator = boost::transform_iterator<decltype(asWeakRefModule), base::const_iterator>;
+			using const_iterator = boost::transform_iterator<MakeNonOwningModule, base::const_iterator>;
 			using iterator = const_iterator;
 			using reference = Module&;
 			using const_reference = Module const&;
@@ -241,14 +247,16 @@ namespace core::win
 			using size_type = std::size_t;
 			using difference_type = std::ptrdiff_t;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
+		private:
+			SharedProcess  Handle;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			LoadedModulesCollection(SharedProcess process, Architecture arch)
-			  : base(size_t{16}, nullptr)
+			  : base(size_t{16}, nullptr), 
+				Handle{ThrowIfEmpty(process)}
 			{
 				auto constexpr
-				static enumProcessModulesEx = [](SharedProcess process, std::vector<::HMODULE> modules, ::DWORD& bytesRequired, Architecture arch) {
+				static enumProcessModulesEx = [](SharedProcess process, std::vector<::HMODULE>& modules, ::DWORD& bytesRequired, Architecture arch) {
 					auto constexpr
 					static convertFlags = [](Architecture a) {
 						switch (a) {
@@ -269,7 +277,7 @@ namespace core::win
 				};
 
 				::DWORD bytesRequired = 0;
-				for (::BOOL result = enumProcessModulesEx(ThrowIfEmpty(process), *this, bytesRequired, arch); !result; /*no-op*/) {
+				for (::BOOL result = enumProcessModulesEx(process, *this, bytesRequired, arch); !result; /*no-op*/) {
 					if (win::LastError err{}; err != ERROR_MORE_DATA)
 						err.throwAlways("EnumProcessModulesEx() failed");
 
@@ -294,13 +302,13 @@ namespace core::win
 			template <typename Self>
 			const_iterator
 			begin(this Self&& self) {
-				return boost::make_transform_iterator(self.cbegin(), LoadedModulesCollection::asWeakRefModule);
+				return boost::make_transform_iterator(self.cbegin(), MakeNonOwningModule{self.Handle});
 			}
 
 			template <typename Self>
 			const_iterator
 			end(this Self&& self) {
-				return boost::make_transform_iterator(self.cend(), LoadedModulesCollection::asWeakRefModule);
+				return boost::make_transform_iterator(self.cend(), MakeNonOwningModule{self.Handle});
 			}
 
 			using base::empty;

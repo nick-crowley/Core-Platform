@@ -60,11 +60,15 @@ namespace core::win
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		SharedModule	Handle;
+		SharedModule	              Handle;
+		std::optional<SharedProcess>  Owner;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		explicit
 		Module(SharedModule m) : Handle{m} {
+		}
+		
+		Module(SharedProcess p, SharedModule m) : Owner{p}, Handle{m} {
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
@@ -100,13 +104,32 @@ namespace core::win
 
 		filesystem::path
 		path() const {
-			wchar_t modulePath[MAX_PATH] {};
-			auto const n = ::GetModuleFileNameW(this->handle(), modulePath, DWord{lengthof(modulePath)});
-			if (LastError err{}; n == 0)
-				err.throwIfError("GetModuleFileName() failed");
-			else if (n == lengthof(modulePath) && err == ERROR_INSUFFICIENT_BUFFER)
-				err.throwIfError("GetModuleFileName() returned ERROR_INSUFFICIENT_BUFFER");
-			return {&modulePath[0], &modulePath[n]};
+			auto constexpr
+			static getModuleFileName = [](std::optional<SharedProcess> process, SharedModule module, std::wstring_view buffer) {
+				auto* const filePath = const_cast<wchar_t*>(buffer.data());
+				auto const capacity = nstd::sizeof_n<wchar_t>(buffer.size());
+				if (process)
+					return ::GetModuleFileNameExW(**process, *module, filePath, DWord{capacity});
+				else
+					return ::GetModuleFileNameW(*module, filePath, DWord{capacity});
+			};
+
+			wchar_t staticBuffer[MAX_PATH] {};
+			std::optional<std::wstring> dynamicBuffer;
+			std::wstring_view buffer{std::begin(staticBuffer), std::end(staticBuffer)};
+			
+			do {
+				if (auto const n = getModuleFileName(this->Owner, this->Handle, buffer); n == 0)
+					LastError{}.throwAlways("GetModuleFileName[Ex]() failed");
+				else if (n == buffer.size() && LastError{} == ERROR_INSUFFICIENT_BUFFER)
+				{
+					dynamicBuffer = std::make_optional<std::wstring>(2*buffer.size(), L'\0');
+					buffer = *dynamicBuffer;
+				}
+				else
+					return buffer.substr(0, n);
+			}
+			while (true);
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};
