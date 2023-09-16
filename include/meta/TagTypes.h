@@ -60,7 +60,7 @@ namespace core::meta
 	
 	struct lazy_t {} constexpr 
 	inline lazy;
-
+	
 	struct noconversion_t {} constexpr 
 	inline noconversion;
 
@@ -75,6 +75,9 @@ namespace core::meta
 	
 	struct program_version_t {} constexpr 
 	inline program_version;
+	
+	struct unconstrained_t {} constexpr 
+	inline unconstrained;
 
 	struct undefined_t {} constexpr 
 	inline undefined;
@@ -133,6 +136,9 @@ namespace core
 	
 	auto constexpr 
 	inline program_version = meta::program_version;
+	
+	auto constexpr 
+	inline unconstrained = meta::unconstrained;
 
 	auto constexpr 
 	inline undefined = meta::undefined;
