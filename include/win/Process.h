@@ -57,7 +57,7 @@ namespace core::win
 		
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			ExistingProcessIdCollection() : base{static_cast<size_t>(256), 0} {
+			ExistingProcessIdCollection() : base(static_cast<size_t>(256), 0) {
 				auto const
 				static enumProcesses = [](std::vector<::DWORD>& storage, ::DWORD& bytesReturned) {
 					return ::EnumProcesses(storage.data(), 
