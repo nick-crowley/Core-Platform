@@ -52,6 +52,8 @@ namespace core::win
 		SharedModule m_module;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		SharedLibrary(std::string_view) = delete;
+
 		SharedLibrary(std::wstring_view path) 
 		  : m_module{::LoadLibraryW(ThrowIfEmpty(path).data())}
 		{
@@ -59,7 +61,14 @@ namespace core::win
 				LastError{}.throwAlways();
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
+	public:
+		satisfies(SharedLibrary,
+			NotDefaultConstructible,
+			IsCopyable,
+			IsMovable,
+			NotEqualityComparable,
+			NotSortable
+		);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
