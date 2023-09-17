@@ -41,7 +41,7 @@ win::RegistryKey::ConstRegistryValueProxy::ConstRegistryValueProxy(RegistryKey c
 win::RegistryKey::ConstRegistryValueProxy::operator
 win::RegistryValue() const
 {
-	return this->m_key->m_api->getValue(this->m_key->m_handle, {/*no-child*/}, this->m_valueName);
+	return this->m_key->m_api->getValue(this->m_key->m_handle, this->m_valueName);
 }
 
 win::RegistryKey::RegistryValueProxy&

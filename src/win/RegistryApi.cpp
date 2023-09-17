@@ -38,7 +38,6 @@ namespace
 	auto constexpr regOpenKeyEx = win::function<1>(::RegOpenKeyExW);
 	auto constexpr regDeleteKeyEx = win::function(::RegDeleteKeyExW);
 	auto constexpr regDeleteKeyValue = win::function(::RegDeleteKeyValueW);
-	auto constexpr regQueryValueEx = win::function<3>(::RegQueryValueExW);
 	auto constexpr regSetKeyValue = win::function(::RegSetKeyValueW);
 }
 
@@ -66,16 +65,19 @@ win::RegistryApi::openKey(SharedRegistryKey root, std::wstring_view path, KeyRig
 
 
 win::RegistryValue
-win::RegistryApi::getValue(SharedRegistryKey root, std::wstring_view path, std::wstring_view name) const
+win::RegistryApi::getValue(SharedRegistryKey root, std::wstring_view name) const
 {
-	auto [type, _, size] = regQueryValueEx(*root, path.data(), Reserved<DWORD*>);
+	::DWORD dataType{}, size{};
+	if (LResult r = ::RegQueryValueExW(*root, name.data(), Reserved<DWORD*>, &dataType, nullptr, &size); !r && r != ERROR_MORE_DATA)
+		r.throwAlways("Failed to query registry value '{}'", to_utf8(name));
 	auto bytes = std::make_unique<std::byte[]>(size);
-	ThrowingLResult result = ::RegQueryValueExW(*root, path.data(), Reserved<DWORD*>, nullptr, nstd::cast_to<BYTE*>(bytes.get()), &size);
+	if (LResult r = ::RegQueryValueExW(*root, name.data(), Reserved<DWORD*>, nullptr, nstd::cast_to<BYTE*>(bytes.get()), &size); !r)
+		r.throwAlways("Failed to read registry value '{}'", to_utf8(name));
 	
-	switch (type)
+	switch (dataType)
 	{
 	default:
-		throw system_error{ERROR_UNSUPPORTED_TYPE};
+		LResult{ERROR_UNSUPPORTED_TYPE}.throwAlways("Cannot read registry value '{}' of unsupported type {:#06x}", to_utf8(name), dataType);
 
 	case REG_BINARY:
 		return std::vector<std::byte>{&bytes[0], &bytes[size]};
@@ -94,7 +96,7 @@ win::RegistryApi::getValue(SharedRegistryKey root, std::wstring_view path, std::
 	auto const chars = boost::reinterpret_pointer_cast<wchar_t[]>(std::move(bytes));
 	auto const strings = std::wstring_view{&chars[0], &chars[size/sizeof(wchar_t)]};
 	
-	if (type == REG_SZ)
+	if (dataType == REG_SZ)
 		return std::wstring{strings};
 	else
 		return std::vector<std::wstring>{ConstMultiStringIterator{strings}, ConstMultiStringIterator{}};

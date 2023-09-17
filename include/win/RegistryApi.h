@@ -70,7 +70,7 @@ namespace core::win
 		virtual openKey(SharedRegistryKey root, std::wstring_view path, KeyRight rights) const;
 		
 		RegistryValue
-		virtual getValue(SharedRegistryKey root, std::wstring_view path, std::wstring_view name) const;
+		virtual getValue(SharedRegistryKey root, std::wstring_view name) const;
 		
 		void
 		virtual setValue(SharedRegistryKey root, std::wstring_view path, std::wstring_view name, RegistryValue value) const;
