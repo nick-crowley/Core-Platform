@@ -97,7 +97,8 @@ win::RegistryApi::getValue(SharedRegistryKey root, std::wstring_view name) const
 	auto const strings = std::wstring_view{&chars[0], &chars[size/sizeof(wchar_t)]};
 	
 	if (dataType == REG_SZ)
-		return std::wstring{strings};
+		// Returned strings may-not be null-terminated but only @c ConstMultiStringIterator can handle this
+		return std::wstring{!strings.ends_with(L'\0') ? strings : strings.substr(0, strings.length()-1)};
 	else
 		return std::vector<std::wstring>{ConstMultiStringIterator{strings}, ConstMultiStringIterator{}};
 }
