@@ -24,7 +24,7 @@
 * the projects which contain it.
 */
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Preprocessor Directives o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#ifndef DISABLE_SHARED_LIBRARY_SYSTEM_TESTS
+#ifndef DISABLE_PROCESS_SYSTEM_TESTS
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include <gtest/gtest.h>
 #include <win/Process.h>
@@ -102,4 +102,4 @@ TEST(Process_ST, LoadedModulesCanBeEnumerated)
 }
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#endif	// DISABLE_SHARED_LIBRARY_SYSTEM_TESTS
+#endif	// DISABLE_PROCESS_SYSTEM_TESTS
