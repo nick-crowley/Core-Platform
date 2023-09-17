@@ -199,5 +199,18 @@ namespace core::win
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace core::win
+{
+	template <std::integral Integral>
+	bool
+	operator==(LResult const& lhs, Integral rhs) noexcept {
+		return static_cast<Integral>(lhs) == rhs;
+	}
 
+	template <std::integral Integral>
+	bool
+	operator==(Integral lhs, LResult const& rhs) noexcept {
+		return static_cast<Integral>(rhs) == lhs;
+	}
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
