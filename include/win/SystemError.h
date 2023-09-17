@@ -53,20 +53,23 @@ namespace core::win
 	private:
 		using base = std::system_error;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
+	private:
+		std::string CustomMessageBugFix;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		explicit
 		system_error(::LRESULT code)
-			: base{static_cast<int>(code), std::system_category(), detail::formatMessage(code)}
+		  : base{static_cast<int>(code), std::system_category()}, 
+		    CustomMessageBugFix{detail::formatMessage(code)}
 		{
 		}
 
 		template <typename... Params>
 		system_error(::LRESULT code, std::string_view msg, Params&&... args)
-		  : base{static_cast<int>(code), 
-		         std::system_category(), 
-		         std::vformat(msg,std::make_format_args(args...)) + " (" + detail::formatMessage(code) + ")"}
+		  : base{static_cast<int>(code), std::system_category()},
+			CustomMessageBugFix{
+			  std::format("{}: {}", std::vformat(msg,std::make_format_args(args...)), detail::formatMessage(code))
+			}
 		{
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -74,7 +77,12 @@ namespace core::win
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
+	public:
+		[[nodiscard]] nstd::return_t<char const*>
+		virtual what() const override 
+		{
+			return this->CustomMessageBugFix.c_str();
+		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};
 }
