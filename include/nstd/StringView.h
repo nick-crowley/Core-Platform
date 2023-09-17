@@ -105,6 +105,9 @@ namespace nstd
 
     using istring_view  = std::basic_string_view<char, case_insensitive_char_traits<char>>;
     using wistring_view = std::basic_string_view<wchar_t, case_insensitive_char_traits<wchar_t>>;
+    
+	using istring  = std::basic_string<char, case_insensitive_char_traits<char>>;
+	using wistring = std::basic_string<wchar_t, case_insensitive_char_traits<wchar_t>>;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
@@ -124,6 +127,20 @@ namespace nstd
                std::basic_string_view<Char, std::char_traits<Char>> const& rhs) {
 	    return lhs.compare(std::remove_reference_t<decltype(lhs)>{rhs.begin(), rhs.end()}) == 0;
     }
+    
+	template <AnyOf<char,wchar_t> Char, typename Alloc>
+	bool
+	operator==(std::basic_string_view<Char, case_insensitive_char_traits<Char>> const& lhs, 
+	           std::basic_string<Char, std::char_traits<Char>, Alloc> const& rhs) {
+		return lhs == std::basic_string_view<Char>{rhs};
+	}
+
+	template <AnyOf<char,wchar_t> Char, typename Alloc>
+	bool
+	operator==(std::basic_string<Char, std::char_traits<Char>, Alloc> const& lhs, 
+	           std::basic_string_view<Char, case_insensitive_char_traits<Char>> const& rhs) {
+        return rhs == std::basic_string_view<Char>{lhs};
+	}
 
     namespace literals 
     {

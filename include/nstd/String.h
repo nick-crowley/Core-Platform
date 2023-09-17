@@ -54,14 +54,14 @@ namespace nstd
 	bool
 	operator==(std::basic_string<Char,std::char_traits<Char>,Alloc> const& lhs, 
 	           std::basic_string<Char,case_insensitive_char_traits<Char>,Alloc> const& rhs) {
-		return rhs.compare(istring_view{lhs.begin(), lhs.end()}) == 0;
+		return std::basic_string_view<Char>{lhs} == std::basic_string_view<Char,case_insensitive_char_traits<Char>>{rhs};
 	}
 
 	template <AnyOf<char,wchar_t> Char, typename Alloc>
 	bool
 	operator==(std::basic_string<Char,case_insensitive_char_traits<Char>,Alloc> const& lhs, 
 	           std::basic_string<Char,std::char_traits<Char>,Alloc> const& rhs) {
-		return lhs.compare(istring_view{rhs.begin(), rhs.end()}) == 0;
+		return std::basic_string_view<Char,case_insensitive_char_traits<Char>>{lhs} == std::basic_string_view<Char>{rhs};
 	}
  
 	template <AnyOf<char,wchar_t> Char, typename Alloc>
