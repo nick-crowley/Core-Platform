@@ -26,74 +26,11 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Preprocessor Directives o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #pragma once
 #ifndef CorePlatform_h_included
-#	define CorePlatform_h_included
-#endif
-
-#if (defined(_MSVC_LANG) && _MSVC_LANG <= 202002L)                                                \
- || (defined(__clang__) && __cplusplus <= 202002L)
-#	error Core-Platform requires C++23
-#endif
-
-#ifdef __clang__
-#	error Core-Platform doesn't yet support clang compiler
+#	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "../../src/PlatformSdk.h"
-#include "../../src/StdLibrary.h"
-#include "../../src/libBoost.h"
-
-#include "../../src/library/PlatformExport.h"
-
-#include "nstd/experimental/abstract.h"
-#include "nstd/experimental/implicit.h"
-#include "nstd/experimental/intern.h"
-#include "nstd/experimental/lambda.h"
-#include "nstd/experimental/metafunc.h"
-#include "nstd/experimental/nameof.h"
-#include "nstd/experimental/satisfies.h"
-#include "nstd/experimental/scoped.h"
-#include "nstd/experimental/lengthof.h"
-#include "nstd/experimental/finally.h"
-#include "nstd/TypeTraits.h"
-#include "nstd/Concepts.h"
-#include "nstd/Bitset.h"
-#include "nstd/FormatString.h"
-#include "nstd/Iterator.h"
-#include "nstd/IoManip.h"
-#include "nstd/Memory.h"
-#include "nstd/Sequence.h"
-#include "nstd/SizeOf.h"
-#include "nstd/SourceLocation.h"
+#include "../src/StdLibrary.h"
 #include "nstd/StringView.h"
-#include "nstd/String.h"
-#include "nstd/Tuple.h"
-#include "nstd/Utility.h"
-
-#include "meta/TagTypes.h"
-#include "meta/Settings.h"
-
-#include "core/Exceptions.h"
-#include "core/ThrowIfEmpty.h"
-#include "core/ThrowIfNot.h"
-#include "core/ThrowIfNull.h"
-#include "core/ThrowIfZero.h"
-#include "core/ThrowInvalidArg.h"
-#include "core/Invariant.h"
-#include "core/PostCondition.h"
-
-#include "core/CharacterConversion.h"
-#include "core/BitwiseEnum.h"
-#ifndef __clang__
-#	include "core/EnumNames.h"
-#	include "core/ThrowIfUndefined.h"
-#endif
-#include "core/ToHexString.h"
-#include "core/ToString.h"
-
-#include "nt/NtStatus.h"
-#include "win/LResult.h"
-#include "win/HResult.h"
-#include "win/DWord.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -103,9 +40,58 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
+namespace nstd
+{
+	using istring  = std::basic_string<char, case_insensitive_char_traits<char>>;
+	using wistring = std::basic_string<wchar_t, case_insensitive_char_traits<wchar_t>>;
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace nstd
+{
+	template <AnyOf<char,wchar_t> Char, typename Alloc>
+	bool
+	operator==(std::basic_string<Char,std::char_traits<Char>,Alloc> const& lhs, 
+	           std::basic_string<Char,case_insensitive_char_traits<Char>,Alloc> const& rhs) {
+		return rhs.compare(istring_view{lhs.begin(), lhs.end()}) == 0;
+	}
 
+	template <AnyOf<char,wchar_t> Char, typename Alloc>
+	bool
+	operator==(std::basic_string<Char,case_insensitive_char_traits<Char>,Alloc> const& lhs, 
+	           std::basic_string<Char,std::char_traits<Char>,Alloc> const& rhs) {
+		return lhs.compare(istring_view{rhs.begin(), rhs.end()}) == 0;
+	}
+ 
+	template <AnyOf<char,wchar_t> Char, typename Alloc>
+	bool
+	operator==(Char const* lhs, 
+	           std::basic_string<Char,case_insensitive_char_traits<Char>,Alloc> const& rhs) {
+		return rhs.compare(lhs) == 0;
+	}
+	
+	template <AnyOf<char,wchar_t> Char, typename Alloc>
+	bool
+	operator==(std::basic_string<Char,case_insensitive_char_traits<Char>,Alloc> const& lhs, 
+	           Char const* rhs) {
+		return lhs.compare(rhs) == 0;
+	}
+	
+	namespace literals 
+    {
+        inline namespace string_literals 
+        {
+			istring constexpr
+			operator ""_is(char const* str, std::size_t len) noexcept {
+				return istring{str, len};
+			}
+
+			wistring constexpr
+			operator ""_is(wchar_t const* str, std::size_t len) noexcept {
+				return wistring{str, len};
+			}
+		}
+	}
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
