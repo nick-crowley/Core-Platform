@@ -89,6 +89,17 @@ namespace core::win
 			implicit operator
 			RegistryValue() const;
 
+			std::wstring
+			wstr() {
+				RegistryValue v{*this};
+				Invariant(std::holds_alternative<std::wstring>(v) || std::holds_alternative<std::wstring_view>(v));
+				if (std::holds_alternative<std::wstring>(v))
+					return std::get<std::wstring>(v);
+				 
+				auto const sv = std::get<std::wstring_view>(v);
+				return {sv.begin(), sv.end()};
+			}
+
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		};
 		
@@ -177,7 +188,7 @@ namespace core::win
 		auto
 		operator[](this Self&& self, meta::use_default_t)
 		{
-			if constexpr (std::is_const_v<Self>)
+			if constexpr (std::is_const_v<std::remove_reference_t<Self>>)
 				return ConstRegistryValueProxy{self, use_default};
 			else
 				return RegistryValueProxy{self, use_default};
@@ -187,7 +198,7 @@ namespace core::win
 		auto
 		operator[](this Self&& self, std::wstring_view name)
 		{
-			if constexpr (std::is_const_v<Self>)
+			if constexpr (std::is_const_v<std::remove_reference_t<Self>>)
 				return ConstRegistryValueProxy{self, name};
 			else
 				return RegistryValueProxy{self, name};
@@ -197,6 +208,11 @@ namespace core::win
 	public:
 		RegistryKey
 		subkey(std::wstring_view child, std::optional<KeyRight> rights = std::nullopt) const;
+
+		RegistryKey
+		operator/(std::wstring_view child) const {
+			return this->subkey(child);
+		}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
