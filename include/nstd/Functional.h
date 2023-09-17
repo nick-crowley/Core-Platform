@@ -41,17 +41,17 @@ namespace nstd
 {
 	template <typename Result>
 	auto constexpr 
-	inline cast_to = [](auto& arg) { return reinterpret_cast<Result>(arg); };
+	inline cast_to = [](auto&& arg) { return reinterpret_cast<Result>(arg); };
 	
 
 	template <typename Result>
 	auto constexpr 
-	inline change_cv = [](auto& arg) { return const_cast<Result>(arg); };
+	inline change_cv = [](auto&& arg) { return const_cast<Result>(arg); };
 
 
 	template <typename Result>
 	auto constexpr 
-	inline convert_to = [](auto& arg) { return static_cast<Result>(arg); };
+	inline convert_to = [](auto&& arg) { return static_cast<Result>(arg); };
 
 	//! @brief	Non-standard function with better support for invoking methods
 	template <typename Signature>
