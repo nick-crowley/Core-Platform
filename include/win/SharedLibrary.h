@@ -75,9 +75,9 @@ namespace core::win
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		template <typename Signature, size_t NumResultParameters = 0>
+		template <nstd::Function Signature, size_t NumResultParameters = 0>
 		auto
-		loadFunction(std::string_view name)
+		loadFunction(std::string_view name) const
 		{
 			using proc_signature_t = nstd::add_function_pointer_t<Signature>;
 			if (auto* const pfx = reinterpret_cast<proc_signature_t>(::GetProcAddress(*this->m_module, name.data())); !pfx)
