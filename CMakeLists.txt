@@ -345,6 +345,11 @@ set_target_properties(exePlatformTests PROPERTIES
 					  LINK_FLAGS "${GLOBAL_LINKER_OPTIONS} /SUBSYSTEM:CONSOLE"
 )
 
+# Change core-platform headers to specify dllimport
+target_compile_definitions(exePlatformTests
+	PRIVATE ${PROJECT_IMPORT_MACRO}
+)
+
 # Set linker dependencies
 target_link_libraries(exePlatformTests
 	dllGoogleTest
