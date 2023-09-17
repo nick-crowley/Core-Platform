@@ -68,9 +68,9 @@ win::RegistryApi::openKey(SharedRegistryKey root, std::wstring_view path, KeyRig
 win::RegistryValue
 win::RegistryApi::getValue(SharedRegistryKey root, std::wstring_view path, std::wstring_view name) const
 {
-	auto [type, data, size] = regQueryValueEx(*root, path.data(), Reserved<DWORD*>);
-	auto value = std::make_unique<std::byte[]>(size);
-	ThrowingLResult result = ::RegQueryValueExW(*root, path.data(), Reserved<DWORD*>, nullptr, (BYTE*)value.get(), &size);
+	auto [type, _, size] = regQueryValueEx(*root, path.data(), Reserved<DWORD*>);
+	auto bytes = std::make_unique<std::byte[]>(size);
+	ThrowingLResult result = ::RegQueryValueExW(*root, path.data(), Reserved<DWORD*>, nullptr, nstd::cast_to<BYTE*>(bytes.get()), &size);
 	
 	switch (type)
 	{
@@ -78,27 +78,26 @@ win::RegistryApi::getValue(SharedRegistryKey root, std::wstring_view path, std::
 		throw system_error{ERROR_UNSUPPORTED_TYPE};
 
 	case REG_BINARY:
-		return std::vector<std::byte>{&value[0], &value[size]};
+		return std::vector<std::byte>{&bytes[0], &bytes[size]};
 
 	case REG_DWORD:
-		return *boost::reinterpret_pointer_cast<std::uint32_t>(std::move(value));
+		return *boost::reinterpret_pointer_cast<std::uint32_t>(std::move(bytes));
 
 	case REG_QWORD:
-		return *boost::reinterpret_pointer_cast<std::uint64_t>(std::move(value));
+		return *boost::reinterpret_pointer_cast<std::uint64_t>(std::move(bytes));
 
 	case REG_SZ:
 	case REG_MULTI_SZ:
 		break;
 	}
 
-	auto const str = boost::reinterpret_pointer_cast<wchar_t[]>(std::move(value));
-	auto const nChars = size/sizeof(wchar_t);
-	auto const first = ConstMultiStringIterator{{&str[0], &str[nChars]}};
+	auto const chars = boost::reinterpret_pointer_cast<wchar_t[]>(std::move(bytes));
+	auto const strings = std::wstring_view{&chars[0], &chars[size/sizeof(wchar_t)]};
 	
 	if (type == REG_SZ)
-		return std::wstring{*first};
+		return std::wstring{strings};
 	else
-		return std::vector<std::wstring>{first, ConstMultiStringIterator{}};
+		return std::vector<std::wstring>{ConstMultiStringIterator{strings}, ConstMultiStringIterator{}};
 }
 	
 void
