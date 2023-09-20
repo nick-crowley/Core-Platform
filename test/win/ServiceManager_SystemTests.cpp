@@ -58,5 +58,19 @@ TEST(ServiceManager_ST, OpenAnyService)
 	);
 }
 
+TEST(ServiceManager_ST, QueryServiceDescription) 
+{
+	using enum win::ServiceManagerRight;
+
+	//! @post	Service control manager can be opened successfully
+	auto const mgr = win::ServiceManager{Connect|EnumerateService};
+
+	//! @test	Verify description of DHCP service
+	EXPECT_EQ(
+		mgr.find(L"Dhcp", win::ServiceRight::QueryConfig).description(),
+		L"Registers and updates IP addresses and DNS records for this computer. If this service is stopped, this computer will not receive dynamic IP addresses and DNS updates. If this service is disabled, any services that explicitly depend on it will fail to start."
+	);
+}
+
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #endif	// DISABLE_SERVICE_MANAGER_SYSTEM_TESTS

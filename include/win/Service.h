@@ -28,9 +28,8 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Platform.h"
 #include "security/ServiceRight.h"
+#include "nstd/Functional.h"
 #include "win/ServiceManager.h"
-//#include "win/Boolean.h"
-//#include "win/Function.h"
 #include "win/SharedHandle.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
@@ -74,6 +73,26 @@ namespace core::win
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		std::wstring
+		description() const {
+			::DWORD bytesNeeded = 0;
+			::QueryServiceConfig2W(*this->Handle, SERVICE_CONFIG_DESCRIPTION, nullptr, 0, &bytesNeeded);
+			if (LastError err; err != ERROR_INSUFFICIENT_BUFFER)
+				err.throwAlways("QueryServiceConfig2W() failed");
+
+			auto buffer = boost::reinterpret_pointer_cast<::SERVICE_DESCRIPTION>(
+				std::make_unique<std::byte[]>(bytesNeeded)
+			);
+			if (!::QueryServiceConfig2W(*this->Handle, 
+			                            SERVICE_CONFIG_DESCRIPTION, 
+			                            nstd::cast_to<::BYTE*>(buffer.get()), 
+			                            bytesNeeded, 
+			                            &bytesNeeded))
+				LastError{}.throwAlways("QueryServiceConfig2W() failed");
+			
+			return std::wstring{buffer->lpDescription, (bytesNeeded / sizeof(wchar_t)) - 5};
+		}
+
 		SharedService
 		handle() const {
 			return this->Handle;
