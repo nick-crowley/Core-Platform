@@ -76,6 +76,7 @@ namespace core::win
 		Read = STANDARD_RIGHTS_READ,			//!< Read the discretionary ACL
 		Required = STANDARD_RIGHTS_REQUIRED,	//!< Delete, Read/modify DACL, Modify Owner
 		Write = STANDARD_RIGHTS_WRITE,			//!< Read the discretionary ACL (NB: Not a mistake)
+		Synchronize = SYNCHRONIZE,              //!< Wait on object
 	};
 
 }      // namespace core::win

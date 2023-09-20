@@ -54,7 +54,6 @@ namespace core::win {
 		AdjustMemory = PROCESS_VM_OPERATION,              //!< Operate on process address space
 		ReadMemory = PROCESS_VM_READ,                     //!< Read from process memory
 		WriteMemory = PROCESS_VM_WRITE,                   //!< Write to process memory
-		Synchronize = SYNCHRONIZE,                        //!< Wait for process to terminate
 	};
 	
 	enum class CommonRight : access_mask_t;
