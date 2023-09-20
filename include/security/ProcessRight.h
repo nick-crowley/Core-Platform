@@ -65,12 +65,12 @@ namespace core::win {
 namespace core::meta 
 {
 	//! @brief	@c core::win::ProcessRight is a bitflag
-	metadata bool Settings<bitwise_enum, core::win::ProcessRight> = true;
+	metadata bool Settings<bitwise_enum, win::ProcessRight> = true;
 
 	//! @brief	@c core::win::ProcessRight can be combined with common/standard/generic rights
-	metadata bool Settings<compatible_enum, core::win::ProcessRight, core::win::CommonRight> = true;
-	metadata bool Settings<compatible_enum, core::win::ProcessRight, core::win::GenericRight> = true;
-	metadata bool Settings<compatible_enum, core::win::ProcessRight, core::win::StandardRight> = true;
+	metadata bool Settings<compatible_enum, win::ProcessRight, win::CommonRight> = true;
+	metadata bool Settings<compatible_enum, win::ProcessRight, win::GenericRight> = true;
+	metadata bool Settings<compatible_enum, win::ProcessRight, win::StandardRight> = true;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
