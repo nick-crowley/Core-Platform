@@ -83,22 +83,22 @@ namespace core::win
 namespace core::meta 
 {
 	//! @brief	@c core::win::CommonRight is a bitflag
-	metadata bool Settings<bitwise_enum, core::win::CommonRight> = true;
+	metadata bool Settings<bitwise_enum, win::CommonRight> = true;
 	
 	//! @brief	@c core::win::GenericRight is a bitflag
-	metadata bool Settings<bitwise_enum, core::win::GenericRight> = true;
+	metadata bool Settings<bitwise_enum, win::GenericRight> = true;
 	
 	//! @brief	@c core::win::StandardRight is a bitflag
-	metadata bool Settings<bitwise_enum, core::win::StandardRight> = true;
+	metadata bool Settings<bitwise_enum, win::StandardRight> = true;
 	
 	//! @brief	@c core::win::StandardRight can be combined with core::win::CommonRight
-	metadata bool Settings<compatible_enum, core::win::StandardRight, core::win::CommonRight> = true;
+	metadata bool Settings<compatible_enum, win::StandardRight, win::CommonRight> = true;
 
 	//! @brief	@c core::win::StandardRight can be combined with core::win::GenericRight
-	metadata bool Settings<compatible_enum, core::win::StandardRight, core::win::GenericRight> = true;
+	metadata bool Settings<compatible_enum, win::StandardRight, win::GenericRight> = true;
 
 	//! @brief	@c core::win::GenericRight can be combined with core::win::CommonRight
-	metadata bool Settings<compatible_enum, core::win::GenericRight, core::win::CommonRight> = true;
+	metadata bool Settings<compatible_enum, win::GenericRight, win::CommonRight> = true;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
