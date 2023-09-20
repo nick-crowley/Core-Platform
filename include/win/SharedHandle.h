@@ -33,6 +33,15 @@ namespace core::detail
         auto constexpr
         inline static release = &::FreeLibrary;
     };
+
+    template <>
+    struct HandleTraits<::SC_HANDLE> {
+        ::SC_HANDLE constexpr
+        inline static empty = nullptr;
+
+        auto constexpr
+        inline static release = &::CloseServiceHandle;
+    };  
 }
 
 namespace core::win
@@ -66,6 +75,9 @@ namespace core::win
     //! @brief  Shared @c ::HANDLE released using @c ::CloseHandle()
     using SharedProcess = SharedHandle;
 
+    //! @brief  Shared @c ::SC_HANDLE released using @c ::CloseServiceHandle()
+    using SharedService = SmartHandle<::SC_HANDLE>;
+    
     //! @brief  Shared @c ::HANDLE released using @c ::CloseHandle()
     using SharedThread = SharedHandle;
     
