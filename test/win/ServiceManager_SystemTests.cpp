@@ -24,14 +24,12 @@
 * the projects which contain it.
 */
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Preprocessor Directives o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#pragma once
+#ifndef DISABLE_SERVICE_MANAGER_SYSTEM_TESTS
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "library/core.Platform.h"
-#include "security/ServiceManagerRight.h"
-#include "win/Service.h"
-#include "win/SharedHandle.h"
+#include <gtest/gtest.h>
+#include <win/ServiceManager.h>
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
+using namespace core;
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -39,46 +37,26 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-namespace core::win
-{
-	class ServiceManager
-	{
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	private:
-		SharedServiceManager Handle;
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		explicit
-		ServiceManager(ServiceManagerRight rights) 
-		  : Handle{::OpenSCManagerW(nullptr, nullptr, DWord{rights})}
-		{}
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		Service
-		find(std::wstring_view name, ServiceRight rights) const {
-			return Service{
-				SharedService{::OpenServiceW(*this->Handle, ThrowIfEmpty(name).data(), DWord{rights})}
-			};
-		}
-
-		SharedServiceManager
-		handle() const {
-			return this->Handle;
-		}
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	};
-}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-namespace core::win
+
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+TEST(ServiceManager_ST, OpenAnyService) 
 {
-	
-}	
+	using enum win::ServiceManagerRight;
+
+	//! @post	Service control manager can be opened successfully
+	auto const mgr = win::ServiceManager{Connect|EnumerateService};
+
+	//! @test	Verify DHCP service existing and is running
+	EXPECT_EQ(
+		mgr.find(L"Dhcp", win::ServiceRight::QueryStatus).state(),
+		win::ServiceState::Running
+	);
+}
+
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+#endif	// DISABLE_SERVICE_MANAGER_SYSTEM_TESTS
