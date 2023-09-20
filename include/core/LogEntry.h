@@ -36,7 +36,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core
 {
-	enum class Severity : unsigned {Verbose,Important,Warning,Failure};
+	enum class Severity : unsigned {Verbose,Heading,Important,Warning,Failure};
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core
@@ -67,6 +67,9 @@ namespace core
 	//! @brief	High-level/important log-entry
 	using Important = LogEntry<Severity::Important>;
 	
+	//! @brief	Underlined heading log-entry (distinguishes separate executions)
+	using Heading = LogEntry<Severity::Heading>;
+
 	//! @brief	Warning log-entry
 	using Warning = LogEntry<Severity::Warning>;
 	

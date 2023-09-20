@@ -133,6 +133,24 @@ namespace core
 			return *this;
 		}
 		
+		template <>
+		LogStream&
+		operator<<(Heading const& entry) {
+			if (!this->outputStream)
+				return *this;
+
+			std::lock_guard lock{LogStream::IsWriting};
+			if (auto const* str = std::get_if<std::string>(&entry.Text)) {
+				this->write(Severity::Important, *str);
+				this->write(Severity::Important, std::string(str->length(), '-'));
+			}
+			else if (auto const* wstr = std::get_if<std::wstring>(&entry.Text)) {
+				this->write(Severity::Important, *wstr);
+				this->write(Severity::Important, std::string(wstr->length(), '-'));
+			}
+			return *this;
+		}
+		
 		LogStream&
 		operator<<(std::exception const& e) {
 			if (!this->outputStream)
