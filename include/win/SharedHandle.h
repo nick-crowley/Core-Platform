@@ -55,6 +55,9 @@ namespace core::win
             auto constexpr
             inline static release = &::CloseHandle;
         };
+
+        struct ServiceManagerHandleTraits : core::detail::HandleTraits<::SC_HANDLE>
+        {};
     }
 
     //! @brief  Shared @c ::HANDLE released using @c ::CloseHandle()
@@ -74,9 +77,12 @@ namespace core::win
     
     //! @brief  Shared @c ::HANDLE released using @c ::CloseHandle()
     using SharedProcess = SharedHandle;
-
+    
     //! @brief  Shared @c ::SC_HANDLE released using @c ::CloseServiceHandle()
     using SharedService = SmartHandle<::SC_HANDLE>;
+    
+    //! @brief  Shared @c ::SC_HANDLE released using @c ::CloseServiceHandle() but distinct from service handles
+    using SharedServiceManager = SmartHandle<::SC_HANDLE, detail::ServiceManagerHandleTraits>;
     
     //! @brief  Shared @c ::HANDLE released using @c ::CloseHandle()
     using SharedThread = SharedHandle;
