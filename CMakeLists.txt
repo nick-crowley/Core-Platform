@@ -316,14 +316,26 @@ target_compile_options(dllGoogleTest
 message("exePlatformTests: Generating project(s) from ${PROJECT_SOURCE_FOLDER} with ${PROJECT_SOURCE_FOLDER}")
 
 # Test files
-file(GLOB_RECURSE PROJECT_UNIT_TEST_FILES
+file(GLOB_RECURSE PROJECT_TEST_FILES
     "${PROJECT_TEST_FOLDER}*.h"
     "${PROJECT_TEST_FOLDER}*.cpp"
-    )
+)
+
+# Optimized build test files
+file(GLOB_RECURSE PROJECT_TEST_CC_FILES
+    "${PROJECT_TEST_FOLDER}*.h"
+    "${PROJECT_TEST_FOLDER}*.cc"
+)
 
 # Project: exePlatformTests
 add_executable(exePlatformTests
-	${PROJECT_UNIT_TEST_FILES}
+	${PROJECT_TEST_CC_FILES}
+	${PROJECT_TEST_FILES}
+)
+
+# Exclude .cpp files from building
+set_source_files_properties(${PROJECT_TEST_FILES} PROPERTIES 
+    HEADER_FILE_ONLY ON
 )
 
 # Include folders
@@ -390,7 +402,7 @@ source_group(TREE ${PROJECT_INCLUDE_FOLDER}   PREFIX "Header Files"   FILES ${PR
 source_group(TREE ${PROJECT_SOURCE_FOLDER}    PREFIX "Source Files"   FILES ${PROJECT_SOURCE_FILES})
 source_group(TREE ${PROJECT_RESOURCE_FOLDER}  PREFIX "Resource Files" FILES ${PROJECT_RESOURCE_FILES})
 
-# unit-test file groups
-#source_group(TREE ${PROJECT_TEST_FOLDER}   PREFIX "Build Files"  FILES ${PROJECT_UNIT_TEST_CC_FILES})
-source_group(TREE ${PROJECT_TEST_FOLDER}   PREFIX "Test Files"   FILES ${PROJECT_UNIT_TEST_FILES})
+# Test file groups
+source_group(TREE ${PROJECT_TEST_FOLDER}   PREFIX "Build Files"  FILES ${PROJECT_TEST_CC_FILES}})
+source_group(TREE ${PROJECT_TEST_FOLDER}   PREFIX "Test Files"   FILES ${PROJECT_TEST_FILES})
 source_group(TREE ${PROJECT_MOCK_FOLDER}   PREFIX "Mock Files"   FILES ${PROJECT_MOCK_FILES})
