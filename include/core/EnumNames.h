@@ -111,9 +111,7 @@ namespace core
 		          std::underlying_type_t<E> Finish,
 		          nstd::EnumSequenceOf<E>   Result>
 			requires std::signed_integral<std::underlying_type_t<E>> 
-			      && (Start > 0)
-			      && (Finish > 0)
-			      && (Start <= Finish)
+			      && (Start <= Finish && Start > 0 && Finish > 0)
 			      && (nstd::is_pow2(Start))
 			      && (nstd::is_pow2(Finish))
 			      && (Finish != std::numeric_limits<std::underlying_type_t<E>>::min())
