@@ -47,9 +47,9 @@ namespace core
 {
 	namespace detail 
 	{
-		template <nstd::Enumeration E, nstd::EnumSequenceOf<E> Sequence, auto Value>
-		using push_back_if_valid_t = std::conditional_t<is_valid_enumerator_v<E,Value>, 
-		                                                nstd::sequence_push_back_t<Sequence,static_cast<E>(Value)>, 
+		template <nstd::EnumSequence Sequence, auto Value>
+		using push_back_if_valid_t = std::conditional_t<is_valid_enumerator_v<nstd::sequence_element_t<Sequence>,Value>, 
+		                                                nstd::sequence_push_back_t<Sequence,static_cast<nstd::sequence_element_t<Sequence>>(Value)>, 
 		                                                Sequence>;
 
 		template <nstd::Enumeration         E,
@@ -59,8 +59,8 @@ namespace core
 			requires (Start <= Finish)
 		metafunc linear_search_impl : std::conditional_t<
 			Start == Finish,
-			std::type_identity<push_back_if_valid_t<E, Result, Finish>>,
-			linear_search_impl<E, (Start+1 <= Finish ? Start+1 : Finish), Finish, push_back_if_valid_t<E,Result,Start>>
+			std::type_identity<push_back_if_valid_t<Result,Finish>>,
+			linear_search_impl<E, (Start+1 <= Finish ? Start+1 : Finish), Finish, push_back_if_valid_t<Result,Start>>
 		> 
 		{};
 		
@@ -74,8 +74,8 @@ namespace core
 			      && (nstd::is_pow2(Finish))
 		metafunc geometric_search_impl : std::conditional_t<
 			Start == Finish,
-			std::type_identity<push_back_if_valid_t<E, Result, Finish>>,
-			geometric_search_impl<E, (Start<<1 != Finish && Start<<1 != 0 ? Start<<1 : Finish), Finish, push_back_if_valid_t<E,Result,Start>>
+			std::type_identity<push_back_if_valid_t<Result,Finish>>,
+			geometric_search_impl<E, (Start<<1 != Finish && Start<<1 != 0 ? Start<<1 : Finish), Finish, push_back_if_valid_t<Result,Start>>
 		> 
 		{};
 	}
