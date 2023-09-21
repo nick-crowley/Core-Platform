@@ -57,12 +57,18 @@ namespace core
 		          std::underlying_type_t<E> Finish,
 		          nstd::EnumSequenceOf<E>   Result = nstd::enum_sequence<E>>
 			requires (Start <= Finish)
-		metafunc linear_search_impl : std::conditional_t<
+		metafunc LinearSearch : std::conditional_t<
 			Start == Finish,
 			std::type_identity<push_back_if_valid_enum_t<Result,Finish>>,
-			linear_search_impl<E, (Start+1 <= Finish ? Start+1 : Finish), Finish, push_back_if_valid_enum_t<Result,Start>>
+			LinearSearch<E, (Start+1 <= Finish ? Start+1 : Finish), Finish, push_back_if_valid_enum_t<Result,Start>>
 		> 
 		{};
+
+		template <nstd::Enumeration         E,
+		          std::underlying_type_t<E> Start,
+		          std::underlying_type_t<E> Finish,
+		          nstd::EnumSequenceOf<E>   Result = nstd::enum_sequence<E>>
+		using LinearSearch_t = typename LinearSearch<E,Start,Finish,Result>::type;
 	}
 	
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
@@ -74,7 +80,7 @@ namespace core
 	*/
 	template <nstd::Enumeration E, std::underlying_type_t<E> Start, std::underlying_type_t<E> Finish>
 		requires (Start < Finish)
-	using BlindLinearSearch = typename detail::linear_search_impl<E,Start,Finish>::type;
+	using BlindLinearSearch = detail::LinearSearch_t<E,Start,Finish>;
 	
 
 	namespace detail 
@@ -83,7 +89,7 @@ namespace core
 		          std::underlying_type_t<E> Start,
 		          std::underlying_type_t<E> Finish,
 		          nstd::EnumSequenceOf<E>   Result = nstd::enum_sequence<E>>
-		metafunc geometric_search_impl;
+		metafunc GeometricSearch;
 
 		template <nstd::Enumeration         E,
 		          std::underlying_type_t<E> Start,
@@ -93,10 +99,10 @@ namespace core
 			      && (Start <= Finish)
 			      && (nstd::is_pow2(Start))
 			      && (nstd::is_pow2(Finish))
-		metafunc geometric_search_impl<E,Start,Finish,Result> : std::conditional_t<
+		metafunc GeometricSearch<E,Start,Finish,Result> : std::conditional_t<
 			Start == Finish,
 			std::type_identity<push_back_if_valid_enum_t<Result,Finish>>,
-			geometric_search_impl<E, (Start<<1 != Finish && Start<<1 != 0 ? Start<<1 : Finish), Finish, push_back_if_valid_enum_t<Result,Start>>
+			GeometricSearch<E, (Start<<1 != Finish && Start<<1 != 0 ? Start<<1 : Finish), Finish, push_back_if_valid_enum_t<Result,Start>>
 		> 
 		{};
 
@@ -111,12 +117,20 @@ namespace core
 			      && (nstd::is_pow2(Start))
 			      && (nstd::is_pow2(Finish))
 			      && (Finish != std::numeric_limits<std::underlying_type_t<E>>::min())
-		metafunc geometric_search_impl<E,Start,Finish,Result> : std::conditional_t<
+		metafunc GeometricSearch<E,Start,Finish,Result> : std::conditional_t<
 			Start == Finish,
 			std::type_identity<push_back_if_valid_enum_t<Result,Finish>>,
-			geometric_search_impl<E, (Start<<1 != Finish && Start<<1 != 0 ? Start<<1 : Finish), Finish, push_back_if_valid_enum_t<Result,Start>>
+			GeometricSearch<E, (Start<<1 != Finish && Start<<1 != 0 ? Start<<1 : Finish), Finish, push_back_if_valid_enum_t<Result,Start>>
 		> 
 		{};
+
+				  
+		template <nstd::Enumeration         E,
+		          std::underlying_type_t<E> Start,
+		          std::underlying_type_t<E> Finish,
+		          nstd::EnumSequenceOf<E>   Result = nstd::enum_sequence<E>>
+		using GeometricSearch_t = typename GeometricSearch<E,Start,Finish,Result>::type;
+
 
 		template <nstd::Integer>
 		metafunc max_pow2;
@@ -141,12 +155,12 @@ namespace core
 	*/
 	template <nstd::Enumeration E, std::underlying_type_t<E> Start, std::underlying_type_t<E> Finish>
 		requires (Start < Finish) 
-	using BlindLinearSearchThenPowersOf2 = typename detail::geometric_search_impl<
+	using BlindLinearSearchThenPowersOf2 = detail::GeometricSearch_t<
 		E,
 		std::bit_ceil<std::make_unsigned_t<std::underlying_type_t<E>>>(Finish),
 		detail::max_pow2<std::underlying_type_t<E>>::value,
-		typename detail::linear_search_impl<E,Start,Finish>::type
-	>::type;
+		detail::LinearSearch_t<E,Start,Finish>
+	>;
 
 	
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
