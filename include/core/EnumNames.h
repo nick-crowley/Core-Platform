@@ -48,7 +48,7 @@ namespace core
 	namespace detail 
 	{
 		template <nstd::EnumSequence Sequence, auto Value>
-		using push_back_if_valid_t = std::conditional_t<is_valid_enumerator_v<nstd::sequence_element_t<Sequence>,Value>, 
+		using push_back_if_valid_t = std::conditional_t<is_valid_enumerator_v<static_cast<nstd::sequence_element_t<Sequence>>(Value)>, 
 		                                                nstd::sequence_push_back_t<Sequence,static_cast<nstd::sequence_element_t<Sequence>>(Value)>, 
 		                                                Sequence>;
 
@@ -119,7 +119,7 @@ namespace core
 	*/
 	template <nstd::Enumeration E, E... Values>
 		requires (sizeof...(Values) >= 1)
-		      && (is_valid_enumerator_v<E,Values> && ...)
+		      && (is_valid_enumerator_v<Values> && ...)
 	using SuppliedValues = nstd::enum_sequence<E,Values...>;
 
 
@@ -149,7 +149,7 @@ namespace core
 	template <nstd::Enumeration E, E... Values>
 	std::array<EnumName<E>,sizeof...(Values)> constexpr
 	enumerator_dictionary_v<E, nstd::enum_sequence<E,Values...>> {
-		EnumName<E>{enumerator_name_v<E,Values>, Values}...
+		EnumName<E>{enumerator_name_v<Values>, Values}...
 	};	
 	
 	

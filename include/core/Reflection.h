@@ -129,30 +129,30 @@ namespace core
 
 	namespace detail
 	{
-		template <nstd::Enumeration E, E Enumerator>
+		template <auto Enumerator>
+			requires nstd::Enumeration<decltype(Enumerator)>
 		auto constexpr
 		__cdecl nameof() noexcept 
 		{
 			using namespace std::string_view_literals;
-			//__FUNCSIG__: auto __cdecl nameof<enum E1,E1::None>(void) noexcept
-			//             auto __cdecl nameof<enum N1::E1,N1::E1::None>(void) noexcept
-			//             auto __cdecl nameof<enum N1::E1,(enum N1::E1)0x16>(void) noexcept
+			//__FUNCSIG__: auto __cdecl nameof<E1::None>(void) noexcept
+			//             auto __cdecl nameof<N1::E1::None>(void) noexcept
+			//             auto __cdecl nameof<(enum N1::E1)0x16>(void) noexcept
 			
 			std::string_view constexpr Signature{__FUNCSIG__, sizeof(__FUNCSIG__)-1};
 			static_assert(Signature.starts_with("auto __cdecl core::detail::nameof<"));
 			static_assert(Signature.ends_with(">(void) noexcept"));
 
 			std::string_view constexpr ParamList{
-				Signature.begin() + "auto __cdecl core::detail::nameof<enum "sv.length(),
+				Signature.begin() + "auto __cdecl core::detail::nameof<"sv.length(),
 				Signature.end() - ">(void) noexcept"sv.length()
 			};
 
-			//ParamList: E1,E1::None
-			//           N1::E1,N1::E1::None
-			//           N1::E1,(enum N1::E1)0x16
+			//ParamList: E1::None
+			//           N1::E1::None
+			//           (enum N1::E1)0x16
 			std::string_view name = ParamList;
-			name.remove_prefix(name.find(',')+1);	// BUG: What happens if E1 is within a template T1 with >1 arguments?
-			if (name.starts_with('('))
+			if (name.starts_with('(')) 
 				return std::string_view{};
 
 			name.remove_prefix(name.find_last_of("::")+1);
@@ -165,17 +165,18 @@ namespace core
 	*
 	* @returns	Non-empty string if enumerator is valid, otherwise empty string
 	*/
-	template <nstd::Enumeration E, E Enumerator>
+	template <auto Enumerator>
+		requires nstd::Enumeration<decltype(Enumerator)>
 	std::string_view constexpr
-	enumerator_name_v = detail::nameof<E, Enumerator>();
+	enumerator_name_v = detail::nameof<Enumerator>();
 	
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
-	* @brief	Query whether a value represents a valid enumerator of enumeration @c E
+	* @brief	Query whether an enumerator value is a _valid_ enumerator
 	*/
-	template <nstd::Enumeration E, auto Enumerator>
+	template <auto Enumerator>
+		requires nstd::Enumeration<decltype(Enumerator)>
 	bool constexpr
-	is_valid_enumerator_v = enumerator_name_v<E, static_cast<E>(Enumerator)>.size() != 0;
-
+	is_valid_enumerator_v = !enumerator_name_v<Enumerator>.empty();
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::testing
@@ -202,10 +203,10 @@ namespace core::testing
 	};
 
 	static_assert(enumeration_name_v<E2> == "core::testing::E2");
-	static_assert(enumerator_name_v<E2, E2::Twenty> == "Twenty");
-	static_assert(is_valid_enumerator_v<E2,E2::Zero>);
-	static_assert(!is_valid_enumerator_v<E2,5>);
-	static_assert(is_valid_enumerator_v<E2,E2::Six>);
+	static_assert(enumerator_name_v<E2::Twenty> == "Twenty");
+	static_assert(is_valid_enumerator_v<E2::Zero>);
+	static_assert(!is_valid_enumerator_v<(E2)5>);
+	static_assert(is_valid_enumerator_v<E2::Six>);
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
