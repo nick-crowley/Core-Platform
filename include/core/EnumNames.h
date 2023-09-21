@@ -47,6 +47,7 @@ namespace core
 {
 	namespace detail 
 	{
+		// Appends a sequence with a value iff its a valid enumerator
 		template <nstd::EnumSequence Sequence, auto Value>
 		using push_back_if_valid_enum_t = std::conditional_t<
 			is_valid_enumerator_v<static_cast<nstd::sequence_element_t<Sequence>>(Value)>, 
@@ -54,6 +55,7 @@ namespace core
 		    Sequence
 		>;
 
+		// Blind search (through a contiguous range) for valid enumerators
 		template <nstd::Enumeration         E,
 		          std::underlying_type_t<E> Start,
 		          std::underlying_type_t<E> Finish,
@@ -67,6 +69,7 @@ namespace core
 			> 
 		{};
 
+		// Type accessor
 		template <nstd::Enumeration         E,
 		          std::underlying_type_t<E> Start,
 		          std::underlying_type_t<E> Finish,
@@ -94,6 +97,7 @@ namespace core
 		          nstd::EnumSequenceOf<E>   Result = nstd::enum_sequence<E>>
 		metafunc GeometricSearch;
 
+		// Specialization for unsigned underlying types
 		template <nstd::Enumeration         E,
 		          std::underlying_type_t<E> Start,
 		          std::underlying_type_t<E> Finish,
@@ -110,6 +114,7 @@ namespace core
 			> 
 		{};
 
+		// Specialization for signed underlying types
 		template <nstd::Enumeration         E,
 		          std::underlying_type_t<E> Start,
 		          std::underlying_type_t<E> Finish,
@@ -127,7 +132,7 @@ namespace core
 			> 
 		{};
 
-				  
+		// Type accessor
 		template <nstd::Enumeration         E,
 		          std::underlying_type_t<E> Start,
 		          std::underlying_type_t<E> Finish,
@@ -135,6 +140,7 @@ namespace core
 		using GeometricSearch_t = typename GeometricSearch<E,Start,Finish,Result>::type;
 
 
+		//! @brief	Maximum power-of-2 for any integer representation
 		template <nstd::Integer>
 		metafunc max_pow2;
 
