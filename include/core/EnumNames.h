@@ -233,9 +233,7 @@ namespace core
 	template <nstd::Enumeration E>
 	bool constexpr
 	is_valid_enumerator(E value) {
-		return ranges::any_of(enumerator_dictionary_v<E> | views::values, [=](auto e){ 
-			return e == value; 
-		});
+		return ranges::any_of(enumerator_dictionary_v<E> | views::values, lambda(=, e, e == value));
 	}
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
