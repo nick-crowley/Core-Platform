@@ -91,6 +91,20 @@ namespace core
 
 	namespace detail 
 	{
+		// Common implementation
+		template <nstd::Enumeration         E,
+		          std::underlying_type_t<E> Start,
+		          std::underlying_type_t<E> Finish,
+		          nstd::EnumSequenceOf<E>   Result = nstd::enum_sequence<E>>
+		metafunc GeometricSearchImpl
+			: std::conditional_t<
+				Start == Finish,
+				std::type_identity<push_back_if_valid_enum_t<Result,Finish>>,
+				GeometricSearchImpl<E, (Start<<1 != Finish && Start<<1 != 0 ? Start<<1 : Finish), Finish, push_back_if_valid_enum_t<Result,Start>>
+			> 
+		{};
+
+		// Blind search through powers-of-2 (within a given range) for valid enumerators
 		template <nstd::Enumeration         E,
 		          std::underlying_type_t<E> Start,
 		          std::underlying_type_t<E> Finish,
@@ -106,12 +120,7 @@ namespace core
 			      && (Start <= Finish)
 			      && (nstd::is_pow2(Start))
 			      && (nstd::is_pow2(Finish))
-		metafunc GeometricSearch<E,Start,Finish,Result> 
-		  : std::conditional_t<
-				Start == Finish,
-				std::type_identity<push_back_if_valid_enum_t<Result,Finish>>,
-				GeometricSearch<E, (Start<<1 != Finish && Start<<1 != 0 ? Start<<1 : Finish), Finish, push_back_if_valid_enum_t<Result,Start>>
-			> 
+		metafunc GeometricSearch<E,Start,Finish,Result> : GeometricSearchImpl<E,Start,Finish,Result>
 		{};
 
 		// Specialization for signed underlying types
@@ -124,12 +133,7 @@ namespace core
 			      && (nstd::is_pow2(Start))
 			      && (nstd::is_pow2(Finish))
 			      && (Finish != std::numeric_limits<std::underlying_type_t<E>>::min())
-		metafunc GeometricSearch<E,Start,Finish,Result> 
-		  : std::conditional_t<
-				Start == Finish,
-				std::type_identity<push_back_if_valid_enum_t<Result,Finish>>,
-				GeometricSearch<E, (Start<<1 != Finish && Start<<1 != 0 ? Start<<1 : Finish), Finish, push_back_if_valid_enum_t<Result,Start>>
-			> 
+		metafunc GeometricSearch<E,Start,Finish,Result> : GeometricSearchImpl<E,Start,Finish,Result>
 		{};
 
 		// Type accessor
