@@ -48,20 +48,23 @@ namespace core
 	namespace detail 
 	{
 		template <nstd::EnumSequence Sequence, auto Value>
-		using push_back_if_valid_enum_t = std::conditional_t<is_valid_enumerator_v<static_cast<nstd::sequence_element_t<Sequence>>(Value)>, 
-		                                                nstd::sequence_push_back_t<Sequence,static_cast<nstd::sequence_element_t<Sequence>>(Value)>, 
-		                                                Sequence>;
+		using push_back_if_valid_enum_t = std::conditional_t<
+			is_valid_enumerator_v<static_cast<nstd::sequence_element_t<Sequence>>(Value)>, 
+		    nstd::sequence_push_back_t<Sequence,static_cast<nstd::sequence_element_t<Sequence>>(Value)>, 
+		    Sequence
+		>;
 
 		template <nstd::Enumeration         E,
 		          std::underlying_type_t<E> Start,
 		          std::underlying_type_t<E> Finish,
 		          nstd::EnumSequenceOf<E>   Result = nstd::enum_sequence<E>>
 			requires (Start <= Finish)
-		metafunc LinearSearch : std::conditional_t<
-			Start == Finish,
-			std::type_identity<push_back_if_valid_enum_t<Result,Finish>>,
-			LinearSearch<E, (Start+1 <= Finish ? Start+1 : Finish), Finish, push_back_if_valid_enum_t<Result,Start>>
-		> 
+		metafunc LinearSearch 
+		  : std::conditional_t<
+				Start == Finish,
+				std::type_identity<push_back_if_valid_enum_t<Result,Finish>>,
+				LinearSearch<E, (Start+1 <= Finish ? Start+1 : Finish), Finish, push_back_if_valid_enum_t<Result,Start>>
+			> 
 		{};
 
 		template <nstd::Enumeration         E,
@@ -99,11 +102,12 @@ namespace core
 			      && (Start <= Finish)
 			      && (nstd::is_pow2(Start))
 			      && (nstd::is_pow2(Finish))
-		metafunc GeometricSearch<E,Start,Finish,Result> : std::conditional_t<
-			Start == Finish,
-			std::type_identity<push_back_if_valid_enum_t<Result,Finish>>,
-			GeometricSearch<E, (Start<<1 != Finish && Start<<1 != 0 ? Start<<1 : Finish), Finish, push_back_if_valid_enum_t<Result,Start>>
-		> 
+		metafunc GeometricSearch<E,Start,Finish,Result> 
+		  : std::conditional_t<
+				Start == Finish,
+				std::type_identity<push_back_if_valid_enum_t<Result,Finish>>,
+				GeometricSearch<E, (Start<<1 != Finish && Start<<1 != 0 ? Start<<1 : Finish), Finish, push_back_if_valid_enum_t<Result,Start>>
+			> 
 		{};
 
 		template <nstd::Enumeration         E,
@@ -115,11 +119,12 @@ namespace core
 			      && (nstd::is_pow2(Start))
 			      && (nstd::is_pow2(Finish))
 			      && (Finish != std::numeric_limits<std::underlying_type_t<E>>::min())
-		metafunc GeometricSearch<E,Start,Finish,Result> : std::conditional_t<
-			Start == Finish,
-			std::type_identity<push_back_if_valid_enum_t<Result,Finish>>,
-			GeometricSearch<E, (Start<<1 != Finish && Start<<1 != 0 ? Start<<1 : Finish), Finish, push_back_if_valid_enum_t<Result,Start>>
-		> 
+		metafunc GeometricSearch<E,Start,Finish,Result> 
+		  : std::conditional_t<
+				Start == Finish,
+				std::type_identity<push_back_if_valid_enum_t<Result,Finish>>,
+				GeometricSearch<E, (Start<<1 != Finish && Start<<1 != 0 ? Start<<1 : Finish), Finish, push_back_if_valid_enum_t<Result,Start>>
+			> 
 		{};
 
 				  
