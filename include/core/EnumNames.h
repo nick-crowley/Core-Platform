@@ -63,7 +63,22 @@ namespace core
 			linear_search_impl<E, (Start+1 <= Finish ? Start+1 : Finish), Finish, push_back_if_valid_t<Result,Start>>
 		> 
 		{};
-		
+	}
+	
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief	Compile-time search algorithm which locates enumerators using a blind linear search
+	*
+	* @tparam	E	Enumeration whos enumerators are to be searched
+	* @tparam	Start	Inclusive minimum of search range
+	* @tparam	Finish	Inclusive maximum of search range
+	*/
+	template <nstd::Enumeration E, std::underlying_type_t<E> Start, std::underlying_type_t<E> Finish>
+		requires (Start < Finish)
+	using BlindLinearSearch = typename detail::linear_search_impl<E,Start,Finish>::type;
+	
+
+	namespace detail 
+	{
 		template <nstd::Enumeration         E,
 		          std::underlying_type_t<E> Start,
 		          std::underlying_type_t<E> Finish,
@@ -79,18 +94,6 @@ namespace core
 		> 
 		{};
 	}
-	
-	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
-	* @brief	Compile-time search algorithm which locates enumerators using a blind linear search
-	*
-	* @tparam	E	Enumeration whos enumerators are to be searched
-	* @tparam	Start	Inclusive minimum of search range
-	* @tparam	Finish	Inclusive maximum of search range
-	*/
-	template <nstd::Enumeration E, std::underlying_type_t<E> Start, std::underlying_type_t<E> Finish>
-		requires (Start < Finish)
-	using BlindLinearSearch = typename detail::linear_search_impl<E,Start,Finish>::type;
-
 	
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 	* @brief	Compile-time search algorithm which extends blind linear search with a scan of remaining power-of-2 values
