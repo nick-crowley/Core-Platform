@@ -136,13 +136,14 @@ namespace core
 	* @tparam	E	Enumeration whos enumerators are to be searched
 	* @tparam	Start	Inclusive minimum of search range for initial blind linear search
 	* @tparam	Finish	Inclusive maximum of search range for initial blind linear search
+	* 
+	* @remarks	Scan of remaining power-of-2 values begins at the next power-of-2 following @p Finish
 	*/
 	template <nstd::Enumeration E, std::underlying_type_t<E> Start, std::underlying_type_t<E> Finish>
 		requires (Start < Finish) 
-		      && (nstd::is_pow2(Finish))
 	using BlindLinearSearchThenPowersOf2 = typename detail::geometric_search_impl<
 		E,
-		Finish,
+		std::bit_ceil<std::make_unsigned_t<std::underlying_type_t<E>>>(Finish),
 		detail::max_pow2<std::underlying_type_t<E>>::value,
 		typename detail::linear_search_impl<E,Start,Finish>::type
 	>::type;
@@ -249,7 +250,7 @@ namespace core::testing
 	>);
 	
 	static_assert(std::same_as<
-		BlindLinearSearchThenPowersOf2<E2,0,32>,
+		BlindLinearSearchThenPowersOf2<E2,0,21>,
 		nstd::enum_sequence<E2,E2::Zero,E2::One,E2::Two,E2::Six,E2::Twenty,
 			E2::v2_6,E2::v2_7,E2::v2_8,E2::v2_9,E2::v2_10,E2::v2_28,E2::v2_29,E2::v2_30,E2::v2_31>
 	>);
@@ -267,7 +268,7 @@ namespace core::testing
 	static_assert(!is_valid_enumerator(SignedEnum{3}));
 	
 	static_assert(std::same_as<
-		BlindLinearSearchThenPowersOf2<SignedEnum,0,4>,
+		BlindLinearSearchThenPowersOf2<SignedEnum,0,3>,
 		nstd::enum_sequence<SignedEnum,SignedEnum::Zero,SignedEnum::One,SignedEnum::Two,SignedEnum::v2_29,SignedEnum::v2_30>
 	>);
 }
