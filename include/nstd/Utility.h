@@ -65,5 +65,18 @@ namespace nstd
 	static_assert( is_pow2<signed char>(+0b00100000));
 	static_assert( is_pow2<signed char>(+0b01000000));
 	static_assert(!is_pow2<signed char>(-0b10000000));
+	
+
+	//! @brief	Maximum power-of-2 for any integer representation
+	template <Integer>
+	metafunc max_pow2;
+
+	template <std::signed_integral N>
+	metafunc max_pow2<N> : std::integral_constant<N, 1 << (-2 + sizeof(N)*8)>
+	{};
+
+	template <std::unsigned_integral N>
+	metafunc max_pow2<N> : std::integral_constant<N, 1 << (-1 + sizeof(N)*8)>
+	{};
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

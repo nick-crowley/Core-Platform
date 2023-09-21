@@ -143,18 +143,6 @@ namespace core
 		          nstd::EnumSequenceOf<E>   Result = nstd::enum_sequence<E>>
 		using GeometricSearch_t = typename GeometricSearch<E,Start,Finish,Result>::type;
 
-
-		//! @brief	Maximum power-of-2 for any integer representation
-		template <nstd::Integer>
-		metafunc max_pow2;
-
-		template <std::signed_integral N>
-		metafunc max_pow2<N> : std::integral_constant<N, 1 << (-2 + sizeof(N)*8)>
-		{};
-
-		template <std::unsigned_integral N>
-		metafunc max_pow2<N> : std::integral_constant<N, 1 << (-1 + sizeof(N)*8)>
-		{};
 	}
 	
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
@@ -171,7 +159,7 @@ namespace core
 	using BlindLinearSearchThenPowersOf2 = detail::GeometricSearch_t<
 		E,
 		std::bit_ceil<std::make_unsigned_t<std::underlying_type_t<E>>>(Finish),
-		detail::max_pow2<std::underlying_type_t<E>>::value,
+		nstd::max_pow2<std::underlying_type_t<E>>::value,
 		detail::LinearSearch_t<E,Start,Finish>
 	>;
 
