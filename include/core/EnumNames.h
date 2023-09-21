@@ -83,15 +83,50 @@ namespace core
 		          std::underlying_type_t<E> Start,
 		          std::underlying_type_t<E> Finish,
 		          nstd::EnumSequenceOf<E>   Result = nstd::enum_sequence<E>>
+		metafunc geometric_search_impl;
+
+		template <nstd::Enumeration         E,
+		          std::underlying_type_t<E> Start,
+		          std::underlying_type_t<E> Finish,
+		          nstd::EnumSequenceOf<E>   Result>
 			requires std::unsigned_integral<std::underlying_type_t<E>> 
 			      && (Start <= Finish)
 			      && (nstd::is_pow2(Start))
 			      && (nstd::is_pow2(Finish))
-		metafunc geometric_search_impl : std::conditional_t<
+		metafunc geometric_search_impl<E,Start,Finish,Result> : std::conditional_t<
 			Start == Finish,
 			std::type_identity<push_back_if_valid_enum_t<Result,Finish>>,
 			geometric_search_impl<E, (Start<<1 != Finish && Start<<1 != 0 ? Start<<1 : Finish), Finish, push_back_if_valid_enum_t<Result,Start>>
 		> 
+		{};
+
+		template <nstd::Enumeration         E,
+		          std::underlying_type_t<E> Start,
+		          std::underlying_type_t<E> Finish,
+		          nstd::EnumSequenceOf<E>   Result>
+			requires std::signed_integral<std::underlying_type_t<E>> 
+			      && (Start > 0)
+			      && (Finish > 0)
+			      && (Start <= Finish)
+			      && (nstd::is_pow2(Start))
+			      && (nstd::is_pow2(Finish))
+			      && (Finish != std::numeric_limits<std::underlying_type_t<E>>::min())
+		metafunc geometric_search_impl<E,Start,Finish,Result> : std::conditional_t<
+			Start == Finish,
+			std::type_identity<push_back_if_valid_enum_t<Result,Finish>>,
+			geometric_search_impl<E, (Start<<1 != Finish && Start<<1 != 0 ? Start<<1 : Finish), Finish, push_back_if_valid_enum_t<Result,Start>>
+		> 
+		{};
+
+		template <nstd::Integer>
+		metafunc max_pow2;
+
+		template <std::signed_integral N>
+		metafunc max_pow2<N> : std::integral_constant<N, 1 << (-2 + sizeof(N)*8)>
+		{};
+
+		template <std::unsigned_integral N>
+		metafunc max_pow2<N> : std::integral_constant<N, 1 << (-1 + sizeof(N)*8)>
 		{};
 	}
 	
@@ -104,12 +139,11 @@ namespace core
 	*/
 	template <nstd::Enumeration E, std::underlying_type_t<E> Start, std::underlying_type_t<E> Finish>
 		requires (Start < Finish) 
-		      && std::unsigned_integral<std::underlying_type_t<E>>
 		      && (nstd::is_pow2(Finish))
 	using BlindLinearSearchThenPowersOf2 = typename detail::geometric_search_impl<
 		E,
 		Finish,
-		~std::numeric_limits<std::make_signed_t<std::underlying_type_t<E>>>::max(),
+		detail::max_pow2<std::underlying_type_t<E>>::value,
 		typename detail::linear_search_impl<E,Start,Finish>::type
 	>::type;
 
@@ -218,6 +252,23 @@ namespace core::testing
 		BlindLinearSearchThenPowersOf2<E2,0,32>,
 		nstd::enum_sequence<E2,E2::Zero,E2::One,E2::Two,E2::Six,E2::Twenty,
 			E2::v2_6,E2::v2_7,E2::v2_8,E2::v2_9,E2::v2_10,E2::v2_28,E2::v2_29,E2::v2_30,E2::v2_31>
+	>);
+
+	
+	enum class SignedEnum : int32_t { 
+		Zero,
+		One,
+		Two,
+		v2_29 = 1u << 29,
+		v2_30 = 1u << 30
+	};
+	static_assert(enumerator_name(SignedEnum::Two) == "Two");
+	static_assert(is_valid_enumerator(SignedEnum::Two));
+	static_assert(!is_valid_enumerator(SignedEnum{3}));
+	
+	static_assert(std::same_as<
+		BlindLinearSearchThenPowersOf2<SignedEnum,0,4>,
+		nstd::enum_sequence<SignedEnum,SignedEnum::Zero,SignedEnum::One,SignedEnum::Two,SignedEnum::v2_29,SignedEnum::v2_30>
 	>);
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
