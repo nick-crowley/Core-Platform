@@ -83,6 +83,11 @@ namespace core::win
 	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		::LRESULT
+		code() const {
+			return this->m_value;
+		}
+
 		std::string
 		str() const {
 			return detail::formatMessage(this->m_value);
@@ -200,26 +205,26 @@ namespace core::win
 	template <nstd::AnyOf<long,::LRESULT> T>
 	bool
 	operator==(T value, LResult r) {
-		return value == static_cast<::LRESULT>(r);
+		return value == r.code();
 	}
 		
 	template <nstd::AnyOf<long,::LRESULT> T>
 	bool
 	operator==(LResult l, T value) {
-		return value == static_cast<::LRESULT>(l);
+		return value == l.code();
 	}
 	
 
 	template <nstd::AnyOf<long,::LRESULT> T>
 	bool
 	operator==(T value, LastError r) {
-		return value == static_cast<::LRESULT>(r);
+		return value == r.code();
 	}
 		
 	template <nstd::AnyOf<long,::LRESULT> T>
 	bool
 	operator==(LastError l, T value) {
-		return value == static_cast<::LRESULT>(l);
+		return value == l.code();
 	}
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
