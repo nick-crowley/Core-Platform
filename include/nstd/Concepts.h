@@ -47,6 +47,21 @@ namespace nstd
 	template <typename T, typename... Types>
 	concept AnyCvOf = (std::is_same_v<std::remove_cv_t<T>, Types> || ...);
 	
+	namespace detail {
+		template <typename T, typename MinusCV = std::remove_cv_t<T>>
+		metafunc comparable_arithmetic : std::type_identity<std::make_signed_t<MinusCV>> {};
+		
+		template <typename T> metafunc comparable_arithmetic<T,bool> : std::type_identity<bool> {};
+		template <typename T> metafunc comparable_arithmetic<T,float> : std::type_identity<float> {};
+		template <typename T> metafunc comparable_arithmetic<T,double> : std::type_identity<double> {};
+
+		template <typename T>
+		using comparable_arithmetic_t = typename comparable_arithmetic<T>::type;
+	}
+
+	template <typename T, typename... Types>
+	concept AnyCvOrSignOf = (std::is_same_v<detail::comparable_arithmetic_t<T>, Types> || ...);
+	
 	template <typename T>
 	concept Character = AnyOf<T,char,wchar_t,char8_t,char16_t,char32_t>;
 	
