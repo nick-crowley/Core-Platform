@@ -78,7 +78,7 @@ namespace core::win
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		[[nodiscard]] nstd::return_t<char const*>
+		[[nodiscard]] gsl::czstring constexpr
 		virtual what() const override 
 		{
 			return this->CustomMessageBugFix.c_str();
