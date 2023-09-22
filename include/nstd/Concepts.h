@@ -51,11 +51,11 @@ namespace nstd
 	concept Class = std::is_class_v<T> || std::is_union_v<T>;
 
 	template <typename T>
-	concept Clock = std::chrono::is_clock_v<T>;
+	concept Clock = chrono::is_clock_v<T>;
 	
 	template <typename Range, typename U>
-	concept ContiguousRangeOf = std::ranges::contiguous_range<Range> 
-	                         && std::is_same_v<std::ranges::range_value_t<Range>,U>;
+	concept ContiguousRangeOf = ranges::contiguous_range<Range> 
+	                         && std::is_same_v<ranges::range_value_t<Range>,U>;
 	
 	template <typename T, typename... Types>
 	concept ConvertibleToAnyOf = (std::convertible_to<T,Types> || ...);
@@ -80,12 +80,12 @@ namespace nstd
 	concept IntegralOrEnum = std::is_integral_v<T> || Enumeration<T>;
 	
 	template <typename Range, typename U>
-	concept InputRangeConvertibleTo = std::ranges::input_range<Range> 
-	                               && std::is_convertible_v<std::ranges::range_value_t<Range>,U>;
+	concept InputRangeConvertibleTo = ranges::input_range<Range> 
+	                               && std::is_convertible_v<ranges::range_value_t<Range>,U>;
 
 	template <typename Range, typename U>
-	concept InputRangeOf = std::ranges::input_range<Range> 
-	                    && std::is_same_v<std::ranges::range_value_t<Range>,U>;
+	concept InputRangeOf = ranges::input_range<Range> 
+	                    && std::is_same_v<ranges::range_value_t<Range>,U>;
 
 	template <typename T, typename Return, typename... Params>
 	concept Invocable_r = std::is_invocable_r_v<Return,T,Params...>;
