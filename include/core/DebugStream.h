@@ -40,20 +40,28 @@ namespace core
 {
 	namespace detail 
 	{
-		class DebugStreamBuffer : public std::wstreambuf 
+		template <nstd::AnyOf<char,wchar_t> Char>
+		class DebugStreamBuffer : public std::basic_streambuf<Char>
 		{
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-			unsigned constexpr
-			static inline BufferSize = 256;
-			
+		private:
+			using type = DebugStreamBuffer<Char>;
+			using base = std::basic_streambuf<Char>;
+			using char_t = Char;
+			using int_type = typename base::int_type;
+
+			size_t constexpr
+			static inline DefaultCapacity = 256;
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
-			std::vector<wchar_t>  Storage;
-			
+			std::vector<wchar_t>  Buffer;
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			DebugStreamBuffer() : Storage(BufferSize) {
-				this->setp(this->Storage.data(), this->Storage.data() + (BufferSize-1)); //-1 to make overflow() easier
+			DebugStreamBuffer(size_t capacity = type::DefaultCapacity)
+			  : Buffer(capacity) 
+			{
+				this->setp(this->Buffer.data(),
+				           this->Buffer.data() + (capacity-1)); //-1 to make overflow() easier
 			}
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
@@ -80,12 +88,15 @@ namespace core
 
 			int 
 			sync() override {
-				::OutputDebugStringW(this->Storage.data());
+				if constexpr (std::same_as<char_t,char>)
+					::OutputDebugStringA(this->Buffer.data());
+				else
+					::OutputDebugStringW(this->Buffer.data());
 		
 				ptrdiff_t const len = this->pptr() - this->pbase();
 				this->pbump(static_cast<int>(-len));
 
-				ranges::fill(this->Storage, L'\0');
+				ranges::fill(this->Buffer, L'\0');
 				return 0;
 			}
 		};
@@ -102,7 +113,7 @@ namespace core
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		detail::DebugStreamBuffer Buffer;
+		detail::DebugStreamBuffer<wchar_t> Buffer;
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
