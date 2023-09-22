@@ -56,13 +56,13 @@ namespace core::win
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		::LRESULT m_value;
+		::LRESULT Value;
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		implicit
-		LResult(::LRESULT value, std::source_location loc = std::source_location::current()) 
-		  : m_value{value}
+		LResult(::LRESULT val, std::source_location loc = std::source_location::current()) 
+		  : Value{val}
 		{
 		}
 		
@@ -85,44 +85,44 @@ namespace core::win
 	public:
 		::LRESULT
 		code() const {
-			return this->m_value;
+			return this->Value;
 		}
 
 		std::string
 		str() const {
-			return detail::formatMessage(this->m_value);
+			return detail::formatMessage(this->Value);
 		}
 		
 		[[noreturn]] 
 		void 
 		throwAlways() const {
-			throw system_error{this->m_value};
+			throw system_error{this->Value};
 		}
 		
 		template <typename... Params>
 		[[noreturn]] 
 		void 
 		throwAlways(std::string_view msg, Params&&... args) const {
-			throw system_error{this->m_value, 
+			throw system_error{this->Value, 
 			                   std::vformat(msg,std::make_format_args(args...))};
 		}
 		
 		template <typename... Params>
 		void 
 		throwIfError(std::string_view msg, Params&&... args) const {
-			if (this->m_value != ERROR_SUCCESS)
-				throw system_error{this->m_value, 
+			if (this->Value != ERROR_SUCCESS)
+				throw system_error{this->Value, 
 				                   std::vformat(msg,std::make_format_args(args...))};
 		}
 
 		explicit operator
 		bool() const {
-			return this->m_value == ERROR_SUCCESS;
+			return this->Value == ERROR_SUCCESS;
 		}
 
 		implicit operator
 		::LRESULT() const {
-			return this->m_value;
+			return this->Value;
 		}
 		
 		template <nstd::AnyArithmeticExcept<::LRESULT> T>
@@ -172,13 +172,13 @@ namespace core::win
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		::LRESULT m_value;
+		::LRESULT Value;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		implicit
-		ThrowingLResult(::LRESULT value, std::source_location loc = std::source_location::current()) {
-			if (value != ERROR_SUCCESS)
-				throw system_error{value};
+		ThrowingLResult(::LRESULT val, std::source_location loc = std::source_location::current()) {
+			if (val != ERROR_SUCCESS)
+				throw system_error{val};
 		}
 		
 		template <nstd::AnyArithmeticExcept<long,::LRESULT> T>

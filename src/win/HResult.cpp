@@ -42,9 +42,9 @@ using namespace core;
 std::string
 win::HResult::str() const 
 {
-	switch (this->m_value)
+	switch (this->Value)
 	{
-	default: return to_hexString<8>(this->m_value);
+	default: return to_hexString<8>(this->Value);
 				
 #define _CaseStringify(value)  \
 	case value: return #value

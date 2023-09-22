@@ -49,12 +49,12 @@ namespace core::win
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		::HRESULT m_value;
+		::HRESULT Value;
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		implicit
-		HResult(::HRESULT value) : m_value{value}
+		HResult(::HRESULT val) : Value{val}
 		{}
 		
 		template <nstd::AnyArithmeticExcept<long,::HRESULT> T>
@@ -77,7 +77,7 @@ namespace core::win
 	public:
 		::HRESULT
 		code() const {
-			return this->m_value;
+			return this->Value;
 		}
 
 		std::string
@@ -86,33 +86,33 @@ namespace core::win
 		[[noreturn]] 
 		void 
 		throwAlways() const {
-			throw system_error{this->m_value};
+			throw system_error{this->Value};
 		}
 		
 		template <typename... Params>
 		[[noreturn]] 
 		void 
 		throwAlways(std::string_view msg, Params&&... args) const {
-			throw system_error{this->m_value, 
+			throw system_error{this->Value, 
 			                   std::vformat(msg,std::make_format_args(args...))};
 		}
 		
 		template <typename... Params>
 		void 
 		throwIfError(std::string_view msg, Params&&... args) const {
-			if (FAILED(this->m_value))
-				throw system_error{this->m_value, 
+			if (FAILED(this->Value))
+				throw system_error{this->Value, 
 				                   std::vformat(msg,std::make_format_args(args...))};
 		}
 		
 		explicit operator
 		bool() const {
-			return SUCCEEDED(this->m_value);
+			return SUCCEEDED(this->Value);
 		}
 
 		implicit operator
 		::HRESULT() const {
-			return this->m_value;
+			return this->Value;
 		}
 		
 		template <nstd::AnyArithmeticExcept<::HRESULT> T>
@@ -132,16 +132,16 @@ namespace core::win
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		::HRESULT m_value = S_OK;
+		::HRESULT Value = S_OK;
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		implicit
-		ThrowingHResult(::HRESULT value, std::source_location loc = std::source_location::current()) 
-		  : m_value{value}
+		ThrowingHResult(::HRESULT val, std::source_location loc = std::source_location::current()) 
+		  : Value{val}
 		{
-			if (FAILED(value))
-				throw system_error{value, HResult{value}.str()};
+			if (FAILED(val))
+				throw system_error{val, HResult{val}.str()};
 		}
 		
 		template <nstd::AnyArithmeticExcept<long,::HRESULT> T>
