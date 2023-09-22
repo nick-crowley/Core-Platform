@@ -96,7 +96,8 @@ namespace core::meta
 	                             && (Settings<compatible_enum,E1,E2> || Settings<compatible_enum,E2,E1>);
 
 	template <nstd::Enumeration E>
-	bool constexpr inline Settings<compatible_enum, E, E> = true;
+	bool constexpr 
+	inline Settings<compatible_enum, E, E> = true;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
