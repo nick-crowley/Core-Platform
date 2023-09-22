@@ -94,7 +94,7 @@ namespace nstd
 	template <typename T>
 	concept FunctionObject = std::is_class_v<T> && !std::is_abstract_v<T> && requires {
 		&T::operator();
-		// BUG: nstd::FunctionObject can't support templated lambdas or overloaded function-call operators
+		//! @bug  @c nstd::FunctionObject can't ever support templated lambdas or overloaded function-call operators
 	};
 	
 	//! @brief	Ensure type is callable target (of any signature)
