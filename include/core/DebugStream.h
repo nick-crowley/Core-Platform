@@ -57,6 +57,7 @@ namespace core
 			std::vector<wchar_t>  Buffer;
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
+			explicit
 			DebugStreamBuffer(size_t capacity = type::DefaultCapacity)
 			  : Buffer(capacity) 
 			{
