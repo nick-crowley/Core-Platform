@@ -45,6 +45,14 @@ namespace core::win::detail
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace core::meta
+{
+	template <typename T>
+	concept ConvertibleToLResult = std::is_arithmetic_v<T> && !nstd::AnyOf<T,long,::LRESULT>;
+		
+	template <typename T>
+	concept ConvertibleFromLResult = std::is_arithmetic_v<T> && !nstd::AnyOf<T,bool,::LRESULT>;
+}
 namespace core::win
 {
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
@@ -65,6 +73,10 @@ namespace core::win
 		  : m_value{value}
 		{
 		}
+
+		template <meta::ConvertibleToLResult T>
+		implicit 
+		LResult(T) = delete;
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
@@ -116,6 +128,10 @@ namespace core::win
 			return this->m_value;
 		}
 
+		template <meta::ConvertibleFromLResult T>
+		implicit operator
+		T() const = delete;
+		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};
 		
@@ -198,5 +214,33 @@ namespace core::win
 	operator==(Integral lhs, LResult const& rhs) noexcept {
 		return static_cast<Integral>(rhs) == lhs;
 	}
+}
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace core::win::testing
+{
+	template <typename T>
+	concept CanOnlyBeConstructedFromLRESULT = requires(::LRESULT v) { T(v); }
+	                                       && !requires(bool     v) { T(v); }
+	                                       && !requires(char     v) { T(v); }
+	                                       && !requires(wchar_t  v) { T(v); }
+	                                       && !requires(int      v) { T(v); }
+	                                       && !requires(unsigned v) { T(v); }
+	                                       && !requires(size_t   v) { T(v); };
+
+	//! @test	Verify @c win::LResult can only be constructed from @c ::LRESULT
+	static_assert(CanOnlyBeConstructedFromLRESULT<win::LResult>);
+	
+	template <typename T>
+	concept CanOnlyConvertToBoolAndLRESULT = requires(::LRESULT v, T t) { v = t; }
+	                                      && requires(bool      v, T t) { v = t; }
+	                                      && !requires(char     v, T t) { v = t; }
+	                                      && !requires(wchar_t  v, T t) { v = t; }
+	                                      && !requires(int      v, T t) { v = t; }
+	                                      && !requires(unsigned v, T t) { v = t; }
+	                                      && !requires(size_t   v, T t) { v = t; }
+	                                      && !requires(void*    v, T t) { v = t; };
+
+	//! @test	Verify @c win::LResult can only be converted to @c bool and @c ::LRESULT
+	static_assert(CanOnlyConvertToBoolAndLRESULT<win::LResult>);
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
