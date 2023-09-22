@@ -50,7 +50,7 @@ namespace core
 	{
 		template <nstd::Class C>
 		auto constexpr
-		nameof() noexcept 
+		__cdecl nameof() noexcept 
 		{
 			using namespace std::string_view_literals;
 			
@@ -74,7 +74,7 @@ namespace core
 		
 		template <nstd::Class C>
 		auto constexpr
-		unqualified_nameof() noexcept 
+		__cdecl unqualified_nameof() noexcept 
 		{
 			auto qualified = nameof<C>();
 			if (auto firstChar = qualified.rfind(':'); firstChar != qualified.npos)
@@ -102,7 +102,7 @@ namespace core
 	{
 		template <nstd::Enumeration E>
 		auto constexpr
-		nameof() noexcept 
+		__cdecl nameof() noexcept 
 		{
 			using namespace std::string_view_literals;
 
