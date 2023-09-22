@@ -67,7 +67,7 @@ namespace core::win
 		
 		template <meta::ConvertibleToHResult T>
 		implicit 
-		HResult(T&&) = delete;
+		HResult(T) = delete;
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
@@ -191,4 +191,32 @@ namespace core::win
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace core::win::testing
+{
+	template <typename T>
+	concept CanOnlyBeConstructedFromHRESULT = requires(::HRESULT v) { T(v); }
+	                                       && !requires(bool     v) { T(v); }
+	                                       && !requires(char     v) { T(v); }
+	                                       && !requires(wchar_t  v) { T(v); }
+	                                       && !requires(int      v) { T(v); }
+	                                       && !requires(unsigned v) { T(v); }
+	                                       && !requires(size_t   v) { T(v); };
+
+	//! @test	Verify @c win::HResult can only be constructed from @c ::HRESULT
+	static_assert(CanOnlyBeConstructedFromHRESULT<win::HResult>);
+	
+	template <typename T>
+	concept CanOnlyConvertToBoolAndHRESULT = requires(::HRESULT v, T t) { v = t; }
+	                                      && requires(bool      v, T t) { v = t; }
+	                                      && !requires(char     v, T t) { v = t; }
+	                                      && !requires(wchar_t  v, T t) { v = t; }
+	                                      && !requires(int      v, T t) { v = t; }
+	                                      && !requires(unsigned v, T t) { v = t; }
+	                                      && !requires(size_t   v, T t) { v = t; }
+	                                      && !requires(void*    v, T t) { v = t; };
+
+	//! @test	Verify @c win::HResult can only be converted to @c bool and @c ::HRESULT
+	static_assert(CanOnlyConvertToBoolAndHRESULT<win::HResult>);
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
