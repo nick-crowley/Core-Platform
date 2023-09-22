@@ -86,7 +86,7 @@ namespace core::win
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		::LRESULT constexpr
-		code() const {
+		code() const noexcept {
 			return this->Value;
 		}
 
