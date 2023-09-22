@@ -60,22 +60,24 @@ namespace core::win
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		constexpr
 		implicit
-		LResult(::LRESULT val, std::source_location loc = std::source_location::current()) 
+		LResult(::LRESULT val, std::source_location loc = std::source_location::current()) noexcept
 		  : Value{val}
 		{
 		}
 		
 		template <nstd::AnyArithmeticExcept<long,::LRESULT> T>
-		implicit 
-		LResult(T, std::source_location = std::source_location::current()) = delete;
+		constexpr
+		implicit
+		LResult(T, std::source_location = std::source_location::current()) noexcept = delete;
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		satisfies(LResult,
 			NotDefaultConstructible,
-			IsCopyable,
-			IsEqualityComparable,
+			constexpr IsCopyable noexcept,
+			constexpr IsEqualityComparable noexcept,
 			NotSortable,
 			NotArithmetic
 		);
@@ -83,12 +85,12 @@ namespace core::win
 	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		::LRESULT
+		::LRESULT constexpr
 		code() const {
 			return this->Value;
 		}
 
-		std::string
+		std::string 
 		str() const {
 			return detail::formatMessage(this->Value);
 		}
@@ -115,19 +117,22 @@ namespace core::win
 				                   std::vformat(msg,std::make_format_args(args...))};
 		}
 
+		constexpr 
 		explicit operator
-		bool() const {
+		bool() const noexcept {
 			return this->Value == ERROR_SUCCESS;
 		}
 
+		constexpr
 		implicit operator
-		::LRESULT() const {
+		::LRESULT() const noexcept {
 			return this->Value;
 		}
 		
 		template <nstd::AnyArithmeticExcept<::LRESULT> T>
+		constexpr
 		implicit operator
-		T() const = delete;
+		T() const noexcept = delete;
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};
@@ -155,7 +160,6 @@ namespace core::win
 			NotSortable,
 			NotArithmetic
 		);
-
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -204,27 +208,27 @@ namespace core::win
 namespace core::win
 {	
 	template <nstd::AnyOf<long,::LRESULT> T>
-	bool
-	operator==(T value, LResult r) {
+	bool constexpr
+	operator==(T value, LResult r) noexcept {
 		return value == r.code();
 	}
 		
 	template <nstd::AnyOf<long,::LRESULT> T>
-	bool
-	operator==(LResult l, T value) {
+	bool constexpr
+	operator==(LResult l, T value) noexcept {
 		return value == l.code();
 	}
 	
 
 	template <nstd::AnyOf<long,::LRESULT> T>
-	bool
-	operator==(T value, LastError r) {
+	bool constexpr
+	operator==(T value, LastError r) noexcept {
 		return value == r.code();
 	}
 		
 	template <nstd::AnyOf<long,::LRESULT> T>
-	bool
-	operator==(LastError l, T value) {
+	bool constexpr
+	operator==(LastError l, T value) noexcept {
 		return value == l.code();
 	}
 }
