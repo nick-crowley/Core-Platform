@@ -91,6 +91,20 @@ namespace core::win
 		std::string
 		str() const;
 		
+		[[noreturn]] 
+		void 
+		throwAlways() const {
+			throw system_error{this->m_value};
+		}
+		
+		template <typename... Params>
+		[[noreturn]] 
+		void 
+		throwAlways(std::string_view msg, Params&&... args) const {
+			throw system_error{this->m_value, 
+			                   std::vformat(msg,std::make_format_args(args...))};
+		}
+		
 		template <typename... Params>
 		void 
 		throwIfError(std::string_view msg, Params&&... args) const {

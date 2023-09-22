@@ -26,6 +26,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "security/Token_UnitTests.cpp"
 #include "win/LogStream_SystemTests.cpp"
+#include "win/HResult_UnitTests.cpp"
 #include "win/LResult_UnitTests.cpp"
 #include "win/Process_SystemTests.cpp"
 #include "win/Reflection_UnitTests.cpp"
