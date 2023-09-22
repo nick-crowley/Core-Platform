@@ -45,14 +45,6 @@ namespace core::win::detail
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-namespace core::meta
-{
-	template <typename T>
-	concept ConvertibleToLResult = std::is_arithmetic_v<T> && !nstd::AnyOf<T,long,::LRESULT>;
-		
-	template <typename T>
-	concept ConvertibleFromLResult = std::is_arithmetic_v<T> && !nstd::AnyOf<T,bool,::LRESULT>;
-}
 namespace core::win
 {
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
@@ -74,9 +66,9 @@ namespace core::win
 		{
 		}
 		
-		template <meta::ConvertibleToLResult T>
+		template <nstd::AnyArithmeticExcept<long,::LRESULT> T>
 		implicit 
-		LResult(T) = delete;
+		LResult(T, std::source_location = std::source_location::current()) = delete;
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
@@ -89,10 +81,9 @@ namespace core::win
 		);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		template <typename Integral>
-			requires (!meta::ConvertibleToLResult<Integral>)
+		template <nstd::AnyOf<long,::LRESULT> T>
 		bool
-		friend operator==(Integral value, LResult r) {
+		friend operator==(T value, LResult r) {
 			return value == r.m_value;
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -134,14 +125,13 @@ namespace core::win
 			return this->m_value;
 		}
 		
-		template <meta::ConvertibleFromLResult T>
+		template <nstd::AnyArithmeticExcept<::LRESULT> T>
 		implicit operator
 		T() const = delete;
 		
-		template <typename Integral>
-			requires (!meta::ConvertibleToLResult<Integral>)
+		template <nstd::AnyOf<long,::LRESULT> T>
 		bool
-		operator==(Integral value) const {
+		operator==(T value) const {
 			return this->m_value == value;
 		}
 
@@ -173,18 +163,16 @@ namespace core::win
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		template <typename Integral>
-			requires (!meta::ConvertibleToLResult<Integral>)
+		template <nstd::AnyOf<long,::LRESULT> T>
 		bool
-		friend operator==(Integral value, LastError r) {
+		friend operator==(T value, LastError r) {
 			return value == (::LRESULT)r;
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		template <typename Integral>
-			requires (!meta::ConvertibleToLResult<Integral>)
+		template <nstd::AnyOf<long,::LRESULT> T>
 		bool
-		operator==(Integral value) const {
+		operator==(T value) const {
 			return (::LRESULT)*this == value;
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -207,6 +195,10 @@ namespace core::win
 			if (value != ERROR_SUCCESS)
 				throw system_error{value};
 		}
+		
+		template <nstd::AnyArithmeticExcept<long,::LRESULT> T>
+		implicit 
+		ThrowingLResult(T, std::source_location = std::source_location::current()) = delete;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		satisfies(ThrowingLResult,
@@ -253,20 +245,24 @@ namespace core::win::testing
 	                                       && !requires(wchar_t  v) { T(v); }
 	                                       && !requires(int      v) { T(v); }
 	                                       && !requires(unsigned v) { T(v); }
-	                                       && !requires(size_t   v) { T(v); };
+	                                       && !requires(float    v) { T(v); }
+	                                       && !requires(double   v) { T(v); }
+	                                       && !requires(void*    v) { T(v); };
 
 	//! @test	Verify @c win::LResult can only be constructed from @c ::LRESULT
 	static_assert(CanOnlyBeConstructedFromLRESULT<win::LResult>);
 	
 	template <typename T>
-	concept CanOnlyConvertToBoolAndLRESULT = requires(::LRESULT v, T t) { v = t; }
-	                                      && requires(bool      v, T t) { v = t; }
-	                                      && !requires(char     v, T t) { v = t; }
-	                                      && !requires(wchar_t  v, T t) { v = t; }
-	                                      && !requires(int      v, T t) { v = t; }
-	                                      && !requires(unsigned v, T t) { v = t; }
-	                                      && !requires(size_t   v, T t) { v = t; }
-	                                      && !requires(void*    v, T t) { v = t; };
+	concept CanOnlyConvertToBoolAndLRESULT = requires(::LRESULT v, T t) { v = t;   }
+	                                      && requires(T t)              { (bool)t; }
+	                                      && !requires(bool     v, T t) { v = t;   }
+	                                      && !requires(char     v, T t) { v = t;   }
+	                                      && !requires(wchar_t  v, T t) { v = t;   }
+	                                      && !requires(int      v, T t) { v = t;   }
+	                                      && !requires(unsigned v, T t) { v = t;   }
+	                                      && !requires(float    v, T t) { v = t;   }
+										  && !requires(double   v, T t) { v = t;   }
+	                                      && !requires(void*    v, T t) { v = t;   };
 
 	//! @test	Verify @c win::LResult can only be converted to @c bool and @c ::LRESULT
 	static_assert(CanOnlyConvertToBoolAndLRESULT<win::LResult>);

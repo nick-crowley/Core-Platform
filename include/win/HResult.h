@@ -38,14 +38,6 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-namespace core::meta
-{
-	template <typename T>
-	concept ConvertibleToHResult = std::is_arithmetic_v<T> && !std::is_same_v<T,::HRESULT>;
-		
-	template <typename T>
-	concept ConvertibleFromHResult = std::is_arithmetic_v<T> && !nstd::AnyOf<T,bool,::HRESULT>;
-}
 namespace core::win
 {
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
@@ -65,9 +57,9 @@ namespace core::win
 		HResult(::HRESULT value) : m_value{value}
 		{}
 		
-		template <meta::ConvertibleToHResult T>
+		template <nstd::AnyArithmeticExcept<long,::HRESULT> T>
 		implicit 
-		HResult(T) = delete;
+		HResult(T, std::source_location = std::source_location::current()) = delete;
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
@@ -81,10 +73,9 @@ namespace core::win
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 	public:
-		template <typename Integral>
-			requires (!meta::ConvertibleToHResult<Integral>)
+		template <nstd::AnyOf<long,::HRESULT> T>
 		bool
-		friend operator==(Integral value, HResult hr) {
+		friend operator==(T value, HResult hr) {
 			return value == hr.m_value;
 		}
 
@@ -125,14 +116,13 @@ namespace core::win
 			return this->m_value;
 		}
 		
-		template <meta::ConvertibleFromHResult T>
+		template <nstd::AnyArithmeticExcept<::HRESULT> T>
 		implicit operator
 		T() const = delete;
-
-		template <typename Integral>
-			requires (!meta::ConvertibleToHResult<Integral>)
+		
+		template <nstd::AnyOf<long,::HRESULT> T>
 		bool
-		operator==(Integral value) const {
+		operator==(T value) const {
 			return this->m_value == value;
 		}
 
@@ -161,9 +151,9 @@ namespace core::win
 				throw system_error{value, HResult{value}.str()};
 		}
 		
-		template <meta::ConvertibleToHResult T>
+		template <nstd::AnyArithmeticExcept<long,::HRESULT> T>
 		implicit
-		ThrowingHResult(T&&, std::source_location = std::source_location::current()) = delete;
+		ThrowingHResult(T, std::source_location = std::source_location::current()) = delete;
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
@@ -221,20 +211,24 @@ namespace core::win::testing
 	                                       && !requires(wchar_t  v) { T(v); }
 	                                       && !requires(int      v) { T(v); }
 	                                       && !requires(unsigned v) { T(v); }
-	                                       && !requires(size_t   v) { T(v); };
+	                                       && !requires(float    v) { T(v); }
+	                                       && !requires(double   v) { T(v); }
+	                                       && !requires(void*    v) { T(v); };
 
 	//! @test	Verify @c win::HResult can only be constructed from @c ::HRESULT
 	static_assert(CanOnlyBeConstructedFromHRESULT<win::HResult>);
 	
 	template <typename T>
-	concept CanOnlyConvertToBoolAndHRESULT = requires(::HRESULT v, T t) { v = t; }
-	                                      && requires(bool      v, T t) { v = t; }
-	                                      && !requires(char     v, T t) { v = t; }
-	                                      && !requires(wchar_t  v, T t) { v = t; }
-	                                      && !requires(int      v, T t) { v = t; }
-	                                      && !requires(unsigned v, T t) { v = t; }
-	                                      && !requires(size_t   v, T t) { v = t; }
-	                                      && !requires(void*    v, T t) { v = t; };
+	concept CanOnlyConvertToBoolAndHRESULT = requires(::HRESULT v, T t) { v = t;   }
+	                                      && requires(T t)              { (bool)t; }
+	                                      && !requires(bool     v, T t) { v = t;   }
+	                                      && !requires(char     v, T t) { v = t;   }
+	                                      && !requires(wchar_t  v, T t) { v = t;   }
+	                                      && !requires(int      v, T t) { v = t;   }
+	                                      && !requires(unsigned v, T t) { v = t;   }
+	                                      && !requires(float    v, T t) { v = t;   }
+										  && !requires(double   v, T t) { v = t;   }
+	                                      && !requires(void*    v, T t) { v = t;   };
 
 	//! @test	Verify @c win::HResult can only be converted to @c bool and @c ::HRESULT
 	static_assert(CanOnlyConvertToBoolAndHRESULT<win::HResult>);
