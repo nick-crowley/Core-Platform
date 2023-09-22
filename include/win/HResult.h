@@ -160,21 +160,25 @@ namespace core::win
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		//! @todo  Can this be deleted? It can only return 1 value
 		std::string
 		str() const {
 			return HResult{this->m_value}.str();
 		}
 
+		//! @todo  Can this be deleted? It can only return 1 value
 		explicit operator
 		bool() const {
 			return SUCCEEDED(this->m_value);
 		}
 
+		//! @todo  Can this be deleted? It can only return 1 value
 		implicit operator
 		::HRESULT() const {
 			return this->m_value;
 		}
 		
+		//! @todo  Can this be deleted? It can only return 1 value
 		template <meta::ConvertibleFromHResult T>
 		implicit operator
 		T() const = delete;
