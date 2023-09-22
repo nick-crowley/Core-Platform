@@ -50,8 +50,8 @@ namespace core::win
 	{	
 		auto const callable = [fx](Parameters... args) -> ReturnType
 		{
-			ThrowingLResult r = (*fx)(std::forward<Parameters>(args)...);
-			return static_cast<ReturnType>(r);
+			ThrowingLResult [[maybe_unused]] r = (*fx)(std::forward<Parameters>(args)...);
+			return ERROR_SUCCESS;
 		};
 		
 		return core::detail::adaptSignature<NumResults>(std::move(callable));

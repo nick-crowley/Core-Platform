@@ -178,24 +178,7 @@ namespace core::win
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		//! @todo  Can this be deleted? It can only return 1 value
-		std::string
-		str() const {
-			return detail::formatMessage(this->m_value);
-		}
-
-		//! @todo  Can this be deleted? It can only return 1 value
-		explicit operator
-		bool() const {
-			return this->m_value == ERROR_SUCCESS;
-		}
-
-		//! @todo  Can this be deleted? It can only return 1 value
-		implicit operator
-		::LRESULT() const {
-			return this->m_value;
-		}
+		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};
 }

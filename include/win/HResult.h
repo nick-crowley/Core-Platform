@@ -159,30 +159,7 @@ namespace core::win
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		//! @todo  Can this be deleted? It can only return 1 value
-		std::string
-		str() const {
-			return HResult{this->m_value}.str();
-		}
 
-		//! @todo  Can this be deleted? It can only return 1 value
-		explicit operator
-		bool() const {
-			return SUCCEEDED(this->m_value);
-		}
-
-		//! @todo  Can this be deleted? It can only return 1 value
-		implicit operator
-		::HRESULT() const {
-			return this->m_value;
-		}
-		
-		//! @todo  Can this be deleted? It can only return 1 value
-		template <meta::ConvertibleFromHResult T>
-		implicit operator
-		T() const = delete;
-		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};
 }
@@ -195,17 +172,8 @@ namespace core::win
 		return hr.str();
 	}
 
-	std::string
-	inline to_string(ThrowingHResult const& hr)
-	{
-		return hr.str();
-	}
-	
 	std::wstring
 	to_wstring(HResult const&) = delete;
-	
-	std::wstring
-	to_wstring(ThrowingHResult const&) = delete;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
