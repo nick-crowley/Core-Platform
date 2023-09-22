@@ -63,6 +63,9 @@ namespace nstd
 	concept AnyCvOrSignOf = (std::is_same_v<detail::comparable_arithmetic_t<T>, Types> || ...);
 	
 	template <typename T>
+	concept Arithmetic = std::is_arithmetic_v<T>;
+	
+	template <typename T>
 	concept Character = AnyOf<T,char,wchar_t,char8_t,char16_t,char32_t>;
 	
 	template <typename T>
