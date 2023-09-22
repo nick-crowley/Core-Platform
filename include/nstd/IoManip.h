@@ -46,24 +46,24 @@ namespace nstd {
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 	* @brief	Inserts a range of elements separated by a delimiter [if more than one element]
 	*/
-	template <ranges::forward_range ForwardRange, Character Delimiter>
+	template <ranges::forward_range ForwardRange, Character Char>
 	class delimit {
-		using type = delimit<ForwardRange,Delimiter>;
+		using type = delimit<ForwardRange,Char>;
 
 	private:
-		ForwardRange     source;
-		Delimiter const* delimiter;
+		ForwardRange     Source;
+		Char const*      Delimiter;
 
 	public:
-		delimit(ForwardRange in, Delimiter const* str) : source{in}, delimiter{str}
+		delimit(ForwardRange in, Char const* str) : Source{in}, Delimiter{str}
 		{}
 
 	public:
-		return_t<std::basic_ostream<Delimiter>&>
-		friend operator<<(std::basic_ostream<Delimiter>& os, type const& io) {
-			if (!ranges::empty(io.source)) 
-				for (os << *ranges::begin(io.source); auto& elem : views::drop(io.source,1))
-					os << io.delimiter << elem;
+		return_t<std::basic_ostream<Char>&>
+		friend operator<<(std::basic_ostream<Char>& os, type const& io) {
+			if (!ranges::empty(io.Source)) 
+				for (os << *ranges::begin(io.Source); auto& elem : views::drop(io.Source,1))
+					os << io.Delimiter << elem;
 			return os;
 		}
 	};
@@ -72,23 +72,23 @@ namespace nstd {
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 	* @brief	Repeatedly inserts a value [without any delimiter]
 	*/
-	template <OutputStreamCompatible Value>
+	template <OutputStreamCompatible WritableValue>
 	class repeat {
-		using type = repeat<Value>;
+		using type = repeat<WritableValue>;
 
 	private:
-		Value     value;
-		uint32_t  count;
+		WritableValue Value;
+		uint32_t      Count;
 
 	public:
-		repeat(Value val, uint32_t num) : value{val}, count{num}
+		repeat(WritableValue val, uint32_t num) : Value{val}, Count{num}
 		{}
 
 	public:
 		return_t<std::ostream&>
-		friend operator<<(std::ostream& os, type const& repetition) {
-			for (uint32_t idx = 0; idx < repetition.count; ++idx)
-				os << repetition.value;
+		friend operator<<(std::ostream& os, type const& rep) {
+			for (uint32_t idx = 0; idx < rep.Count; ++idx)
+				os << rep.Value;
 			return os;
 		}
 	};
