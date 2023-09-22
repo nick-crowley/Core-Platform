@@ -143,6 +143,7 @@ namespace core::win
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		implicit
 		LastError(std::source_location loc = std::source_location::current()) 
 			: LResult{::GetLastError(), loc} 
 		{}
