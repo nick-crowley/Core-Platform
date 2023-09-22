@@ -81,8 +81,10 @@ namespace core::win
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 	public:
+		template <typename Integral>
+			requires (!meta::ConvertibleToHResult<Integral>)
 		bool
-		friend operator==(::HRESULT value, HResult hr) {
+		friend operator==(Integral value, HResult hr) {
 			return value == hr.m_value;
 		}
 
@@ -113,11 +115,6 @@ namespace core::win
 				                   std::vformat(msg,std::make_format_args(args...))};
 		}
 		
-		bool
-		operator==(::HRESULT value) const {
-			return this->m_value == value;
-		}
-
 		explicit operator
 		bool() const {
 			return SUCCEEDED(this->m_value);
@@ -131,7 +128,14 @@ namespace core::win
 		template <meta::ConvertibleFromHResult T>
 		implicit operator
 		T() const = delete;
-		
+
+		template <typename Integral>
+			requires (!meta::ConvertibleToHResult<Integral>)
+		bool
+		operator==(Integral value) const {
+			return this->m_value == value;
+		}
+
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 	};
@@ -173,7 +177,7 @@ namespace core::win
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
+		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};
 }
@@ -194,6 +198,22 @@ namespace core::win
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::win::testing
 {
+	//! @test	Verify @c win::HResult equality relationship is well-defined
+	static_assert(requires(win::HResult lhs, win::HResult rhs) { 
+		lhs == rhs; 
+		lhs != rhs; 
+		rhs == lhs;
+		lhs != rhs; 
+	});
+	
+	//! @test	Verify @c win::HResult equality relationship with @c ::HRESULT is well-defined
+	static_assert(requires(win::HResult lhs, ::HRESULT rhs) { 
+		lhs == rhs; 
+		lhs != rhs; 
+		rhs == lhs;
+		rhs != lhs;
+	});
+	
 	template <typename T>
 	concept CanOnlyBeConstructedFromHRESULT = requires(::HRESULT v) { T(v); }
 	                                       && !requires(bool     v) { T(v); }

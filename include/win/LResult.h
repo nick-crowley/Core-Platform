@@ -73,7 +73,7 @@ namespace core::win
 		  : m_value{value}
 		{
 		}
-
+		
 		template <meta::ConvertibleToLResult T>
 		implicit 
 		LResult(T) = delete;
@@ -88,7 +88,13 @@ namespace core::win
 			NotArithmetic
 		);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
+	public:
+		template <typename Integral>
+			requires (!meta::ConvertibleToLResult<Integral>)
+		bool
+		friend operator==(Integral value, LResult r) {
+			return value == r.m_value;
+		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		std::string
@@ -127,11 +133,18 @@ namespace core::win
 		::LRESULT() const {
 			return this->m_value;
 		}
-
+		
 		template <meta::ConvertibleFromLResult T>
 		implicit operator
 		T() const = delete;
 		
+		template <typename Integral>
+			requires (!meta::ConvertibleToLResult<Integral>)
+		bool
+		operator==(Integral value) const {
+			return this->m_value == value;
+		}
+
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};
 		
@@ -159,9 +172,21 @@ namespace core::win
 		);
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
+	public:
+		template <typename Integral>
+			requires (!meta::ConvertibleToLResult<Integral>)
+		bool
+		friend operator==(Integral value, LastError r) {
+			return value == (::LRESULT)r;
+		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
+	public:
+		template <typename Integral>
+			requires (!meta::ConvertibleToLResult<Integral>)
+		bool
+		operator==(Integral value) const {
+			return (::LRESULT)*this == value;
+		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};
 	
@@ -201,23 +226,26 @@ namespace core::win
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-namespace core::win
-{
-	template <std::integral Integral>
-	bool
-	operator==(LResult const& lhs, Integral rhs) noexcept {
-		return static_cast<Integral>(lhs) == rhs;
-	}
 
-	template <std::integral Integral>
-	bool
-	operator==(Integral lhs, LResult const& rhs) noexcept {
-		return static_cast<Integral>(rhs) == lhs;
-	}
-}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::win::testing
 {
+	//! @test	Verify @c win::LResult equality relationship is well-defined
+	static_assert(requires(win::LResult lhs, win::LResult rhs) { 
+		lhs == rhs; 
+		lhs != rhs; 
+		rhs == lhs;
+		lhs != rhs; 
+	});
+	
+	//! @test	Verify @c win::LResult equality relationship with @c ::LRESULT is well-defined
+	static_assert(requires(win::LResult lhs, ::LRESULT rhs) { 
+		lhs == rhs; 
+		lhs != rhs; 
+		rhs == lhs;
+		rhs != lhs;
+	});
+
 	template <typename T>
 	concept CanOnlyBeConstructedFromLRESULT = requires(::LRESULT v) { T(v); }
 	                                       && !requires(bool     v) { T(v); }
