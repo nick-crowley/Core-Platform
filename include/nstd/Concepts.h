@@ -44,6 +44,9 @@ namespace nstd
 	template <typename T, typename... Types>
 	concept AnyOf = is_any_of_v<T,Types...>;
 
+	template <typename T, typename... Types>
+	concept AnyCvOf = (std::is_same_v<std::remove_cv_t<T>, Types> || ...);
+	
 	template <typename T>
 	concept Character = AnyOf<T,char,wchar_t,char8_t,char16_t,char32_t>;
 	
