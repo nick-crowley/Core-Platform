@@ -69,6 +69,10 @@ namespace nstd
 	template <typename T, typename... Types>
 	concept AnyArithmeticExcept = std::is_arithmetic_v<T> && !AnyCvOrSignOf<T,Types...>;
 	
+	//! @brief	Any integral type except any cv-qualified or signed variant of [...]
+	template <typename T, typename... Types>
+	concept AnyIntegralExcept = std::is_integral_v<T> && !AnyCvOrSignOf<T,Types...>;
+
 	template <typename T>
 	concept Character = AnyOf<T,char,wchar_t,char8_t,char16_t,char32_t>;
 	
