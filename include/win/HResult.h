@@ -72,13 +72,7 @@ namespace core::win
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-	public:
-		template <nstd::AnyOf<long,::HRESULT> T>
-		bool
-		friend operator==(T value, HResult hr) {
-			return value == hr.m_value;
-		}
-
+		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		std::string
@@ -120,12 +114,6 @@ namespace core::win
 		implicit operator
 		T() const = delete;
 		
-		template <nstd::AnyOf<long,::HRESULT> T>
-		bool
-		operator==(T value) const {
-			return this->m_value == value;
-		}
-
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 	};
@@ -182,6 +170,19 @@ namespace core::win
 
 	std::wstring
 	to_wstring(HResult const&) = delete;
+
+
+	template <nstd::AnyOf<long,::HRESULT> T>
+	bool
+	operator==(T value, HResult r) {
+		return value == static_cast<::HRESULT>(r);
+	}
+		
+	template <nstd::AnyOf<long,::HRESULT> T>
+	bool
+	operator==(HResult l, T value) {
+		return value == static_cast<::HRESULT>(l);
+	}
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 

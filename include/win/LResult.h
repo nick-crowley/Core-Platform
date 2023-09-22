@@ -80,12 +80,7 @@ namespace core::win
 			NotArithmetic
 		);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		template <nstd::AnyOf<long,::LRESULT> T>
-		bool
-		friend operator==(T value, LResult r) {
-			return value == r.m_value;
-		}
+	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		std::string
@@ -128,12 +123,6 @@ namespace core::win
 		template <nstd::AnyArithmeticExcept<::LRESULT> T>
 		implicit operator
 		T() const = delete;
-		
-		template <nstd::AnyOf<long,::LRESULT> T>
-		bool
-		operator==(T value) const {
-			return this->m_value == value;
-		}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};
@@ -162,19 +151,9 @@ namespace core::win
 		);
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		template <nstd::AnyOf<long,::LRESULT> T>
-		bool
-		friend operator==(T value, LastError r) {
-			return value == (::LRESULT)r;
-		}
+	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		template <nstd::AnyOf<long,::LRESULT> T>
-		bool
-		operator==(T value) const {
-			return (::LRESULT)*this == value;
-		}
+	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};
 	
@@ -216,7 +195,33 @@ namespace core::win
 	};
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace core::win
+{	
+	template <nstd::AnyOf<long,::LRESULT> T>
+	bool
+	operator==(T value, LResult r) {
+		return value == static_cast<::LRESULT>(r);
+	}
+		
+	template <nstd::AnyOf<long,::LRESULT> T>
+	bool
+	operator==(LResult l, T value) {
+		return value == static_cast<::LRESULT>(l);
+	}
+	
 
+	template <nstd::AnyOf<long,::LRESULT> T>
+	bool
+	operator==(T value, LastError r) {
+		return value == static_cast<::LRESULT>(r);
+	}
+		
+	template <nstd::AnyOf<long,::LRESULT> T>
+	bool
+	operator==(LastError l, T value) {
+		return value == static_cast<::LRESULT>(l);
+	}
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
