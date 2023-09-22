@@ -54,7 +54,7 @@ namespace core::meta
 
 template <core::meta::BitwiseEnumeration E>
 E constexpr
-operator&(E lhs, E rhs) { 
+operator&(E lhs, E rhs) noexcept { 
 	return static_cast<E>(
 		std::to_underlying(lhs) & std::to_underlying(rhs)
 	);
@@ -62,7 +62,7 @@ operator&(E lhs, E rhs) {
 
 template <core::meta::BitwiseEnumeration E>
 E constexpr
-operator|(E lhs, E rhs) { 
+operator|(E lhs, E rhs) noexcept { 
 	return static_cast<E>(
 		std::to_underlying(lhs) | std::to_underlying(rhs)
 	);
@@ -70,7 +70,7 @@ operator|(E lhs, E rhs) {
 
 template <core::meta::BitwiseEnumeration E>
 E constexpr
-operator^(E lhs, E rhs) { 
+operator^(E lhs, E rhs) noexcept { 
 	return static_cast<E>(
 		std::to_underlying(lhs) ^ std::to_underlying(rhs)
 	);
@@ -78,7 +78,7 @@ operator^(E lhs, E rhs) {
 
 template <core::meta::BitwiseEnumeration E>
 E constexpr
-operator~(E lhs) { 
+operator~(E lhs) noexcept { 
 	return static_cast<E>(
 		~std::to_underlying(lhs)
 	);
@@ -103,7 +103,7 @@ namespace core::meta
 
 template <core::meta::BitwiseEnumeration E1, core::meta::CompatibleEnumeration<E1> E2>
 E1 constexpr
-operator&(E1 lhs, E2 rhs) { 
+operator&(E1 lhs, E2 rhs) noexcept { 
 	return static_cast<E1>(
 		std::to_underlying(lhs) & std::to_underlying(rhs)
 	);
@@ -111,7 +111,7 @@ operator&(E1 lhs, E2 rhs) {
 
 template <core::meta::BitwiseEnumeration E1, core::meta::CompatibleEnumeration<E1> E2>
 E1 constexpr
-operator|(E1 lhs, E2 rhs) { 
+operator|(E1 lhs, E2 rhs) noexcept { 
 	return static_cast<E1>(
 		std::to_underlying(lhs) | std::to_underlying(rhs)
 	);
@@ -119,7 +119,7 @@ operator|(E1 lhs, E2 rhs) {
 
 template <core::meta::BitwiseEnumeration E1, core::meta::CompatibleEnumeration<E1> E2>
 E1 constexpr
-operator^(E1 lhs, E2 rhs) { 
+operator^(E1 lhs, E2 rhs) noexcept { 
 	return static_cast<E1>(
 		std::to_underlying(lhs) ^ std::to_underlying(rhs)
 	);
