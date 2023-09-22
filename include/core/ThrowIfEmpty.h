@@ -59,10 +59,7 @@ namespace core
 	{
 		return value == static_cast<std::remove_reference_t<T>>(0);
 	}
-}
 
-namespace std 
-{
 	template <typename T>
 	bool
 	empty(std::shared_ptr<T> const& value)
@@ -88,10 +85,9 @@ namespace std
 namespace core::meta 
 {
 	template <typename T> 
-	concept EmptyCompatible = requires(T&& value) 
-	{ 
-		empty(std::forward<T>(value)); 
-	};
+	concept EmptyCompatible = requires(T&& value) { empty(std::forward<T>(value));       }
+	                       || requires(T&& value) { std::empty(std::forward<T>(value));  }
+	                       || requires(T&& value) { core::empty(std::forward<T>(value)); };
 }
 
 namespace core::detail
