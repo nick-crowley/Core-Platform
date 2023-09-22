@@ -53,20 +53,22 @@ namespace core::win
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		constexpr
 		implicit
-		HResult(::HRESULT val) : Value{val}
+		HResult(::HRESULT val) noexcept : Value{val}
 		{}
 		
 		template <nstd::AnyArithmeticExcept<long,::HRESULT> T>
+		constexpr
 		implicit 
-		HResult(T, std::source_location = std::source_location::current()) = delete;
+		HResult(T, std::source_location = std::source_location::current()) noexcept = delete;
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		satisfies(HResult,
 			NotDefaultConstructible,
-            IsCopyable noexcept,
-			IsEqualityComparable noexcept,
+            constexpr IsCopyable noexcept,
+			constexpr IsEqualityComparable noexcept,
 			NotSortable
 		);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -75,8 +77,8 @@ namespace core::win
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		::HRESULT
-		code() const {
+		::HRESULT constexpr
+		code() const noexcept {
 			return this->Value;
 		}
 
@@ -105,19 +107,22 @@ namespace core::win
 				                   std::vformat(msg,std::make_format_args(args...))};
 		}
 		
+		constexpr
 		explicit operator
-		bool() const {
+		bool() const noexcept {
 			return SUCCEEDED(this->Value);
 		}
 
+		constexpr
 		implicit operator
-		::HRESULT() const {
+		::HRESULT() const noexcept {
 			return this->Value;
 		}
 		
 		template <nstd::AnyArithmeticExcept<::HRESULT> T>
+		constexpr
 		implicit operator
-		T() const = delete;
+		T() const noexcept = delete;
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
@@ -178,14 +183,14 @@ namespace core::win
 
 
 	template <nstd::AnyOf<long,::HRESULT> T>
-	bool
-	operator==(T value, HResult r) {
+	bool constexpr
+	operator==(T value, HResult r) noexcept {
 		return value == r.code();
 	}
 		
 	template <nstd::AnyOf<long,::HRESULT> T>
-	bool
-	operator==(HResult l, T value) {
+	bool constexpr
+	operator==(HResult l, T value) noexcept {
 		return value == l.code();
 	}
 }
