@@ -46,15 +46,15 @@ namespace nstd
 #define _MoveConstructibleDecl(className)       className(className&&)
 #define _EqualityComparableDecl(className)      bool operator==(className const&) const
 #define _SortableDecl(className)                auto operator<=>(className const&) const
-#define _AddableDecl(className)                 className operator+(className const&) const
-#define _AddAssignableDecl(className)           className& operator+=(className const&) const
-#define _SubtractableDecl(className)            className operator-(className const&) const
-#define _SubtractAssignableDecl(className)      className& operator-=(className const&) const
+#define _AddableDecl(className)                 className operator+(auto const&) const
+#define _AddAssignableDecl(className)           className& operator+=(auto const&) const
+#define _SubtractableDecl(className)            className operator-(auto const&) const
+#define _SubtractAssignableDecl(className)      className& operator-=(auto const&) const
 #define _NegatableDecl(className)               className operator-() const
-#define _MultipliableDecl(className)            className operator*(className const&) const
-#define _MultiplyAssignableDecl(className)      className& operator*=(className const&) const
-#define _DividableDecl(className)               className operator/(className const&) const
-#define _DivideAssignableDecl(className)        className& operator/=(className const&) const
+#define _MultipliableDecl(className)            className operator*(auto const&) const
+#define _MultiplyAssignableDecl(className)      className& operator*=(auto const&) const
+#define _DividableDecl(className)               className operator/(auto const&) const
+#define _DivideAssignableDecl(className)        className& operator/=(auto const&) const
 
 #define _MakeDefaultedConceptMacro(...)         BOOST_PP_COMMA() BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__) BOOST_PP_COMMA() = default BOOST_PP_COMMA()
 #define _MakeDeletedConceptMacro(...)           BOOST_PP_COMMA() BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__) BOOST_PP_COMMA() = delete BOOST_PP_COMMA()
