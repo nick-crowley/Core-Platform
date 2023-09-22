@@ -69,7 +69,8 @@ namespace core::win
 			NotDefaultConstructible,
             constexpr IsCopyable noexcept,
 			constexpr IsEqualityComparable noexcept,
-			NotSortable
+			NotSortable,
+			NotArithmetic
 		);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 		
@@ -160,7 +161,8 @@ namespace core::win
 			NotCopyConstructible,
 			IsCopyAssignable,
 			IsEqualityComparable noexcept,
-			NotSortable
+			NotSortable,
+			NotArithmetic
 		);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
