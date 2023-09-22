@@ -105,6 +105,9 @@ namespace nstd
 		|| is_function_pointer_v<T>;
 	
 	template <typename T>
+	concept OutputStreamCompatible = requires(T& t) { std::declval<std::ostream>() << t; };
+
+	template <typename T>
 	concept RealNumber = std::is_arithmetic_v<T> && !Character<T>;
 	
 	//! @brief	Ensure type is either built-in string or string-like class (of any character type)

@@ -72,16 +72,16 @@ namespace nstd {
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 	* @brief	Repeatedly inserts a value [without any delimiter]
 	*/
-	template <typename WritableValue>
+	template <OutputStreamCompatible Value>
 	class repeat {
-		using type = repeat<WritableValue>;
+		using type = repeat<Value>;
 
 	private:
-		WritableValue  value;
-		uint32_t       count;
+		Value     value;
+		uint32_t  count;
 
 	public:
-		repeat(WritableValue val, uint32_t num) : value{val}, count{num}
+		repeat(Value val, uint32_t num) : value{val}, count{num}
 		{}
 
 	public:
