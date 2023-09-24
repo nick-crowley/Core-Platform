@@ -50,20 +50,93 @@ namespace core::win
 		class ExistingServicesCollection {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
-			class ConstIterator : public boost::iterator_facade<ConstIterator, ::ENUM_SERVICE_STATUS const, boost::forward_traversal_tag>
+			using SharedServiceStatusArray = std::shared_ptr<::ENUM_SERVICE_STATUS[]>;
+
+			//! @brief  Wrapper for variable-length service snapshot data
+			class InstalledService {
+				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			private:
+				SharedServiceStatusArray Snapshots;
+				size_t                   Index;
+				// o~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~o
+			public:
+				InstalledService(SharedServiceStatusArray statuses, size_t idx) 
+				  : Snapshots{statuses}, 
+				    Index{idx}
+				{}
+				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			public:
+				satisfies(InstalledService, 
+					NotDefaultConstructible,
+					IsCopyable,
+					IsMovable noexcept,
+					NotSortable,
+					NotEqualityComparable
+				);
+				// o~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
+			public:
+				std::wstring
+				displayName() const {
+					return this->data().lpDisplayName;
+				}
+
+				std::wstring
+				name() const {
+					return this->data().lpServiceName;
+				}
+
+				ServiceState
+				state() const {
+					return static_cast<ServiceState>(this->data().ServiceStatus.dwCurrentState);
+				}
+
+			private:
+				::ENUM_SERVICE_STATUS const&
+				data() const {
+					return this->Snapshots[this->Index];
+				}
+			};
+
+			//! @brief  Lifetime extending proxy for @c ::ENUM_SERVICE_STATUS[] wrapper
+			class InstalledServiceProxy {
+				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			private:
+				InstalledService Object;
+				// o~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~o
+			public:
+				InstalledServiceProxy(SharedServiceStatusArray statuses, size_t idx) 
+				  : Object{statuses, idx}
+				{}
+				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			public:
+				satisfies(InstalledServiceProxy, 
+					NotDefaultConstructible,
+					IsCopyable,
+					IsMovable noexcept,
+					NotSortable,
+					NotEqualityComparable
+				);
+				// o~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
+			public:
+				implicit operator
+				InstalledService const&() const {
+					return this->Object;
+				}
+			};
+
+			//! @brief  Navigates over snapshot of all currently installed services
+			class ConstIterator : public boost::iterator_facade<ConstIterator, InstalledService const, boost::forward_traversal_tag>
 			{
 				friend class boost::iterator_core_access;
 				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 			private:
-				using ServiceStatusStorage = std::shared_ptr<::ENUM_SERVICE_STATUS[]>;
-
 				ptrdiff_t constexpr
 				static npos = -1;
 				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 			private:
-				ptrdiff_t             Index = ConstIterator::npos;
-				size_t                NumServices = 0;
-				ServiceStatusStorage  Services;
+				ptrdiff_t                Index = ConstIterator::npos;
+				size_t                   NumServices = 0;
+				SharedServiceStatusArray Services;
 				// o~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~o
 			public:
 				explicit
@@ -95,9 +168,9 @@ namespace core::win
 
 				// o~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
 			private:
-				::ENUM_SERVICE_STATUS const&
+				InstalledServiceProxy
 				dereference() const {
-					return this->Services[this->Index];
+					return InstalledServiceProxy{this->Services, static_cast<size_t>(this->Index)};
 				}
 
 				bool
@@ -116,11 +189,12 @@ namespace core::win
 
 		public:
 			using const_iterator = ConstIterator;
+			using const_reference = InstalledService const&;
 			using iterator = const_iterator;
-			using value_type = ::ENUM_SERVICE_STATUS;
-			using const_reference = ::ENUM_SERVICE_STATUS const&;
 			using reference = const_reference;
-			
+			using value_type = InstalledService;
+			using size_type = size_t;
+			using different_type = ptrdiff_t;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			SharedServiceManager SCM;
@@ -128,13 +202,15 @@ namespace core::win
 		public:
 			explicit
 			ExistingServicesCollection(SharedServiceManager scm)
-				: SCM{scm}
+			  : SCM{scm}
 			{}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			satisfies(ExistingServicesCollection,
 				NotDefaultConstructible,
-				NotCopyable
+				NotCopyable,
+				NotEqualityComparable,
+				NotSortable
 			);
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
@@ -149,6 +225,9 @@ namespace core::win
 			end() const {
 				return const_iterator{};
 			}
+
+			size_type
+			size() const = delete;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		};
 
