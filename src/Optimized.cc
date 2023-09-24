@@ -39,5 +39,6 @@
 #include "win/RegistryKey.cpp"
 #include "win/RegistryValueProxy.cpp"
 #include "win/ResourceId.cpp"
+#include "win/ServiceManager.cpp"
 
 #include "core/FunctionLogging.h"

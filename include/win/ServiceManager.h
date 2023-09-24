@@ -41,9 +41,120 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::win
 {
-	class ServiceManager
+	class PlatformExport ServiceManager
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
+		//! @brief	Virtual collection of currently installed services
+		//! @remarks  Iteration occurs over a snapshot taken at enumeration time
+		class ExistingServicesCollection {
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		private:
+			class ConstIterator : public boost::iterator_facade<ConstIterator, ::ENUM_SERVICE_STATUS const, boost::forward_traversal_tag>
+			{
+				friend class boost::iterator_core_access;
+				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			private:
+				using ServiceStatusStorage = std::shared_ptr<::ENUM_SERVICE_STATUS[]>;
+
+				ptrdiff_t constexpr
+				static npos = -1;
+				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			private:
+				ptrdiff_t             Index = ConstIterator::npos;
+				size_t                NumServices = 0;
+				ServiceStatusStorage  Services;
+				// o~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~o
+			public:
+				explicit
+				ConstIterator(SharedServiceManager manager)
+				{
+					DWORD bytesNeeded{}, numServices{}, idxStart{};
+					::EnumServicesStatusW(*manager, SERVICE_DRIVER|SERVICE_WIN32, SERVICE_STATE_ALL, nullptr, 0, &bytesNeeded, &numServices, &idxStart);
+					if (LastError err; err != ERROR_MORE_DATA) 
+						LastError{}.throwAlways("EnumServicesStatusW() failed");
+					else {
+						auto buffer = boost::reinterpret_pointer_cast<::ENUM_SERVICE_STATUS[]>(
+							std::make_shared<std::byte[]>(bytesNeeded)
+						);
+						if (!::EnumServicesStatusW(*manager, SERVICE_DRIVER|SERVICE_WIN32, SERVICE_STATE_ALL, buffer.get(), bytesNeeded, &bytesNeeded, &numServices, &idxStart))
+							LastError{}.throwAlways("EnumServicesStatusW({} bytes) failed", bytesNeeded);
+
+						this->Index = 0;
+						this->Services = std::move(buffer);
+						this->NumServices = numServices;
+					}
+				}
+				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			public:
+				satisfies(ConstIterator,
+					IsDefaultConstructible,
+					IsCopyable
+				);
+				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+
+				// o~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
+			private:
+				::ENUM_SERVICE_STATUS const&
+				dereference() const {
+					return this->Services[this->Index];
+				}
+
+				bool
+				equal(const ConstIterator& r) const noexcept {
+					return this->Index == r.Index;
+				}
+				// o~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
+			private:
+				void
+				increment() {
+					if (this->Index != ConstIterator::npos 
+					 && ++this->Index == static_cast<ptrdiff_t>(this->NumServices))
+						*this = ConstIterator{};
+				}
+			};
+
+		public:
+			using const_iterator = ConstIterator;
+			using iterator = const_iterator;
+			using value_type = ::ENUM_SERVICE_STATUS;
+			using const_reference = ::ENUM_SERVICE_STATUS const&;
+			using reference = const_reference;
+			
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		private:
+			SharedServiceManager SCM;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			explicit
+			ExistingServicesCollection(SharedServiceManager scm)
+				: SCM{scm}
+			{}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			satisfies(ExistingServicesCollection,
+				NotDefaultConstructible,
+				NotCopyable
+			);
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			const_iterator
+			begin() const {
+				return const_iterator{this->SCM};
+			}
+
+			const_iterator
+			end() const {
+				return const_iterator{};
+			}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+		};
+
+	public:
+		ExistingServicesCollection const
+		static ExistingServices;
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:

@@ -72,5 +72,14 @@ TEST(ServiceManager_ST, QueryServiceDescription)
 	);
 }
 
+TEST(ServiceManager_ST, EnumerateInstalledServices) 
+{
+	//! @test  Verify service control manager can be enumerated successfully
+	EXPECT_NO_THROW(
+		for (auto& service : win::ServiceManager::ExistingServices)
+			std::wcout << service.lpServiceName;
+	);
+}
+
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #endif	// DISABLE_SERVICE_MANAGER_SYSTEM_TESTS
