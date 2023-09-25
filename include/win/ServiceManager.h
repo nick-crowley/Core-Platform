@@ -95,7 +95,7 @@ namespace core::win
 
 		//! @brief	Virtual collection of currently installed services
 		//! @remarks  Iteration occurs over a snapshot taken at enumeration time
-		class ExistingServicesCollection {
+		class InstalledServicesCollection {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			//! @brief  Navigates over snapshot of all currently installed services
@@ -188,12 +188,12 @@ namespace core::win
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			explicit
-			ExistingServicesCollection(SharedServiceManager scm)
+			InstalledServicesCollection(SharedServiceManager scm)
 			  : ManagerHandle{scm}
 			{}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			satisfies(ExistingServicesCollection,
+			satisfies(InstalledServicesCollection,
 				NotDefaultConstructible,
 				NotCopyable,
 				NotEqualityComparable,
@@ -219,7 +219,7 @@ namespace core::win
 		};
 
 	public:
-		ExistingServicesCollection const
+		InstalledServicesCollection const
 		static ExistingServices;
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
