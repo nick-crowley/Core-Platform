@@ -84,7 +84,7 @@ namespace core::win
 
 			Service
 			open(ServiceRight rights) const {
-				return ServiceManager{this->ManagerHandle}.find(this->name(), rights);
+				return ServiceManager{this->ManagerHandle}.open(this->name(), rights);
 			}
 
 			ServiceState
@@ -244,7 +244,7 @@ namespace core::win
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		Service
-		find(std::wstring_view name, ServiceRight rights) const {
+		open(std::wstring_view name, ServiceRight rights) const {
 			return Service{
 				SharedService{::OpenServiceW(*this->Handle, ThrowIfEmpty(name).data(), DWord{rights})}
 			};

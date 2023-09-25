@@ -53,7 +53,7 @@ TEST(ServiceManager_ST, OpenAnyService)
 
 	//! @test	Verify DHCP service existing and is running
 	EXPECT_EQ(
-		mgr.find(L"Dhcp", win::ServiceRight::QueryStatus).state(),
+		mgr.open(L"Dhcp", win::ServiceRight::QueryStatus).state(),
 		win::ServiceState::Running
 	);
 }
@@ -67,7 +67,7 @@ TEST(ServiceManager_ST, QueryServiceDescription)
 
 	//! @test	Verify description of DHCP service
 	EXPECT_EQ(
-		mgr.find(L"Dhcp", win::ServiceRight::QueryConfig).description(),
+		mgr.open(L"Dhcp", win::ServiceRight::QueryConfig).description(),
 		L"Registers and updates IP addresses and DNS records for this computer. If this service is stopped, this computer will not receive dynamic IP addresses and DNS updates. If this service is disabled, any services that explicitly depend on it will fail to start."
 	);
 }
