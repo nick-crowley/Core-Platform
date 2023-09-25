@@ -104,35 +104,8 @@ namespace core::win
 				}
 			};
 
-			//! @brief  Lifetime extending proxy for @c ::ENUM_SERVICE_STATUS[] wrapper
-			class InstalledServiceProxy {
-				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-			private:
-				InstalledService Object;
-				// o~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~o
-			public:
-				InstalledServiceProxy(SharedServiceStatusArray statuses, size_t idx) 
-				  : Object{statuses, idx}
-				{}
-				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~o
-			public:
-				satisfies(InstalledServiceProxy, 
-					NotDefaultConstructible,
-					IsCopyable,
-					IsMovable noexcept,
-					NotSortable,
-					NotEqualityComparable
-				);
-				// o~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
-			public:
-				implicit operator
-				InstalledService const&() const {
-					return this->Object;
-				}
-			};
-
 			//! @brief  Navigates over snapshot of all currently installed services
-			class ConstIterator : public boost::iterator_facade<ConstIterator, InstalledService const, boost::forward_traversal_tag>
+			class ConstIterator : public boost::iterator_facade<ConstIterator, InstalledService const, boost::forward_traversal_tag, InstalledService const>
 			{
 				friend class boost::iterator_core_access;
 				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -177,9 +150,9 @@ namespace core::win
 
 				// o~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
 			private:
-				InstalledServiceProxy
+				InstalledService
 				dereference() const {
-					return InstalledServiceProxy{this->Services, static_cast<size_t>(this->Index)};
+					return InstalledService{this->ManagerHandle, this->Services, static_cast<size_t>(this->Index)};
 				}
 
 				bool
@@ -198,9 +171,9 @@ namespace core::win
 
 		public:
 			using const_iterator = ConstIterator;
-			using const_reference = InstalledService const&;
+			using const_reference = std::iter_const_reference_t<ConstIterator>;
 			using iterator = const_iterator;
-			using reference = const_reference;
+			using reference = std::iter_reference_t<ConstIterator>;
 			using value_type = InstalledService;
 			using size_type = size_t;
 			using different_type = ptrdiff_t;
