@@ -35,21 +35,20 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-namespace core::win {
-
+namespace core::win {	
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 	* @brief	Access-rights for the service manager
 	*/
 	enum class ServiceManagerRight : access_mask_t {
 		AllAccess = SC_MANAGER_ALL_ACCESS,                  //!< All access rights
-		CreateService = SC_MANAGER_CREATE_SERVICE,          //!< Required to create a service object and add it to the database.
+		CreateServicé = SC_MANAGER_CREATE_SERVICE,          //!< Required to create a service object and add it to the database.
 		Connect = SC_MANAGER_CONNECT,                       //!< Required to connect to the service control manager.
 		EnumerateService = SC_MANAGER_ENUMERATE_SERVICE,    //!< Required to list the services that are in the database or to receive notification when any service is created or deleted.
 		Lock = SC_MANAGER_LOCK,                             //!< Required to acquire a lock on the database.
 		ModifyBootConfig = SC_MANAGER_MODIFY_BOOT_CONFIG,   //!< Required to call the @c NotifyBootConfigStatus() function.
 		QueryLockStatus = SC_MANAGER_QUERY_LOCK_STATUS,     //!< Required to retrieve the lock status information for the database.
 	};
-	
+
 	enum class CommonRight : access_mask_t;
 	enum class GenericRight : access_mask_t;
 	enum class StandardRight : access_mask_t;
