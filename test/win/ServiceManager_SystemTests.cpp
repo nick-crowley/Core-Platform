@@ -71,6 +71,7 @@ TEST(ServiceManager_ST, QueryServiceDescription)
 		L"Registers and updates IP addresses and DNS records for this computer. If this service is stopped, this computer will not receive dynamic IP addresses and DNS updates. If this service is disabled, any services that explicitly depend on it will fail to start."
 	);
 }
+
 TEST(ServiceManager_ST, EnumerateInstalledServices) 
 {
 	//! @test  Verify service control manager can be enumerated successfully
