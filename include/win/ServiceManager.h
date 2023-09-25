@@ -44,98 +44,103 @@ namespace core::win
 	class PlatformExport ServiceManager
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
+	public:	
+		//! @brief  Wrapper for variable-length service snapshot data
+		class InstalledService {
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		private:
+			SharedServiceManager         ManagerHandle;
+			::ENUM_SERVICE_STATUS const& ServiceData;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			InstalledService(SharedServiceManager scm, ::ENUM_SERVICE_STATUS const& data) 
+			  : ManagerHandle{std::move(scm)},
+				ServiceData{data}
+			{}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			satisfies(InstalledService, 
+				NotDefaultConstructible,
+				IsCopyable,
+				IsMovable noexcept,
+				NotSortable,
+				NotEqualityComparable
+			);
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			std::wstring
+			displayName() const {
+				return this->ServiceData.lpDisplayName;
+			}
+
+			std::wstring
+			name() const {
+				return this->ServiceData.lpServiceName;
+			}
+
+			Service
+			open(ServiceRight rights) const {
+				return ServiceManager{this->ManagerHandle}.find(this->name(), rights);
+			}
+
+			ServiceState
+			state() const {
+				return static_cast<ServiceState>(this->ServiceData.ServiceStatus.dwCurrentState);
+			}
+		};
+
 		//! @brief	Virtual collection of currently installed services
 		//! @remarks  Iteration occurs over a snapshot taken at enumeration time
 		class ExistingServicesCollection {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
-			using SharedServiceStatusArray = std::shared_ptr<::ENUM_SERVICE_STATUS[]>;
-
-			//! @brief  Wrapper for variable-length service snapshot data
-			class InstalledService {
-				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-			private:
-				SharedServiceStatusArray Snapshots;
-				size_t                   Index;
-				SharedServiceManager     ManagerHandle;
-				// o~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~o
-			public:
-				InstalledService(SharedServiceManager scm, SharedServiceStatusArray statuses, size_t idx) 
-				  : Snapshots{std::move(statuses)}, 
-				    Index{idx},
-					ManagerHandle{std::move(scm)}
-				{}
-				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~o
-			public:
-				satisfies(InstalledService, 
-					NotDefaultConstructible,
-					IsCopyable,
-					IsMovable noexcept,
-					NotSortable,
-					NotEqualityComparable
-				);
-				// o~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
-			public:
-				std::wstring
-				displayName() const {
-					return this->data().lpDisplayName;
-				}
-
-				std::wstring
-				name() const {
-					return this->data().lpServiceName;
-				}
-
-				Service
-				open(ServiceRight rights) const {
-					return ServiceManager{this->ManagerHandle}.find(this->name(), rights);
-				}
-
-				ServiceState
-				state() const {
-					return static_cast<ServiceState>(this->data().ServiceStatus.dwCurrentState);
-				}
-
-			private:
-				::ENUM_SERVICE_STATUS const&
-				data() const {
-					return this->Snapshots[this->Index];
-				}
-			};
-
 			//! @brief  Navigates over snapshot of all currently installed services
-			class ConstIterator : public boost::iterator_facade<ConstIterator, InstalledService const, boost::forward_traversal_tag, InstalledService const>
+			class ConstIterator : public boost::iterator_facade<ConstIterator, InstalledService const, boost::forward_traversal_tag>
 			{
 				friend class boost::iterator_core_access;
 				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 			private:
+				using SharedServiceStatusArray = std::shared_ptr<::ENUM_SERVICE_STATUS[]>;
+				using SharedInstallServiceArray = std::shared_ptr<InstalledService[]>;
+
 				ptrdiff_t constexpr
 				static npos = -1;
 				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 			private:
-				ptrdiff_t                Index = ConstIterator::npos;
-				size_t                   NumServices = 0;
-				SharedServiceStatusArray Services;
-				SharedServiceManager     ManagerHandle;
+				ptrdiff_t                                Index = ConstIterator::npos;
+				size_t                                   NumServices = 0;
+				std::optional<SharedServiceStatusArray>  DataStorage;
+				std::optional<SharedInstallServiceArray> Services;
+				std::optional<SharedServiceManager>      ManagerHandle;
 				// o~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~o
 			public:
 				explicit
 				ConstIterator(SharedServiceManager manager)
 				{
 					DWORD bytesNeeded{}, numServices{}, idxStart{};
-					::EnumServicesStatusW(*manager, SERVICE_DRIVER|SERVICE_WIN32, SERVICE_STATE_ALL, nullptr, 0, &bytesNeeded, &numServices, &idxStart);
+					::EnumServicesStatusW(*ThrowIfEmpty(manager), SERVICE_DRIVER|SERVICE_WIN32, SERVICE_STATE_ALL, nullptr, 0, &bytesNeeded, &numServices, &idxStart);
 					if (LastError err; err != ERROR_MORE_DATA) 
 						LastError{}.throwAlways("EnumServicesStatusW() failed");
 					else {
-						auto buffer = boost::reinterpret_pointer_cast<::ENUM_SERVICE_STATUS[]>(
-							std::make_shared<std::byte[]>(bytesNeeded)
+						auto buffer = std::reinterpret_pointer_cast<::ENUM_SERVICE_STATUS[]>(
+							std::make_shared_for_overwrite<std::byte[]>(bytesNeeded)
 						);
 						if (!::EnumServicesStatusW(*manager, SERVICE_DRIVER|SERVICE_WIN32, SERVICE_STATE_ALL, buffer.get(), bytesNeeded, &bytesNeeded, &numServices, &idxStart))
 							LastError{}.throwAlways("EnumServicesStatusW({} bytes) failed", bytesNeeded);
 
+						auto wrappers = std::reinterpret_pointer_cast<InstalledService[]>(
+							std::make_shared_for_overwrite<std::byte[]>(nstd::sizeof_n<InstalledService>(numServices))
+						);
+						for (unsigned idx = 0; idx < numServices; ++idx)
+							std::construct_at(&wrappers[idx], manager, buffer[idx]);
+						
 						this->Index = 0;
-						this->Services = std::move(buffer);
+						this->DataStorage = std::move(buffer);
+						this->Services = std::move(wrappers);
 						this->NumServices = numServices;
 						this->ManagerHandle = manager;
 					}
@@ -150,9 +155,9 @@ namespace core::win
 
 				// o~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
 			private:
-				InstalledService
+				InstalledService const&
 				dereference() const {
-					return InstalledService{this->ManagerHandle, this->Services, static_cast<size_t>(this->Index)};
+					return (*this->Services)[this->Index];
 				}
 
 				bool

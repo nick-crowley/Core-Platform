@@ -86,12 +86,11 @@ TEST(ServiceManager_ST, EnumerateAndOpenAnInstalledService)
 	auto const inRunningState = [](auto const& service) { return service.state() == win::ServiceState::Running; };
 	
 	//! @test  Verify enumerated services can be used to open a handle to the actual service
-	EXPECT_TRUE(false);
-	/*EXPECT_NO_THROW(
-		auto running = win::ServiceManager::ExistingServices | views::filter(inRunningState);
+	EXPECT_NO_THROW(
+		auto running = win::ServiceManager::ExistingServices | views::filter(inRunningState) | views::drop(4);
 		auto service = running.front().open(win::ServiceRight::QueryConfig);
 		std::wcout << service.description();
-	);*/
+	);
 }
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
