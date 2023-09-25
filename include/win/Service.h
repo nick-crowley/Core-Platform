@@ -90,6 +90,8 @@ namespace core::win
 			                            &bytesNeeded))
 				LastError{}.throwAlways("QueryServiceConfig2W() failed");
 			
+			if (!buffer->lpDescription)
+				return {};
 			return std::wstring{buffer->lpDescription, (bytesNeeded / sizeof(wchar_t)) - 5};
 		}
 
