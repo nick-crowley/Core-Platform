@@ -58,11 +58,13 @@ namespace core::win
 			private:
 				SharedServiceStatusArray Snapshots;
 				size_t                   Index;
+				SharedServiceManager     ManagerHandle;
 				// o~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~o
 			public:
-				InstalledService(SharedServiceStatusArray statuses, size_t idx) 
-				  : Snapshots{statuses}, 
-				    Index{idx}
+				InstalledService(SharedServiceManager scm, SharedServiceStatusArray statuses, size_t idx) 
+				  : Snapshots{std::move(statuses)}, 
+				    Index{idx},
+					ManagerHandle{std::move(scm)}
 				{}
 				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~o
 			public:
@@ -83,6 +85,11 @@ namespace core::win
 				std::wstring
 				name() const {
 					return this->data().lpServiceName;
+				}
+
+				Service
+				open(ServiceRight rights) const {
+					return ServiceManager{this->ManagerHandle}.find(this->name(), rights);
 				}
 
 				ServiceState
@@ -137,6 +144,7 @@ namespace core::win
 				ptrdiff_t                Index = ConstIterator::npos;
 				size_t                   NumServices = 0;
 				SharedServiceStatusArray Services;
+				SharedServiceManager     ManagerHandle;
 				// o~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~o
 			public:
 				explicit
@@ -156,6 +164,7 @@ namespace core::win
 						this->Index = 0;
 						this->Services = std::move(buffer);
 						this->NumServices = numServices;
+						this->ManagerHandle = manager;
 					}
 				}
 				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -197,12 +206,12 @@ namespace core::win
 			using different_type = ptrdiff_t;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
-			SharedServiceManager SCM;
+			SharedServiceManager ManagerHandle;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			explicit
 			ExistingServicesCollection(SharedServiceManager scm)
-			  : SCM{scm}
+			  : ManagerHandle{scm}
 			{}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
@@ -218,7 +227,7 @@ namespace core::win
 		public:
 			const_iterator
 			begin() const {
-				return const_iterator{this->SCM};
+				return const_iterator{this->ManagerHandle};
 			}
 
 			const_iterator
@@ -239,6 +248,12 @@ namespace core::win
 	private:
 		SharedServiceManager Handle;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	private:
+		explicit
+		ServiceManager(SharedServiceManager existing)
+		  : Handle{std::move(existing)}
+		{}
+
 	public:
 		explicit
 		ServiceManager(ServiceManagerRight rights) 
