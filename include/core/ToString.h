@@ -111,7 +111,7 @@ namespace core
     to_string(BitFlag const value)
     {
         // Whether there exists an enumerator equal to zero representing 'no flags'
-        bool constexpr hasNoneEnumerator = is_valid_enumerator_v<BitFlag, 0>;
+        bool constexpr hasNoneEnumerator = is_valid_enumerator_v<static_cast<BitFlag>(0)>;
 
 	    // Predicate: Tests whether a flag is present (using bitwise-AND)
 	    auto const isPresent = [value](const EnumName<BitFlag>& n) -> bool {
@@ -137,7 +137,7 @@ namespace core
 #endif
 	    // [NONE] Some bitflags provide an explicit enumerator for 'no-flags'
 	    else if (hasNoneEnumerator) 
-		    out = enumerator_name_v<BitFlag, static_cast<BitFlag>(0)>;
+		    out = enumerator_name_v<static_cast<BitFlag>(0)>;
 
 	    // Return (possibly empty) string
 	    return out;
