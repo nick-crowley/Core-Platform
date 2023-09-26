@@ -87,9 +87,9 @@ namespace core::win
 				return ServiceManager{this->ManagerHandle}.open(this->name(), rights);
 			}
 
-			ServiceState
-			state() const {
-				return static_cast<ServiceState>(this->ServiceData.ServiceStatus.dwCurrentState);
+			ServiceStatus
+			status() const {
+				return static_cast<ServiceStatus>(this->ServiceData.ServiceStatus.dwCurrentState);
 			}
 		};
 

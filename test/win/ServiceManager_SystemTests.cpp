@@ -53,8 +53,8 @@ TEST(ServiceManager_ST, OpenAnyService)
 
 	//! @test	Verify DHCP service existing and is running
 	EXPECT_EQ(
-		mgr.open(L"Dhcp", win::ServiceRight::QueryStatus).state(),
-		win::ServiceState::Running
+		mgr.open(L"Dhcp", win::ServiceRight::QueryStatus).status(),
+		win::ServiceStatus::Running
 	);
 }
 
@@ -77,13 +77,13 @@ TEST(ServiceManager_ST, EnumerateInstalledServices)
 	//! @test  Verify service control manager can be enumerated successfully
 	EXPECT_NO_THROW(
 		for (auto& service : win::ServiceManager::ExistingServices)
-			std::wcout << std::format("Installed: {} ({})", to_utf8(service.name()), to_string(service.state())) << std::endl;
+			std::wcout << std::format("Installed: {} ({})", to_utf8(service.name()), to_string(service.status())) << std::endl;
 	);
 }
 
 TEST(ServiceManager_ST, EnumerateAndOpenAnInstalledService) 
 {
-	auto const inRunningState = [](auto const& service) { return service.state() == win::ServiceState::Running; };
+	auto const inRunningState = [](auto const& service) { return service.status() == win::ServiceStatus::Running; };
 	
 	//! @test  Verify enumerated services can be used to open a handle to the actual service
 	EXPECT_NO_THROW(

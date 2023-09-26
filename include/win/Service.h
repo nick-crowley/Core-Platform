@@ -39,7 +39,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::win
 {
-	enum class ServiceState : DWORD {
+	enum class ServiceStatus : DWORD {
 		ContinuePending = SERVICE_CONTINUE_PENDING,   //!< The service continue is pending.
 		PausePending = SERVICE_PAUSE_PENDING,         //!< The service pause is pending.
 		Paused = SERVICE_PAUSED,                      //!< The service is paused.
@@ -99,12 +99,12 @@ namespace core::win
 			return this->Handle;
 		}
 
-		ServiceState
-		state() const {
+		ServiceStatus
+		status() const {
 			if (::SERVICE_STATUS info{}; !::QueryServiceStatus(*this->Handle, &info))
 				LastError{}.throwAlways("QueryServiceStatus() failed");
 			else
-				return static_cast<ServiceState>(info.dwCurrentState);
+				return static_cast<ServiceStatus>(info.dwCurrentState);
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};
