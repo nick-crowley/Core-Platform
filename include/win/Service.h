@@ -29,7 +29,6 @@
 #include "library/core.Platform.h"
 #include "security/ServiceRight.h"
 #include "nstd/Functional.h"
-#include "win/ServiceManager.h"
 #include "win/SharedHandle.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
