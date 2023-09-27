@@ -248,9 +248,10 @@ namespace core::win
 	public:
 		Service
 		open(std::wstring_view name, ServiceRight rights) const {
-			return Service{
-				SharedService{::OpenServiceW(*this->Handle, ThrowIfEmpty(name).data(), DWord{rights})}
-			};
+			if (auto handle = ::OpenServiceW(*this->Handle, ThrowIfEmpty(name).data(), DWord{rights}); !handle)
+				LastError{}.throwAlways("OpenService('{}') failed", to_utf8(name));
+			else 
+				return Service{SharedService{handle}};
 		}
 
 		SharedServiceManager
