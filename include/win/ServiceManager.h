@@ -235,8 +235,11 @@ namespace core::win
 	public:
 		explicit
 		ServiceManager(ServiceManagerRight rights) 
-		  : Handle{::OpenSCManagerW(nullptr, nullptr, DWord{rights})}
-		{}
+		  : Handle{::OpenSCManagerW(nullptr, SERVICES_ACTIVE_DATABASE, DWord{rights})}
+		{
+			if (!this->Handle)
+				LastError{}.throwAlways("OpenSCManager('{}') failed", core::to_string(rights));
+		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
