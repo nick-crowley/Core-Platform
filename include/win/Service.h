@@ -107,6 +107,33 @@ namespace core::win
 				return static_cast<ServiceStatus>(info.dwCurrentState);
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
+		void
+		continué() {
+			::SERVICE_STATUS status{};
+			if (!::ControlService(*this->Handle, SERVICE_CONTROL_CONTINUE, &status))
+				LastError{}.throwIfError("ControlService() failed");
+		}
+
+		void
+		pause() {
+			::SERVICE_STATUS status{};
+			if (!::ControlService(*this->Handle, SERVICE_CONTROL_PAUSE, &status))
+				LastError{}.throwIfError("ControlService() failed");
+		}
+
+		void
+		start() {
+			if (!::StartServiceW(*this->Handle, 0, nullptr))
+				LastError{}.throwIfError("StartService() failed");
+		}
+		
+		void
+		stop() {
+			::SERVICE_STATUS status{};
+			if (!::ControlService(*this->Handle, SERVICE_CONTROL_STOP, &status))
+				LastError{}.throwIfError("ControlService() failed");
+		}
 	};
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
