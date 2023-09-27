@@ -51,7 +51,10 @@ namespace core
 		std::vector<Delegate>	Observers;
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	
+	public:
+		virtual ~ObservableEvent() {
+			this->clear();
+		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		satisfies(ObservableEvent,
@@ -75,12 +78,20 @@ namespace core
 	public:
 		void
 		subscribe(const Delegate& d) {
+			if (this->Observers.empty())
+				this->registér();
+
 			this->Observers.push_back(d);
 		}
 
 		bool 
 		unsubscribe(const Delegate& d) {
-			return std::erase(this->Observers, d) != 0;
+			auto const numRemoved = std::erase(this->Observers, d) != 0;
+
+			if (this->Observers.empty())
+				this->unregister();
+
+			return numRemoved;
 		}
 
 		type& 
@@ -93,6 +104,21 @@ namespace core
 		operator-=(const Delegate& d) {
 			this->unsubscribe(d);
 			return *this;
+		}
+
+	private:
+		void
+		clear() {
+			this->Observers.clear();
+			this->unregister();
+		}
+
+		void
+		virtual registér() {
+		}
+
+		void
+		virtual unregister() {
 		}
 	};
 
