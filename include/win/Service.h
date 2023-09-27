@@ -48,6 +48,25 @@ namespace core::win
 		StopPending = SERVICE_STOP_PENDING,           //!< The service is stopping.
 		Stopped = SERVICE_STOPPED,                    //!< The service is not running.
 	};
+
+	enum class ServiceNotify : DWORD {
+		Unspecified = 0,                                     //!< [CUSTOM] Occurs when application must determine that itself
+		Created = SERVICE_NOTIFY_CREATED,                    //!< Report when the service has been created.
+		ContinuePending = SERVICE_NOTIFY_CONTINUE_PENDING,   //!< Report when the service is about to continue.
+		DeletePending = SERVICE_NOTIFY_DELETE_PENDING,       //!< Report when service has been passed to @c DeleteService() (Your application should close any handles to the service so it can be deleted)
+		Deleted = SERVICE_NOTIFY_DELETED,                    //!< Report when the service has been deleted. (An application cannot receive this notification if it has an open handle to the service)
+		PausePending = SERVICE_NOTIFY_PAUSE_PENDING,         //!< Report when the service is pausing.
+		Paused = SERVICE_NOTIFY_PAUSED,                      //!< Report when the service has paused.
+		Running = SERVICE_NOTIFY_RUNNING,                    //!< Report when the service is running.
+		StartPending = SERVICE_NOTIFY_START_PENDING,         //!< Report when the service is starting.
+		StopPending = SERVICE_NOTIFY_STOP_PENDING,           //!< Report when the service is stopping.
+		Stopped = SERVICE_NOTIFY_STOPPED,                    //!< Report when the service has stopped.
+	};
+}
+namespace core::meta 
+{
+	//! @brief	@c core::win::ServiceNotify is a bitflag
+	metadata bool Settings<bitwise_enum, win::ServiceNotify> = true;	
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::win
