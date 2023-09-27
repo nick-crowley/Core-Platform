@@ -74,21 +74,75 @@ namespace core::win
 	class Service
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
+		using StatusChangedDelegate = Delegate<void(Service&,ServiceNotify)>;
 
+	private:
+		class StatusChangedEvent : public ObservableEvent<StatusChangedDelegate> {
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		private:
+			Service&                       Owner;
+			PSC_NOTIFICATION_REGISTRATION  Cookie;
+			SharedLibrary                  SecHostLib;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			StatusChangedEvent(Service& s) 
+			  : Owner{s},
+			    SecHostLib{L"sechost.dll"}
+			{}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+		private:
+			void
+			virtual registér() override {
+				auto const subscribeChangeNotifications = this->SecHostLib.loadFunction<decltype(::SubscribeServiceChangeNotifications)>("SubscribeServiceChangeNotifications");
+
+				if (BOOL const result = subscribeChangeNotifications(*this->Owner.Handle, 
+				                                                     SC_EVENT_STATUS_CHANGE, 
+				                                                     &Service::OnStatusChanged, 
+				                                                     &this->Owner, 
+				                                                     &this->Cookie); !result)
+					LastError{}.throwAlways("SubscribeServiceChangeNotifications() failed");
+			}
+
+			void
+			virtual unregister() override {
+				auto const unsubscribeChangeNotifications = this->SecHostLib.loadFunction<decltype(::UnsubscribeServiceChangeNotifications)>("UnsubscribeServiceChangeNotifications");
+
+				unsubscribeChangeNotifications(this->Cookie);
+				this->Cookie = nullptr;
+			}
+		};
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		SharedService  Handle;
+
+	public:
+		StatusChangedEvent  StatusChanged;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		explicit
 		Service(SharedService srvc) 
-		  : Handle{ThrowIfEmpty(srvc)}
+		  : Handle{ThrowIfEmpty(srvc)},
+			StatusChanged{*this}  // @c Handle must be initialized prior to @c StatusChanged
 		{
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
+	private:
+		void
+		static CALLBACK OnStatusChanged(DWORD notifyMask, void* param) {
+			auto* const self = static_cast<Service*>(param);
+			self->StatusChanged.raise(*self, static_cast<ServiceNotify>(notifyMask));
+		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		std::wstring

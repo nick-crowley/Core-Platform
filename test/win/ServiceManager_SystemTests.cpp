@@ -28,6 +28,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include <gtest/gtest.h>
 #include <win/ServiceManager.h>
+#include <win/ManualResetEvent.h>
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 using namespace core;
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -90,6 +91,57 @@ TEST(ServiceManager_ST, EnumerateAndOpenAnInstalledService)
 		auto running = win::ServiceManager::ExistingServices | views::filter(inRunningState) | views::drop(4);
 		auto service = running.front().open(win::ServiceRight::QueryConfig);
 		std::wcout << service.description();
+	);
+}
+
+TEST(ServiceManager_ST, NotifyServiceStatusChanged) 
+{
+	using namespace win;
+	using enum ServiceManagerRight;
+	
+	std::optional<win::ServiceManager> scm;
+	std::optional<win::Service> service;
+	
+	//! @post  Service control manager can be opened successfully
+	EXPECT_NO_THROW(
+		scm = ServiceManager{Connect|EnumerateService};
+	);
+	
+	//! @post  Print Spooler service can be opened successfully
+	EXPECT_NO_THROW(
+		service.emplace(scm->open(L"Spooler", ServiceRight::Start|ServiceRight::Stop|ServiceRight::QueryStatus));
+	);
+	
+	ManualResetEvent receivedNotification{false};
+	unsigned numNotifications = 0;
+
+	//! @test  Verify service status change event can be listened upon successfully
+	EXPECT_NO_THROW(
+		service->StatusChanged += [&](win::Service& sender, ServiceNotify mask) {
+			++numNotifications;
+			receivedNotification.signal();
+		};
+	);
+
+	// Trigger notifications
+	service->start();
+	win::waitFor(*receivedNotification.handle(), chrono::seconds{1});
+	std::wcout << "Service status changed to " << to_string(service->status()) << std::endl;
+
+	receivedNotification.reset();
+	service->stop();
+	win::waitFor(*receivedNotification.handle(), chrono::seconds{1});
+	std::wcout << "Service status changed to " << to_string(service->status()) << std::endl;
+
+	//! @post	Status notifications are received
+	EXPECT_TRUE(
+		receivedNotification.signalled()
+	);
+
+	//! @post	Expected number of status notifications are received
+	EXPECT_EQ(
+		4u,         // TODO: Set to correct number
+		numNotifications
 	);
 }
 
