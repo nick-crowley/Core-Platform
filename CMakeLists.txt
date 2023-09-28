@@ -22,6 +22,7 @@ set(OUTPUT_FOLDER "${BASE_FOLDER}build")
 # Folders: Project
 set(PROJECT_EXTRA_FOLDER    "${BASE_FOLDER}extra/")
 set(PROJECT_INCLUDE_FOLDER  "${BASE_FOLDER}include/")
+set(PROJECT_SAMPLE_FOLDER   "${BASE_FOLDER}sample/")
 set(PROJECT_SOURCE_FOLDER   "${BASE_FOLDER}src/")
 set(PROJECT_RESOURCE_FOLDER "${BASE_FOLDER}res/")
 
@@ -260,6 +261,57 @@ add_dependencies(appCorePlatform
 	dllCorePlatform
 )
 
+
+##############################################################
+#         _________                  .__              		 #
+#        /   _____/ ______________  _|__| ____  ____  		 #
+#        \_____  \_/ __ \_  __ \  \/ /  |/ ___\/ __ \ 		 #
+#        /        \  ___/|  | \/\   /|  \  \__\  ___/ 		 #
+#       /_______  /\___  >__|    \_/ |__|\___  >___  >		 #
+#               \/     \/                    \/    \/ 		 #
+##############################################################
+
+# Project: appService
+add_executable(appService
+	"${PROJECT_SAMPLE_FOLDER}appService.cpp"
+	#${PROJECT_RESOURCE_FILES}
+    )
+
+# Include folders
+target_include_directories(appService BEFORE
+    PRIVATE
+	${PROJECT_SAMPLE_FOLDER} 
+	${PROJECT_RESOURCE_FOLDER} 
+    PUBLIC
+    ${PROJECT_INCLUDE_FOLDER}            
+	)
+	
+# Set linker dependencies
+target_link_libraries(appService
+	dllCorePlatform
+)
+
+# Set compiler & linker flags
+set_target_properties(appService PROPERTIES
+					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS}"
+					  LINK_FLAGS "${GLOBAL_LINKER_OPTIONS} /SUBSYSTEM:WINDOWS"
+					  OUTPUT_NAME "appService")
+
+# Set macros to 'import DLL'
+target_compile_definitions(appService
+	PRIVATE ${PROJECT_IMPORT_MACRO}
+)
+
+# Link CRT dynamically
+target_compile_options(appService
+	PRIVATE $<$<CONFIG:Release>:/MD>
+	PRIVATE $<$<CONFIG:Debug>:/MDd>
+)
+
+# Set project dependencies
+add_dependencies(appService
+	dllCorePlatform
+)
 ###############################################################################
 #   ________                     .__           ___________              __    #
 #  /  _____/  ____   ____   ____ |  |   ____   \__    ___/___   _______/  |_  #
@@ -394,11 +446,18 @@ file(GLOB_RECURSE PROJECT_EXTRA_FILES
     "${PROJECT_EXTRA_FOLDER}*.h"
     "${PROJECT_EXTRA_FOLDER}*.cpp"
     )
-	
+
+# Sample code
+file(GLOB_RECURSE PROJECT_SAMPLE_FILES
+    "${PROJECT_SAMPLE_FOLDER}*.h"
+    "${PROJECT_SAMPLE_FOLDER}*.cpp"
+)
+
 # Project file groups
 source_group(TREE ${PROJECT_SOURCE_FOLDER}    PREFIX "Build Files"    FILES ${PROJECT_SOURCE_CC_FILES}})
 source_group(TREE ${PROJECT_EXTRA_FOLDER}     PREFIX "Extra Files"    FILES ${PROJECT_EXTRA_FILES})
 source_group(TREE ${PROJECT_INCLUDE_FOLDER}   PREFIX "Header Files"   FILES ${PROJECT_INCLUDE_FILES})
+source_group(TREE ${PROJECT_SAMPLE_FOLDER}    PREFIX "Source Files"   FILES ${PROJECT_SAMPLE_FILES})
 source_group(TREE ${PROJECT_SOURCE_FOLDER}    PREFIX "Source Files"   FILES ${PROJECT_SOURCE_FILES})
 source_group(TREE ${PROJECT_RESOURCE_FOLDER}  PREFIX "Resource Files" FILES ${PROJECT_RESOURCE_FILES})
 
