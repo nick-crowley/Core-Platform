@@ -55,18 +55,24 @@ namespace nstd
 	template <typename T, typename Element>
 	concept EnumSequenceOf = EnumSequence<T> 
 	                      && std::same_as<sequence_element_t<T>, Element>;
-	
-
-	enum class TestEnum;
-	static_assert(EnumSequence<std::integer_sequence<TestEnum>>);
-	static_assert(!EnumSequence<std::integer_sequence<int>>);
-	static_assert(EnumSequenceOf<std::integer_sequence<TestEnum>,TestEnum>);
-	static_assert(!EnumSequenceOf<std::integer_sequence<TestEnum>,int>);
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
-// o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Separator o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace nstd::testing {
+	enum class TestEnum;
+	//! @test  Verify @c nstd::EnumSequence recognises empty sequences of enumeration type
+	static_assert(EnumSequence<std::integer_sequence<TestEnum>>);
 
+	//! @test  Verify @c nstd::EnumSequence recognises non-empty sequences of enumeration type
+	static_assert(EnumSequenceOf<std::integer_sequence<TestEnum>,TestEnum>);
+
+	//! @test  Verify @c nstd::EnumSequence rejects empty sequences of non-enumeration type
+	static_assert(!EnumSequence<std::integer_sequence<int>>);
+
+	//! @test  Verify @c nstd::EnumSequence rejects non-empty sequences of non-enumeration type
+	static_assert(!EnumSequenceOf<std::integer_sequence<TestEnum>,int>);
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

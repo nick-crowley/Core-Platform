@@ -56,19 +56,25 @@ namespace nstd
 	//! @brief	Ensure type is @c std::integer_sequence<> (of any type and length)
 	template <typename T>
 	concept IntegerSequence = is_integer_sequence_v<T>;
-	
-
-	static_assert(IntegerSequence<std::integer_sequence<int>>);
-	static_assert(IntegerSequence<std::integer_sequence<int,1>>);
-#if defined(__cpp_nontype_template_args) && (__cpp_nontype_template_args >= 201911L)
-	static_assert(IntegerSequence<std::integer_sequence<double,2.0>>);
-	static_assert(!IntegerSequence<float>);
-#endif
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
-// o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Separator o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace nstd::testing {
+	//! @brief  Verify @c nstd::IntegerSequence recognises empty sequences
+	static_assert(IntegerSequence<std::integer_sequence<int>>);
 
+	//! @brief  Verify @c nstd::IntegerSequence recognises non-empty sequences
+	static_assert(IntegerSequence<std::integer_sequence<int,1>>);
+
+#if defined(__cpp_nontype_template_args) && (__cpp_nontype_template_args >= 201911L)
+	//! @brief  Verify @c nstd::IntegerSequence recognises sequences of non-integral element types
+	static_assert(IntegerSequence<std::integer_sequence<double,2.0>>);
+
+	//! @brief  Verify @c nstd::IntegerSequence rejects non-sequence types
+	static_assert(!IntegerSequence<float>);
+#endif
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

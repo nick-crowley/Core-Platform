@@ -53,16 +53,20 @@ namespace nstd
 	//! @brief	Ensure type is an @c std::integer_sequence<> of a particular type
 	template <typename T, typename Element>
 	concept SequenceOf = is_sequence_of<T,Element>::value;
-	
-
-	static_assert(SequenceOf<std::integer_sequence<int>,int>);
-	static_assert(SequenceOf<std::integer_sequence<int,1>,int>);
-	static_assert(!SequenceOf<std::integer_sequence<float>,int>);
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
-// o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Separator o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace nstd::testing {
+	//! @brief  Verify @c nstd::SequenceOf detects the element type of empty sequences
+	static_assert(SequenceOf<std::integer_sequence<int>,int>);
 
+	//! @brief  Verify @c nstd::SequenceOf detects the element type of non-empty sequences
+	static_assert(SequenceOf<std::integer_sequence<int,1>,int>);
+
+	//! @brief  Verify @c nstd::SequenceOf detects the element type of non-empty sequences of non-integral elements
+	static_assert(!SequenceOf<std::integer_sequence<float>,int>);
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

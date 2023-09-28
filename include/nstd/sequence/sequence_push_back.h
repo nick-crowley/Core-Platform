@@ -52,14 +52,17 @@ namespace nstd
 
 	template <IntegerSequence Sequence, sequence_element_t<Sequence> Element>
 	using sequence_push_back_t = typename sequence_push_back<Sequence,Element>::type;
-	
-	static_assert(std::same_as<sequence_push_back_t<std::integer_sequence<int>, 1>, std::integer_sequence<int,1>>);
-	static_assert(std::same_as<sequence_push_back_t<std::integer_sequence<int,1>, 2>, std::integer_sequence<int,1,2>>);
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
-// o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Separator o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace nstd::testing {
+	//! @test  Verify @c nstd::sequence_push_back_t appends an empty sequence to create a non-empty sequence
+	static_assert(std::same_as<sequence_push_back_t<std::integer_sequence<int>, 1>, std::integer_sequence<int,1>>);
 
+	//! @test  Verify @c nstd::sequence_push_back_t appends a non-empty sequence
+	static_assert(std::same_as<sequence_push_back_t<std::integer_sequence<int,1>, 2>, std::integer_sequence<int,1,2>>);
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

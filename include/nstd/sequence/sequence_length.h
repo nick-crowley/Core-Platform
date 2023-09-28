@@ -51,15 +51,17 @@ namespace nstd
 	template <IntegerSequence Sequence>
 	size_t constexpr
 	sequence_length_v = sequence_length<Sequence>::value;
-	
-	static_assert(sequence_length_v<std::integer_sequence<int>> == 0);
-	static_assert(sequence_length_v<std::integer_sequence<int,1>> == 1);
-
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
-// o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Separator o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace nstd::testing {
+	//! @test  Verify @c nstd::sequence_length_v is @c 0 for empty sequences
+	static_assert(sequence_length_v<std::integer_sequence<int>> == 0);
 
+	//! @test  Verify @c nstd::sequence_length_v is @c 1 for sequences with a single element
+	static_assert(sequence_length_v<std::integer_sequence<int,1>> == 1);
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
