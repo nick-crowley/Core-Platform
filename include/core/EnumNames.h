@@ -193,9 +193,9 @@ namespace core
 	* @brief	Array of name-value pairs representing every valid enumerator for type @c E
 	*
 	* @tparam	E	Any enumeration type
-	* @tparam	Values...	[optional] User-provided valid enumerators
+	* @tparam	...	[optional] User-provided valid enumerators
 	*/
-	template <nstd::Enumeration E, nstd::EnumSequence Values = BlindLinearSearchThenPowersOf2<E,0,32> /*std::remove_cv_t<decltype(enumerator_values_v<E>)>*/ >
+	template <nstd::Enumeration E, nstd::EnumSequence = BlindLinearSearchThenPowersOf2<E,0,32> /*std::remove_cv_t<decltype(enumerator_values_v<E>)>*/ >
 	meta::undefined_t constexpr
 	enumerator_dictionary_v;
 
@@ -239,29 +239,39 @@ namespace core
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::testing
 {
+	//! @test	Verify @c core::enumerator_name() correctly stringifies enumerators (of enumerations who underlying type is unsigned)
 	static_assert(enumerator_name(E2::Twenty) == "Twenty");
+
+	//! @test	Verify @c core::is_valid_enumerator() correctly identifies valid enumerators (of enumerations who underlying type is unsigned)
 	static_assert(is_valid_enumerator(E2::Twenty));
+
+	//! @test	Verify @c core::is_valid_enumerator() correctly identifies invalid enumerators (of enumerations who underlying type is unsigned)
 	static_assert(!is_valid_enumerator(E2{21}));
 
+	//! @test	Verify @c core::enumerator_dictionary_v returns @c std::array containing all enumerators
 	static_assert(enumerator_dictionary_v<N1::E1> == std::array<EnumName<N1::E1>,1>{ 
 		EnumName<N1::E1>{"Zero",N1::E1::Zero} 
 	});
 		
+	//! @test	Verify @c core::SuppliedValues produces correct @c nstd::enum_sequence when enumeration is nested type
 	static_assert(std::same_as<
-		SuppliedValues<N1::E1, N1::E1::Zero>,
+		SuppliedValues<N1::E1::Zero>,
 		nstd::enum_sequence<N1::E1, N1::E1::Zero>
 	>);
 
+	//! @test	Verify @c core::SuppliedValues produces correct @c nstd::enum_sequence when enumeration isn't a nested type
 	static_assert(std::same_as<
-		SuppliedValues<E2, E2::Zero>,
+		SuppliedValues<E2::Zero>,
 		nstd::enum_sequence<E2, E2::Zero>
 	>);
 	
+	//! @test	Verify @c core::BlindLinearSearch correctly finds all enumerators between zero and twenty
 	static_assert(std::same_as<
 		BlindLinearSearch<E2,0,20>,
 		nstd::enum_sequence<E2,E2::Zero,E2::One,E2::Two,E2::Six,E2::Twenty>
 	>);
 	
+	//! @test	Verify @c core::BlindLinearSearchThenPowersOf2 correctly finds all remaining enumerators not found by earlier test
 	static_assert(std::same_as<
 		BlindLinearSearchThenPowersOf2<E2,0,21>,
 		nstd::enum_sequence<E2,E2::Zero,E2::One,E2::Two,E2::Six,E2::Twenty,
@@ -276,10 +286,17 @@ namespace core::testing
 		v2_29 = 1u << 29,
 		v2_30 = 1u << 30
 	};
+
+	//! @test	Verify @c core::enumerator_name() correctly stringifies enumerators (of enumerations who underlying type is signed)
 	static_assert(enumerator_name(SignedEnum::Two) == "Two");
+
+	//! @test	Verify @c core::is_valid_enumerator() correctly identifies valid enumerators (of enumerations who underlying type is signed)
 	static_assert(is_valid_enumerator(SignedEnum::Two));
+
+	//! @test	Verify @c core::is_valid_enumerator() correctly identifies invalid enumerators (of enumerations who underlying type is signed)
 	static_assert(!is_valid_enumerator(SignedEnum{3}));
 	
+	//! @test	Verify @c core::BlindLinearSearchThenPowersOf2 operates correctly on enumerations whose underlying type is signed
 	static_assert(std::same_as<
 		BlindLinearSearchThenPowersOf2<SignedEnum,0,3>,
 		nstd::enum_sequence<SignedEnum,SignedEnum::Zero,SignedEnum::One,SignedEnum::Two,SignedEnum::v2_29,SignedEnum::v2_30>
