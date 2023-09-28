@@ -29,16 +29,11 @@
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+#include "meta/TagTypes.h"
+#include "nstd/experimental/metafunc.h"
 #include "nstd/sequence/type_sequence.h"
 #include "nstd/sequence/value_sequence.h"
-#include "nstd/sequence/is_index_sequence.h"
-#include "nstd/sequence/is_integer_sequence.h"
-#include "nstd/sequence/is_sequence_of.h"
-#include "nstd/sequence/sequence_element.h"
-#include "nstd/sequence/sequence_front.h"
-#include "nstd/sequence/sequence_length.h"
-#include "nstd/sequence/sequence_push_back.h"
-#include "nstd/sequence/enum_sequence.h"
+#include "../../../src/StdLibrary.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -48,11 +43,69 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace nstd
+{
+	//! @brief  First element of any sequence [type or value]
+	template <typename Sequence>
+	metafunc sequence_front : core::meta::undefined_t {};
+	
+	// Specialization for @c std::integer_sequence
+	template <typename T, T F, T... R>
+	metafunc sequence_front<std::integer_sequence<T,F,R...>> : std::integral_constant<T, F> {};
+	
+	// Specialization for @c nstd::type_sequence
+	template <typename T, typename... R>
+	metafunc sequence_front<type_sequence<T,R...>> : std::type_identity<T> {};
 
+	// Specialization for @c nstd::value_sequence
+	template <auto F, auto... R>
+	metafunc sequence_front<value_sequence<F,R...>> : std::integral_constant<decltype(F), F> {};
+	
+
+
+	//! @brief  First value of any sequence
+	template <typename Sequence>
+	auto constexpr
+	inline sequence_front_v = core::undefined;
+	
+	// Specialization for @c std::integer_sequence
+	template <typename T, T F, T... R>
+	auto constexpr
+	inline sequence_front_v<std::integer_sequence<T,F,R...>> = F;
+	
+	// Specialization for @c nstd::value_sequence
+	template <auto F, auto... R>
+	auto constexpr
+	inline sequence_front_v<value_sequence<F,R...>> = F;
+
+
+
+	namespace detail {
+		//! @brief  Type of the front element of any sequence
+		template <typename Sequence>
+		metafunc sequence_front_type : std::type_identity<core::meta::undefined_t> {};
+		
+		// Specialization for @c std::integer_sequence
+		template <typename T, T... R>
+		metafunc sequence_front_type<std::integer_sequence<T,R...>> : std::type_identity<T> {};
+
+		// Specialization for @c nstd::type_sequence
+		template <typename T, typename... R>
+		metafunc sequence_front_type<type_sequence<T,R...>> : std::type_identity<T> {};
+		
+		// Specialization for @c nstd::value_sequence
+		template <auto F, auto... R>
+		metafunc sequence_front_type<value_sequence<F,R...>> : std::type_identity<decltype(F)> {};
+	}
+
+	//! @brief  Type of the first element of any sequence
+	template <typename Sequence>
+	using sequence_front_t = typename detail::sequence_front_type<Sequence>::type;
+
+
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
-// o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Separator o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
