@@ -42,6 +42,15 @@ namespace core::detail
         auto constexpr
         inline static release = &::CloseServiceHandle;
     };  
+    
+    template <>
+    struct HandleTraits<::SERVICE_STATUS_HANDLE> {
+        ::SERVICE_STATUS_HANDLE constexpr
+        inline static empty = nullptr;
+
+        auto constexpr
+        inline static release = [](::SERVICE_STATUS_HANDLE) {};
+    };
 }
 
 namespace core::win
@@ -80,6 +89,9 @@ namespace core::win
     
     //! @brief  Shared @c ::SC_HANDLE released using @c ::CloseServiceHandle()
     using SharedService = SmartHandle<::SC_HANDLE>;
+    
+    //! @brief  Shared @c ::SERVICE_STATUS_HANDLE
+    using SharedServiceController = SmartHandle<::SERVICE_STATUS_HANDLE>;
     
     //! @brief  Shared @c ::SC_HANDLE released using @c ::CloseServiceHandle() but distinct from service handles
     using SharedServiceManager = SmartHandle<::SC_HANDLE, detail::ServiceManagerHandleTraits>;
