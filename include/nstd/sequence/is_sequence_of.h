@@ -30,6 +30,9 @@
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "nstd/experimental/metafunc.h"
+#include "nstd/sequence/type_sequence.h"
+#include "nstd/sequence/value_tuple.h"
+#include "nstd/sequence/value_sequence.h"
 #include "../../../src/StdLibrary.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
@@ -42,15 +45,32 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace nstd
 {
-	//! @brief	Query whether type is an @c std::integer_sequence<> of a particular type
+	//! @brief	Query whether @p Sequence is a sequence of elements of type @p T
 	template <typename Sequence, typename T>
 	metafunc is_sequence_of : std::false_type {};
 
-	template <typename Value, Value... Values>
-	metafunc is_sequence_of<std::integer_sequence<Value,Values...>, Value> : std::true_type {};
+	// Specialization for @c std::integer_sequence
+	template <typename Value, Value... Rs>
+	metafunc is_sequence_of<std::integer_sequence<Value,Rs...>, Value> : std::true_type {};
 	
+	// Specialization for @c nstd::type_sequence
+	template <typename T, typename... R>
+	metafunc is_sequence_of<type_sequence<R...>, T> : std::bool_constant<
+		(sizeof...(R)) && (std::same_as<T,R> && ...)
+	> {};
 
-	//! @brief	Ensure type is an @c std::integer_sequence<> of a particular type
+	// Specialization for @c nstd::value_sequence
+	template <typename Value, Value... Rs>
+	metafunc is_sequence_of<value_sequence<Value,Rs...>, Value> : std::true_type {};
+
+	// Specialization for @c nstd::value_tuple
+	template <typename T, auto... Values>
+	metafunc is_sequence_of<value_tuple<Values...>, T> : std::bool_constant<
+		(sizeof...(Values) > 0) && (std::same_as<T,decltype(Values)> && ...)
+	> {};
+
+
+	//! @brief	Ensure @p T is any sequence of elements of type @p Element
 	template <typename T, typename Element>
 	concept SequenceOf = is_sequence_of<T,Element>::value;
 }
@@ -60,13 +80,35 @@ namespace nstd
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace nstd::testing {
-	//! @brief  Verify @c nstd::SequenceOf detects the element type of empty sequences
-	static_assert(SequenceOf<std::integer_sequence<int>,int>);
+	//! @test  Verify @c nstd::SequenceOf recognises empty @c std::integer_sequence element type
+	static_assert(SequenceOf<std::integer_sequence<int>, int>);
+	
+	//! @test  Verify @c nstd::SequenceOf recognises empty @c nstd::value_sequence element type
+	static_assert(SequenceOf<nstd::value_sequence<float>, float>);
+	
+	//! @test  Verify @c nstd::SequenceOf rejects empty @c nstd::type_sequence
+	static_assert(!SequenceOf<nstd::type_sequence<>, int>);
 
-	//! @brief  Verify @c nstd::SequenceOf detects the element type of non-empty sequences
-	static_assert(SequenceOf<std::integer_sequence<int,1>,int>);
+	//! @test  Verify @c nstd::SequenceOf rejects empty @c nstd::value_tuple
+	static_assert(!SequenceOf<nstd::value_tuple<>, bool>);
 
-	//! @brief  Verify @c nstd::SequenceOf detects the element type of non-empty sequences of non-integral elements
-	static_assert(!SequenceOf<std::integer_sequence<float>,int>);
+
+	//! @test  Verify @c nstd::SequenceOf recognises non-empty @c std::integer_sequence element type
+	static_assert(SequenceOf<std::integer_sequence<int,1,3,5>, int>);
+	
+	//! @test  Verify @c nstd::SequenceOf recognises non-empty @c nstd::value_sequence element type
+	static_assert(SequenceOf<nstd::value_sequence<float,3.14159f,2.34f>, float>);
+	
+	//! @test  Verify @c nstd::SequenceOf recognises non-empty @c nstd::value_tuple element type
+	static_assert(SequenceOf<nstd::value_tuple<true,false,true>, bool>);
+
+	//! @test  Verify @c nstd::SequenceOf rejects heterogenous non-empty @c nstd::value_tuple 
+	static_assert(!SequenceOf<nstd::value_tuple<true, 42, false>, bool>);
+
+	//! @test  Verify @c nstd::SequenceOf recognises non-empty @c nstd::type_sequence element type
+	static_assert(SequenceOf<nstd::type_sequence<long,long>, long>);
+
+	//! @test  Verify @c nstd::SequenceOf rejects heterogenous non-empty @c nstd::type_sequence 
+	static_assert(!SequenceOf<nstd::type_sequence<long,int,long>, long>);
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
