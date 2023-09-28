@@ -29,7 +29,7 @@
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
+#include "../../../src/StdLibrary.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -41,9 +41,9 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace nstd
 {
-	//! @brief  Heterogenous sequence of compile-time values
-	template <auto... Values>
-	struct value_tuple {};
+	//! @brief  Homogenous sequence of compile-time values
+	template <typename Value, Value... Values>
+	struct value_sequence {};
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
