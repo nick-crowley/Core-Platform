@@ -32,7 +32,7 @@
 #include "meta/TagTypes.h"
 #include "nstd/experimental/metafunc.h"
 #include "nstd/sequence/type_sequence.h"
-#include "nstd/sequence/value_sequence.h"
+#include "nstd/sequence/value_tuple.h"
 #include "../../../src/StdLibrary.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
@@ -57,9 +57,9 @@ namespace nstd
 	template <typename T, typename... R>
 	metafunc sequence_front<type_sequence<T,R...>> : std::type_identity<T> {};
 
-	// Specialization for @c nstd::value_sequence
+	// Specialization for @c nstd::value_tuple
 	template <auto F, auto... R>
-	metafunc sequence_front<value_sequence<F,R...>> : std::integral_constant<decltype(F), F> {};
+	metafunc sequence_front<value_tuple<F,R...>> : std::integral_constant<decltype(F), F> {};
 	
 
 
@@ -73,10 +73,10 @@ namespace nstd
 	auto constexpr
 	inline sequence_front_v<std::integer_sequence<T,F,R...>> = F;
 	
-	// Specialization for @c nstd::value_sequence
+	// Specialization for @c nstd::value_tuple
 	template <auto F, auto... R>
 	auto constexpr
-	inline sequence_front_v<value_sequence<F,R...>> = F;
+	inline sequence_front_v<value_tuple<F,R...>> = F;
 
 
 
@@ -93,9 +93,9 @@ namespace nstd
 		template <typename T, typename... R>
 		metafunc sequence_front_type<type_sequence<T,R...>> : std::type_identity<T> {};
 		
-		// Specialization for @c nstd::value_sequence
+		// Specialization for @c nstd::value_tuple
 		template <auto F, auto... R>
-		metafunc sequence_front_type<value_sequence<F,R...>> : std::type_identity<decltype(F)> {};
+		metafunc sequence_front_type<value_tuple<F,R...>> : std::type_identity<decltype(F)> {};
 	}
 
 	//! @brief  Type of the first element of any sequence
@@ -119,8 +119,8 @@ namespace nstd::testing {
 	//! @test  Verify @c nstd::sequence_front_v returns first value of @c std::integer_sequence
 	static_assert(sequence_front_v<std::integer_sequence<int,1,2,3>> == 1);
 
-	//! @test  Verify @c nstd::sequence_front_v returns first value of @c nstd::value_sequence
-	static_assert(sequence_front_v<nstd::value_sequence<3,2,1>> == 3);
+	//! @test  Verify @c nstd::sequence_front_v returns first value of @c nstd::value_tuple
+	static_assert(sequence_front_v<nstd::value_tuple<3,2,1>> == 3);
 
 	//! @test  Verify @c nstd::sequence_front_v returns first type of @c nstd::type_sequence
 	static_assert(sequence_front_v<nstd::type_sequence<float,bool>> == core::undefined);
@@ -134,8 +134,8 @@ namespace nstd::testing {
 	//! @test  Verify @c nstd::sequence_front_t returns first @c nstd::type_sequence element
 	static_assert(std::same_as<int, sequence_front_t<nstd::type_sequence<int,float,char>>>);
 
-	//! @test  Verify @c nstd::sequence_front_t returns type of first @c nstd::value_sequence element
-	static_assert(std::same_as<int, sequence_front_t<nstd::value_sequence<3,2,1>>>);
+	//! @test  Verify @c nstd::sequence_front_t returns type of first @c nstd::value_tuple element
+	static_assert(std::same_as<int, sequence_front_t<nstd::value_tuple<3,2,1>>>);
 
 	//! @test  Verify @c nstd::sequence_front_t is undefined for non-sequence types
 	static_assert(std::same_as<core::meta::undefined_t, sequence_front_t<int>>);

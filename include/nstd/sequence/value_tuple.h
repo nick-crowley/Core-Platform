@@ -43,7 +43,7 @@ namespace nstd
 {
 	//! @brief  Sequence of non-types (compile-time values)
 	template <auto... Values>
-	struct value_sequence {};
+	struct value_tuple {};
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 

@@ -30,7 +30,7 @@
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "nstd/sequence/type_sequence.h"
-#include "nstd/sequence/value_sequence.h"
+#include "nstd/sequence/value_tuple.h"
 #include "nstd/sequence/is_index_sequence.h"
 #include "nstd/sequence/is_integer_sequence.h"
 #include "nstd/sequence/is_sequence_of.h"
