@@ -181,7 +181,7 @@ namespace core::win
 		void
 		start(this Self&& self) {
 			using service_t = std::remove_reference_t<Self>;
-			auto* const thís = static_cast<ServiceController*>(&self);
+			ServiceController* const thís = &self;
 			thís->Handle = ServiceController::registerControlHandler<service_t>(self);
 			thís->status(ServiceStatus::StartPending);
 			thís->onStart();
