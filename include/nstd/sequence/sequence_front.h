@@ -108,4 +108,36 @@ namespace nstd
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace nstd::testing {
+	//! @test  Verify @c nstd::sequence_front is @c undefined for non-sequence types
+	static_assert(std::convertible_to<sequence_front<void>, core::meta::undefined_t>);
+
+	//! @test  Verify @c nstd::sequence_front is @c undefined for non-sequence types
+	static_assert(std::convertible_to<sequence_front<int>, core::meta::undefined_t>);
+
+	//! @test  Verify @c nstd::sequence_front_v returns first value of @c std::integer_sequence
+	static_assert(sequence_front_v<std::integer_sequence<int,1,2,3>> == 1);
+
+	//! @test  Verify @c nstd::sequence_front_v returns first value of @c nstd::value_sequence
+	static_assert(sequence_front_v<nstd::value_sequence<3,2,1>> == 3);
+
+	//! @test  Verify @c nstd::sequence_front_v returns first type of @c nstd::type_sequence
+	static_assert(sequence_front_v<nstd::type_sequence<float,bool>> == core::undefined);
+
+	//! @test  Verify @c nstd::sequence_front_v is undefined for non-sequence types
+	static_assert(sequence_front_v<int> == core::undefined);
+	
+	//! @test  Verify @c nstd::sequence_front_t returns type of @c std::integer_sequence values
+	static_assert(std::same_as<int, sequence_front_t<std::integer_sequence<int,1,2,3>>>);
+
+	//! @test  Verify @c nstd::sequence_front_t returns first @c nstd::type_sequence element
+	static_assert(std::same_as<int, sequence_front_t<nstd::type_sequence<int,float,char>>>);
+
+	//! @test  Verify @c nstd::sequence_front_t returns type of first @c nstd::value_sequence element
+	static_assert(std::same_as<int, sequence_front_t<nstd::value_sequence<3,2,1>>>);
+
+	//! @test  Verify @c nstd::sequence_front_t is undefined for non-sequence types
+	static_assert(std::same_as<core::meta::undefined_t, sequence_front_t<int>>);
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
