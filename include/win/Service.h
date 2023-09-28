@@ -102,7 +102,7 @@ namespace core::win
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			void
-			virtual registÃ©r() override {
+			virtual registér() override {
 				auto const subscribeChangeNotifications = this->SecHostLib.loadFunction<decltype(::SubscribeServiceChangeNotifications)>("SubscribeServiceChangeNotifications");
 
 				if (BOOL const result = subscribeChangeNotifications(*this->Owner.Handle, 
@@ -183,7 +183,7 @@ namespace core::win
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void
-		continuÃ©() {
+		continué() {
 			::SERVICE_STATUS status{};
 			if (!::ControlService(*this->Handle, SERVICE_CONTROL_CONTINUE, &status))
 				LastError{}.throwIfError("ControlService() failed");
