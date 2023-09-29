@@ -29,7 +29,9 @@
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "nstd/sequence/is_integer_sequence.h"
+#include "nstd/sequence/type_sequence.h"
+#include "nstd/sequence/value_sequence.h"
+#include "nstd/sequence/value_tuple.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -41,14 +43,29 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace nstd
 {
-	//! @brief	Calculate number of elements in @c std::integer_sequence<> (of any type)
-	template <IntegerSequence Sequence>
-	metafunc sequence_length;
+	//! @brief	Calculate number of elements in any sequence
+	template <typename Sequence>
+	metafunc sequence_length : core::meta::undefined_t {};
 
+	// Specialization for @c std::integer_sequence
 	template <typename T, T... Values>
 	metafunc sequence_length<std::integer_sequence<T,Values...>> : std::integral_constant<size_t,sizeof...(Values)> {};
 	
-	template <IntegerSequence Sequence>
+	// Specialization for @c nstd::type_sequence
+	template <typename... Types>
+	metafunc sequence_length<type_sequence<Types...>> : std::integral_constant<size_t,sizeof...(Types)> {};
+
+	// Specialization for @c nstd::value_sequence
+	template <typename T, T... Values>
+	metafunc sequence_length<value_sequence<T,Values...>> : std::integral_constant<size_t,sizeof...(Values)> {};
+
+	// Specialization for @c nstd::value_tuple
+	template <auto... Values>
+	metafunc sequence_length<value_tuple<Values...>> : std::integral_constant<size_t,sizeof...(Values)> {};
+
+
+	//! @brief	Number of elements in any sequence
+	template <typename Sequence>
 	size_t constexpr
 	sequence_length_v = sequence_length<Sequence>::value;
 }
@@ -58,10 +75,28 @@ namespace nstd
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace nstd::testing {
-	//! @test  Verify @c nstd::sequence_length_v is @c 0 for empty sequences
+	//! @test  Verify @c nstd::sequence_length_v is @c 0 for empty @c std::integer_sequence
 	static_assert(sequence_length_v<std::integer_sequence<int>> == 0);
 
-	//! @test  Verify @c nstd::sequence_length_v is @c 1 for sequences with a single element
+	//! @test  Verify @c nstd::sequence_length_v is @c 0 for empty @c nstd::type_sequence
+	static_assert(sequence_length_v<type_sequence<>> == 0);
+
+	//! @test  Verify @c nstd::sequence_length_v is @c 0 for empty @c nstd::value_sequence
+	static_assert(sequence_length_v<value_sequence<float>> == 0);
+
+	//! @test  Verify @c nstd::sequence_length_v is @c 0 for empty @c nstd::value_tuple
+	static_assert(sequence_length_v<value_tuple<>> == 0);
+
+	//! @test  Verify @c nstd::sequence_length_v is @c 1 for @c std::integer_sequence with a single element
 	static_assert(sequence_length_v<std::integer_sequence<int,1>> == 1);
+
+	//! @test  Verify @c nstd::sequence_length_v is @c 1 for @c nstd::type_sequence with a single element
+	static_assert(sequence_length_v<type_sequence<bool>> == 1);
+
+	//! @test  Verify @c nstd::sequence_length_v is @c 1 for @c nstd::value_sequence with a single element
+	static_assert(sequence_length_v<value_sequence<float, 3.14159f>> == 1);
+
+	//! @test  Verify @c nstd::sequence_length_v is @c 1 for @c nstd::value_tuple with a single element
+	static_assert(sequence_length_v<value_tuple<42>> == 1);
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
