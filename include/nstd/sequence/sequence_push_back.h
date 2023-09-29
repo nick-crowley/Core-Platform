@@ -29,7 +29,7 @@
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "nstd/sequence/is_integer_sequence.h"
+#include "nstd/sequence/is_value_sequence.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -41,16 +41,30 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace nstd
 {
-	//! @brief	Append an item to an integer sequence
-	template <IntegerSequence Sequence, sequence_element_t<Sequence> Element>
-	metafunc sequence_push_back;
-
-	template <typename Element, Element... Values, Element NewValue>
-	metafunc sequence_push_back<std::integer_sequence<Element,Values...>, NewValue> 
-		: std::type_identity<std::integer_sequence<Element,Values...,NewValue>> 
-	{};
-
-	template <IntegerSequence Sequence, sequence_element_t<Sequence> Element>
+	//! @brief	Append value to any value-sequence
+	template <AnyValueSequence Sequence, auto Element>
+	metafunc sequence_push_back : std::type_identity<core::meta::undefined_t> {};
+	
+	// Specialization for @c std::integer_sequence
+	template <typename T, T... V, T E>
+	metafunc sequence_push_back<std::integer_sequence<T,V...>, E> : std::type_identity<
+		std::integer_sequence<T,V..., E>
+	>{};
+	
+	// Specialization for @c nstd::value_sequence
+	template <typename T, T... V, T E>
+	metafunc sequence_push_back<value_sequence<T,V...>, E> : std::type_identity<
+		value_sequence<T,V..., E>
+	>{};
+	
+	// Specialization for @c nstd::value_tuple
+	template <auto... V, auto E>
+	metafunc sequence_push_back<value_tuple<V...>, E> : std::type_identity<
+		value_tuple<V..., E>
+	>{};
+	
+	//! @brief	Append value to any value-sequence
+	template <AnyValueSequence Sequence, auto Element>
 	using sequence_push_back_t = typename sequence_push_back<Sequence,Element>::type;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -59,10 +73,31 @@ namespace nstd
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace nstd::testing {
-	//! @test  Verify @c nstd::sequence_push_back_t appends an empty sequence to create a non-empty sequence
+	//! @test  Verify @c nstd::sequence_push_back_t appends element to empty @c std::integer_sequence
 	static_assert(std::same_as<sequence_push_back_t<std::integer_sequence<int>, 1>, std::integer_sequence<int,1>>);
+	
+	//! @test  Verify @c nstd::sequence_push_back_t appends element to empty @c nstd::value_sequence
+	static_assert(std::same_as<sequence_push_back_t<value_sequence<int>, 1>, value_sequence<int,1>>);
 
-	//! @test  Verify @c nstd::sequence_push_back_t appends a non-empty sequence
+	//! @test  Verify @c nstd::sequence_push_back_t appends element to empty @c nstd::value_tuple
+	static_assert(std::same_as<sequence_push_back_t<value_tuple<>, 1>, value_tuple<1>>);
+
+	
+	//! @test  Verify @c nstd::sequence_push_back_t appends element to non-empty @c std::integer_sequence
 	static_assert(std::same_as<sequence_push_back_t<std::integer_sequence<int,1>, 2>, std::integer_sequence<int,1,2>>);
+	
+	//! @test  Verify @c nstd::sequence_push_back_t appends element to non-empty @c nstd::value_sequence
+	static_assert(std::same_as<sequence_push_back_t<value_sequence<int,1>, 2>, value_sequence<int,1,2>>);
+
+	//! @test  Verify @c nstd::sequence_push_back_t appends element to non-empty @c nstd::value_tuple
+	static_assert(std::same_as<sequence_push_back_t<value_tuple<1>, 2>, value_tuple<1,2>>);
+
+	
+	//! @test  Verify @c nstd::sequence_push_back_t cannot append heterogenous value to homogenous std::integer_sequence
+	static_assert(std::same_as<sequence_push_back_t<std::integer_sequence<int>,42.0f>, core::meta::undefined_t>);
+
+	//! @test  Verify @c nstd::sequence_push_back_t cannot append heterogenous value to homogenous nstd::value_sequence
+	static_assert(std::same_as<sequence_push_back_t<value_sequence<float>,42>, core::meta::undefined_t>);
+	
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
