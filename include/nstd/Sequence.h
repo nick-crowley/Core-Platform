@@ -33,7 +33,6 @@
 #include "nstd/sequence/value_tuple.h"
 #include "nstd/sequence/value_sequence.h"
 #include "nstd/sequence/is_index_sequence.h"
-#include "nstd/sequence/is_integer_sequence.h"
 #include "nstd/sequence/is_sequence.h"
 #include "nstd/sequence/is_sequence_of.h"
 #include "nstd/sequence/is_value_sequence.h"
