@@ -45,7 +45,7 @@ namespace nstd
 {
 	//! @brief	Calculate number of elements in any sequence
 	template <typename Sequence>
-	metafunc sequence_length : core::meta::undefined_t {};
+	metafunc sequence_length : std::integral_constant<core::meta::undefined_t, core::undefined> {};
 
 	// Specialization for @c std::integer_sequence
 	template <typename T, T... Values>
@@ -66,7 +66,7 @@ namespace nstd
 
 	//! @brief	Number of elements in any sequence
 	template <typename Sequence>
-	size_t constexpr
+	auto constexpr
 	sequence_length_v = sequence_length<Sequence>::value;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -75,6 +75,9 @@ namespace nstd
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace nstd::testing {
+	//! @test  Verify @c nstd::sequence_length is @c undefined for non-sequence types
+	static_assert(sequence_length_v<bool> == core::undefined);
+
 	//! @test  Verify @c nstd::sequence_length_v is @c 0 for empty @c std::integer_sequence
 	static_assert(sequence_length_v<std::integer_sequence<int>> == 0);
 
