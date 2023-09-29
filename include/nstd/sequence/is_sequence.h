@@ -29,18 +29,11 @@
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+#include "nstd/experimental/metafunc.h"
 #include "nstd/sequence/type_sequence.h"
 #include "nstd/sequence/value_tuple.h"
 #include "nstd/sequence/value_sequence.h"
-#include "nstd/sequence/is_index_sequence.h"
-#include "nstd/sequence/is_integer_sequence.h"
-#include "nstd/sequence/is_sequence.h"
-#include "nstd/sequence/is_sequence_of.h"
-#include "nstd/sequence/sequence_element.h"
-#include "nstd/sequence/sequence_front.h"
-#include "nstd/sequence/sequence_length.h"
-#include "nstd/sequence/sequence_push_back.h"
-#include "nstd/sequence/enum_sequence.h"
+#include "../../../src/StdLibrary.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -50,11 +43,67 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace nstd
+{
+	//! @brief	Query whether @p Sequence is any sequence type
+	template <typename Sequence>
+	metafunc is_sequence : std::false_type {};
 
+	// Specialization for @c std::integer_sequence
+	template <typename Value, Value... Rs>
+	metafunc is_sequence<std::integer_sequence<Value,Rs...>> : std::true_type {};
+	
+	// Specialization for @c nstd::type_sequence
+	template <typename... R>
+	metafunc is_sequence<type_sequence<R...>> : std::true_type {};
+
+	// Specialization for @c nstd::value_sequence
+	template <typename Value, Value... Rs>
+	metafunc is_sequence<value_sequence<Value,Rs...>> : std::true_type {};
+
+	// Specialization for @c nstd::value_tuple
+	template <auto... Values>
+	metafunc is_sequence<value_tuple<Values...>> : std::true_type {};
+
+
+	//! @brief	Ensure @p Sequence is any sequence of elements
+	template <typename Sequence>
+	concept AnySequence = is_sequence<Sequence>::value;
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
-// o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Separator o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace nstd::testing {
+	//! @test  Verify @c nstd::AnySequence rejects non-sequence types
+	static_assert(!AnySequence<int>);
+	
 
+	//! @test  Verify @c nstd::AnySequence recognises empty @c std::integer_sequence
+	static_assert(AnySequence<std::integer_sequence<int>>);
+	
+	//! @test  Verify @c nstd::AnySequence recognises empty @c nstd::value_sequence 
+	static_assert(AnySequence<nstd::value_sequence<float>>);
+	
+	//! @test  Verify @c nstd::AnySequence recognises empty @c nstd::type_sequence
+	static_assert(AnySequence<nstd::type_sequence<>>);
+
+	//! @test  Verify @c nstd::AnySequence recognises empty @c nstd::value_tuple
+	static_assert(AnySequence<nstd::value_tuple<>>);
+
+	
+	//! @test  Verify @c nstd::AnySequence recognises non-empty @c std::integer_sequence
+	static_assert(AnySequence<std::integer_sequence<int,1,2,3>>);
+	
+	//! @test  Verify @c nstd::AnySequence recognises non-empty @c nstd::value_sequence 
+	static_assert(AnySequence<nstd::value_sequence<float,3.14159f>>);
+	
+	//! @test  Verify @c nstd::AnySequence recognises non-empty @c nstd::type_sequence
+	static_assert(AnySequence<nstd::type_sequence<bool>>);
+
+	//! @test  Verify @c nstd::AnySequence recognises non-empty @c nstd::value_tuple
+	static_assert(AnySequence<nstd::value_tuple<1,true,'c'>>);
+
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
