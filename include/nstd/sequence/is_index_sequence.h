@@ -41,7 +41,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace nstd
 {
-	//! @brief	Ensure type is @c std::index_sequence<> (of any length)
+	//! @brief	Ensure @p T is any sequence of @c size_t
 	template <typename T>
 	concept IndexSequence = SequenceOf<T,size_t>;
 }
