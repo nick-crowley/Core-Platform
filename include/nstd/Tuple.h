@@ -36,7 +36,6 @@
 #include "nstd/tuple/tuple_push_front.h"
 #include "nstd/tuple/tuple_reverse.h"
 #include "nstd/tuple/tuple_transform.h"
-#include "nstd/Sequence.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -46,41 +45,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-namespace nstd
-{	
-	//! @brief	Tuple with its matching index sequence
-	template <Tuple Types, nstd::IndexSequence Indicies>
-	struct indexed_tuple {};
 
-	//! @brief	An @c indexed_tuple containing an empty tuple and empty indicies sequence
-	using empty_indexed_tuple_t = indexed_tuple<std::tuple<>, std::index_sequence<>>;
-	
-
-	//! @brief	An @c indexed_tuple containing a single element
-	template <typename T>
-	using unary_indexed_tuple_t = indexed_tuple<std::tuple<T>, std::index_sequence<0>>;
-
-
-	//! @brief	Generate an @c indexed_tuple of arbitrary length
-	template <typename... Types>
-	using make_indexed_tuple_t = indexed_tuple<std::tuple<Types...>, std::index_sequence_for<Types...>>;
-
-	
-	//! @brief	Query whether type is @c indexed_tuple (of any length)
-	template <typename T>
-	metafunc is_indexed_tuple : std::false_type {};
-
-	template <Tuple T, nstd::IndexSequence I>
-	metafunc is_indexed_tuple<indexed_tuple<T,I>> : std::true_type {};
-	
-	template <typename T>
-	bool constexpr is_indexed_tuple_v = is_indexed_tuple<T>::value;
-
-	
-	//! @brief	Ensure type is @c indexed_tuple (of any length)
-	template <typename T>
-	concept IndexedTuple = is_indexed_tuple<T>::value;
-}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
