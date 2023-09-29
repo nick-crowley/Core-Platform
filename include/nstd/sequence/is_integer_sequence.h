@@ -63,17 +63,17 @@ namespace nstd
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace nstd::testing {
-	//! @brief  Verify @c nstd::IntegerSequence recognises empty sequences
+	//! @test  Verify @c nstd::IntegerSequence recognises empty sequences
 	static_assert(IntegerSequence<std::integer_sequence<int>>);
 
-	//! @brief  Verify @c nstd::IntegerSequence recognises non-empty sequences
+	//! @test  Verify @c nstd::IntegerSequence recognises non-empty sequences
 	static_assert(IntegerSequence<std::integer_sequence<int,1>>);
 
 #if defined(__cpp_nontype_template_args) && (__cpp_nontype_template_args >= 201911L)
-	//! @brief  Verify @c nstd::IntegerSequence recognises sequences of non-integral element types
+	//! @test  Verify @c nstd::IntegerSequence recognises sequences of non-integral element types
 	static_assert(IntegerSequence<std::integer_sequence<double,2.0>>);
 
-	//! @brief  Verify @c nstd::IntegerSequence rejects non-sequence types
+	//! @test  Verify @c nstd::IntegerSequence rejects non-sequence types
 	static_assert(!IntegerSequence<float>);
 #endif
 }
