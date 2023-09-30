@@ -47,11 +47,11 @@ namespace core
 {
 	namespace detail 
 	{
-		// Appends a sequence with a value iff its a valid enumerator
-		template <nstd::EnumSequence Sequence, auto Value>
+		// Appends a sequence with a value iff its a valid enumerator; otherwise no-op
+		template <nstd::EnumSequence Sequence, auto Value, auto _E = static_cast<nstd::sequence_element_t<Sequence>>(Value)>
 		using push_back_if_valid_enum_t = std::conditional_t<
-			is_valid_enumerator_v<static_cast<nstd::sequence_element_t<Sequence>>(Value)>, 
-		    nstd::sequence_push_back_t<Sequence,static_cast<nstd::sequence_element_t<Sequence>>(Value)>, 
+			is_valid_enumerator_v<_E>, 
+		    nstd::sequence_push_back_t<Sequence,_E>, 
 		    Sequence
 		>;
 
