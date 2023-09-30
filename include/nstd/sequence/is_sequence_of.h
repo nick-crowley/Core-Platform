@@ -29,11 +29,7 @@
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "nstd/experimental/metafunc.h"
-#include "nstd/sequence/type_sequence.h"
-#include "nstd/sequence/value_tuple.h"
-#include "nstd/sequence/value_sequence.h"
-#include "../../../src/StdLibrary.h"
+#include "nstd/sequence/is_sequence.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -46,7 +42,7 @@
 namespace nstd
 {
 	//! @brief	Query whether @p Sequence is a sequence of elements of type @p T
-	template <typename Sequence, typename T>
+	template <AnySequence Sequence, typename T>
 	metafunc is_sequence_of : std::false_type {};
 
 	// Specialization for @c std::integer_sequence
