@@ -24,6 +24,14 @@
 * the projects which contain it.
 */
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+#include "nstd/Coroutine.h"
+#include "nstd/Future.h"
+#include "core/FunctionLogging.h"
+#include "core/LogFile.h"
+#include "core/LogStream.h"
+#include "win/ServiceController.h"
+#include "win/ThreadCollection.h"
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Source Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "core/CharacterConversion.cpp"
 #include "core/DebugStream.cpp"
 #include "core/LogStream.cpp"
@@ -40,5 +48,3 @@
 #include "win/RegistryValueProxy.cpp"
 #include "win/ResourceId.cpp"
 #include "win/ServiceManager.cpp"
-
-#include "core/FunctionLogging.h"
