@@ -92,6 +92,10 @@ namespace nstd
 #define NotMovable                  _MakeDeletedConceptMacro(_MoveConstructibleDecl, _MoveAssignableDecl)
 #define NotArithmetic               _MakeDeletedConceptMacro(_AddableDecl, _AddAssignableDecl, _SubtractableDecl, _SubtractAssignableDecl, _NegatableDecl, _MultipliableDecl, _MultiplyAssignableDecl, _DividableDecl, _DivideAssignableDecl)
 
+// Custom concepts
+#define IsInterface                 protected: IsDefaultConstructible,                             \
+									public: IsPolymorphic
+
 //! @brief	Expand 4-tuple: {prefix, class-name, postfix, enabled} with concept-name 'prefix concept(class-name) postfix enabled'
 #define _expandConceptDeclaration(r,state,conceptDecl)      \
 	BOOST_PP_SEQ_ELEM(0,state) conceptDecl(BOOST_PP_SEQ_ELEM(1,state)) BOOST_PP_SEQ_ELEM(2,state) BOOST_PP_SEQ_ELEM(3,state);
