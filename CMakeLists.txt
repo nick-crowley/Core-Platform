@@ -8,6 +8,7 @@
 #          \/                   \/                      \/                              \/  #
 #############################################################################################
 cmake_minimum_required (VERSION 3.8.2)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Solution: CorePlatform
 project (CorePlatform
@@ -243,7 +244,9 @@ target_link_libraries(appCorePlatform
 set_target_properties(appCorePlatform PROPERTIES
 					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS}"
 					  LINK_FLAGS "${GLOBAL_LINKER_OPTIONS} /SUBSYSTEM:CONSOLE"
-					  OUTPUT_NAME "appCorePlatform")
+					  OUTPUT_NAME "appCorePlatform"
+					  FOLDER "Samples"
+)
 
 # Set macros to 'import DLL'
 target_compile_definitions(appCorePlatform
@@ -295,7 +298,9 @@ target_link_libraries(appService
 set_target_properties(appService PROPERTIES
 					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS}"
 					  LINK_FLAGS "${GLOBAL_LINKER_OPTIONS} /SUBSYSTEM:WINDOWS"
-					  OUTPUT_NAME "appService")
+					  OUTPUT_NAME "appService"
+					  FOLDER "Samples"
+)
 
 # Set macros to 'import DLL'
 target_compile_definitions(appService
@@ -344,6 +349,7 @@ set_target_properties(dllGoogleTest PROPERTIES
 					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS}"
 					  LINK_FLAGS "${GLOBAL_LINKER_OPTIONS}"
 					  OUTPUT_NAME "GoogleTest"
+					  FOLDER "Testing"
 )
 
 # Specify GTest should be build as a DLL
@@ -407,6 +413,7 @@ target_compile_definitions(exePlatformTests
 set_target_properties(exePlatformTests PROPERTIES
 					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS}"
 					  LINK_FLAGS "${GLOBAL_LINKER_OPTIONS} /SUBSYSTEM:CONSOLE"
+					  FOLDER "Testing"
 )
 
 # Change core-platform headers to specify dllimport
