@@ -163,17 +163,16 @@ namespace core
 		detail::LinearSearch_t<E,Start,Finish>
 	>;
 
-	
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
-	* @brief	Compile-time search algorithm which defines enumerators via user-provided values
+	* @brief	Sequence of user-provided enumerators
 	*
-	* @tparam	E	Enumeration whos enumerators are to be searched
-	* @tparam	Values...	Sequence of valid enumerators
+	* @tparam	Values...	Sequence of valid enumerators (of the same type)
 	*/
-	template <nstd::Enumeration E, E... Values>
-		requires (sizeof...(Values) >= 1)
-		      && (is_valid_enumerator_v<Values> && ...)
-	using SuppliedValues = nstd::enum_sequence<E,Values...>;
+	template <auto... Values>
+		requires nstd::NonEmptyPack<Values...>
+		      && nstd::HomogenousValues<Values...>
+		      && ValidEnumerators<Values...>
+	using SuppliedValues = nstd::enum_sequence<nstd::sequence_element_t<nstd::value_tuple<Values...>>, Values...>;
 
 
 	//! @brief	Name-value pair containing string-representation of one enumerator
