@@ -94,10 +94,12 @@ namespace nstd
 		
 		// Specialization for @c std::integer_sequence
 		template <typename T, T... R>
+			requires (sizeof...(R) > 0)
 		metafunc sequence_front_type<std::integer_sequence<T,R...>> : std::type_identity<T> {};
 		
 		// Specialization for @c nstd::value_sequence
 		template <typename T, T... R>
+			requires (sizeof...(R) > 0)
 		metafunc sequence_front_type<value_sequence<T,R...>> : std::type_identity<T> {};
 
 		// Specialization for @c nstd::type_sequence
@@ -127,6 +129,16 @@ namespace nstd::testing {
 
 	//! @test  Verify @c nstd::sequence_front_v returns first value of @c nstd::value_tuple
 	static_assert(sequence_front_v<nstd::value_tuple<3,2,1>> == 3);
+	
+	//! @test  Verify @c nstd::sequence_front_v is undefined for empty @c std::integer_sequence
+	static_assert(sequence_front_v<std::integer_sequence<int>> == core::undefined);
+	
+	//! @test  Verify @c nstd::sequence_front_v is undefined for empty @c nstd::value_sequence
+	static_assert(sequence_front_v<value_sequence<int>> == core::undefined);
+	
+	//! @test  Verify @c nstd::sequence_front_v is undefined for empty @c nstd::value_tuple
+	static_assert(sequence_front_v<value_tuple<>> == core::undefined);
+
 
 	//! @test  Verify @c nstd::sequence_front_t returns type of @c std::integer_sequence values
 	static_assert(std::same_as<int, sequence_front_t<std::integer_sequence<int,1,2,3>>>);
@@ -139,5 +151,19 @@ namespace nstd::testing {
 
 	//! @test  Verify @c nstd::sequence_front_t returns type of first @c nstd::value_tuple element
 	static_assert(std::same_as<int, sequence_front_t<nstd::value_tuple<3,2,1>>>);
+	
+	
+	//! @test  Verify @c nstd::sequence_front_t is undefined for empty @c std::integer_sequence
+	static_assert(std::same_as<sequence_front_t<std::integer_sequence<int>>, core::meta::undefined_t>);
+	
+	//! @test  Verify @c nstd::sequence_front_t is undefined for empty @c nstd::value_sequence 
+	static_assert(std::same_as<sequence_front_t<nstd::value_sequence<int>>, core::meta::undefined_t>);
+
+	//! @test  Verify @c nstd::sequence_front_t is undefined for empty @c nstd::type_sequence 
+	static_assert(std::same_as<sequence_front_t<nstd::type_sequence<>>, core::meta::undefined_t>);
+
+	//! @test  Verify @c nstd::sequence_front_t is undefined for empty  @c nstd::value_tuple
+	static_assert(std::same_as<sequence_front_t<nstd::value_tuple<>>, core::meta::undefined_t>);
+	
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
