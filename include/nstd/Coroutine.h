@@ -46,7 +46,6 @@ namespace nstd
 	private:
 		using type = default_suspendable<Routine>;
 		using handle_type = std::coroutine_handle<type>;
-		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -99,17 +98,14 @@ namespace nstd
 	public:
 		using promise_type = SuspensionPolicy<type>;
 		using handle_type = std::coroutine_handle<promise_type>;
-		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		std::shared_ptr<handle_type> Handle;
-		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		explicit
 		SharedCoroutine(std::shared_ptr<handle_type> h) noexcept : Handle{h}
 		{}
-	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		satisfies(SharedCoroutine,
@@ -117,7 +113,6 @@ namespace nstd
 			IsCopyable noexcept,
 			IsMovable noexcept
 		);
-		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -130,7 +125,6 @@ namespace nstd
 			this->Handle->resume();
 			return !this->Handle->done();
 		}
-
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};
 

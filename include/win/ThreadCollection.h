@@ -57,7 +57,6 @@ namespace core::win
 		  : m_stopToken{std::move(canx)}
 		{
 		}
-
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		satisfies(ThreadCollection,
@@ -71,16 +70,13 @@ namespace core::win
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		nstd::stop_token
-		getStopToken() const
-		{
+		getStopToken() const {
 			return this->m_stopToken;
 		}
-	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void
-		asyncStop() 
-		{
+		asyncStop() {
 			this->m_stopToken.signal();
 		}
 

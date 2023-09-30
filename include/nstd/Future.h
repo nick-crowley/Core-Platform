@@ -49,12 +49,10 @@ namespace nstd
 		private:
 			using value_type = T;
 			using state_type = std::variant<std::exception_ptr,value_type>;
-			
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			std::optional<state_type>  m_value;
 			std::atomic_bool           m_valid = false;
-			
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -74,7 +72,6 @@ namespace nstd
 			valid() const {
 				return this->m_valid;
 			}
-			
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			value_type
@@ -130,18 +127,15 @@ namespace nstd
 		template <std::invocable<stop_token> F>
 		future<std::invoke_result_t<F,stop_token>>
 		friend async(stop_token, F&&);
-
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		using type = future<T>;
 		using value_type = T;
 		using state_type = detail::shared_state<value_type>;
-		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		std::shared_ptr<state_type>  m_state;
 		mutable thread               m_thread;
-		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		future(std::shared_ptr<state_type> state, thread thread)

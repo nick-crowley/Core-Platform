@@ -52,7 +52,6 @@ namespace core::win
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		SharedEvent  m_handle;
-
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		explicit 
@@ -76,33 +75,28 @@ namespace core::win
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		SharedEvent 
-		handle() const 
-		{
+		handle() const {
 			return this->m_handle;
 		}
 
 		bool 
-		signalled() const 
-		{
+		signalled() const {
 			return isSignalled(*this->m_handle);
 		}
 		
 		implicit operator
-		bool() const 
-		{
+		bool() const {
 			return this->signalled();
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void 
-		reset()
-		{
+		reset() {
 			::ResetEvent(*this->m_handle);
 		}
 
 		void 
-		signal() 
-		{
+		signal() {
 			::SetEvent(*this->m_handle);
 		}
 	};
