@@ -68,7 +68,8 @@ namespace nstd
 	metafunc is_indexed_tuple<indexed_tuple<T,I>> : std::true_type {};
 	
 	template <typename T>
-	bool constexpr is_indexed_tuple_v = is_indexed_tuple<T>::value;
+	bool constexpr
+	is_indexed_tuple_v = is_indexed_tuple<T>::value;
 
 	
 	//! @brief	Ensure type is @c indexed_tuple (of any length)
