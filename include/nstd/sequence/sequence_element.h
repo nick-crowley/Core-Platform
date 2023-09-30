@@ -42,7 +42,7 @@
 namespace nstd
 {
 	//! @brief	Query the element type of any homogenous sequence
-	template <typename Sequence>
+	template <AnySequence  Sequence>
 	metafunc sequence_element : std::type_identity<core::meta::undefined_t> {};
 	
 	// Specialization for @c std::integer_sequence
@@ -65,7 +65,7 @@ namespace nstd
 
 
 	//! @brief  Element type of any homogenous sequence
-	template <typename Sequence>
+	template <AnySequence Sequence>
 	using sequence_element_t = typename sequence_element<Sequence>::type;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -74,9 +74,6 @@ namespace nstd
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace nstd::testing {
-	//! @test  Verify @c nstd::sequence_element_t is @c undefined for non-sequence types
-	static_assert(std::same_as<sequence_element_t<int>, core::meta::undefined_t>);
-	
 	//! @test  Verify @c nstd::sequence_element_t returns element type of empty @c std::integer_sequence
 	static_assert(std::same_as<sequence_element_t<std::integer_sequence<int>>, int>);
 
