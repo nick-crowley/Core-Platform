@@ -134,6 +134,9 @@ namespace nstd
 		|| std::is_function_v<T>
 		|| is_function_pointer_v<T>;
 	
+	template <auto... Values>
+	concept NonEmptyPack = sizeof...(Values) >= 1;
+
 	template <typename T>
 	concept OutputStreamCompatible = requires(T& t) { std::declval<std::ostream>() << t; };
 
