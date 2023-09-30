@@ -181,6 +181,10 @@ namespace core
 	//! @brief  Ensure @p Enumerator is a valid enumerator
 	template <auto Enumerator>
 	concept ValidEnumerator = is_valid_enumerator_v<Enumerator>;
+
+	//! @brief  Ensure all @p Enumerators are valid enumerators
+	template <auto... Enumerators>
+	concept ValidEnumerators = (is_valid_enumerator_v<Enumerators> && ...);
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::testing
