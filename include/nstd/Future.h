@@ -51,8 +51,8 @@ namespace nstd
 			using state_type = std::variant<std::exception_ptr,value_type>;
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
-			std::optional<state_type>  m_value;
-			std::atomic_bool           m_valid = false;
+			std::optional<state_type>  Value;
+			std::atomic_bool           IsValid = false;
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -70,20 +70,20 @@ namespace nstd
 		public:
 			bool constexpr
 			valid() const {
-				return this->m_valid;
+				return this->IsValid;
 			}
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			value_type
 			get_value() {
-				if (!this->m_valid)
+				if (!this->IsValid)
 					throw std::runtime_error("Not ready");
 
-				final_act(&) noexcept { this->m_value.reset(); };
-				if (std::holds_alternative<value_type>(*this->m_value))
-					return std::get<value_type>(*this->m_value);
+				final_act(&) noexcept { this->Value.reset(); };
+				if (std::holds_alternative<value_type>(*this->Value))
+					return std::get<value_type>(*this->Value);
 				else
-					std::rethrow_exception(std::get<std::exception_ptr>(*this->m_value));
+					std::rethrow_exception(std::get<std::exception_ptr>(*this->Value));
 			}
 			
 			void
@@ -94,21 +94,21 @@ namespace nstd
 
 			void
 			set_exception_at_thread_exit(std::exception_ptr ptr) {
-				if (this->m_valid)
+				if (this->IsValid)
 					throw std::runtime_error("Already set");
 
-				this->m_value = ptr;
-				this->m_valid = true;
+				this->Value = ptr;
+				this->IsValid = true;
 			}
 
 			template <typename ValueType>
 			void
 			set_value_at_thread_exit(ValueType&& value) {
-				if (this->m_valid)
+				if (this->IsValid)
 					throw std::runtime_error("Already set");
 
-				this->m_value = std::forward<ValueType>(value);
-				this->m_valid = true;
+				this->Value = std::forward<ValueType>(value);
+				this->IsValid = true;
 			}
 		};
 	}
@@ -134,13 +134,13 @@ namespace nstd
 		using state_type = detail::shared_state<value_type>;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		std::shared_ptr<state_type>  m_state;
-		mutable thread               m_thread;
+		std::shared_ptr<state_type>  Result;
+		mutable thread               Worker;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		future(std::shared_ptr<state_type> state, thread thread)
-		  : m_state{std::move(state)}, 
-		    m_thread{std::move(thread)}
+		  : Result{std::move(state)}, 
+		    Worker{std::move(thread)}
 		{}
 	
 	public:
@@ -155,8 +155,8 @@ namespace nstd
 		}
 
 		~future() {
-			if (this->m_thread.joinable())
-				this->m_thread.detach();
+			if (this->Worker.joinable())
+				this->Worker.detach();
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
@@ -172,28 +172,28 @@ namespace nstd
 	public:
 		bool constexpr
 		valid() const {
-			return this->m_state && this->m_state->valid();
+			return this->Result && this->Result->valid();
 		}
 
 		void
 		wait() const {
-			Invariant(this->m_state);
-			core::win::waitFor(this->m_thread.native_handle());
+			Invariant(this->Result);
+			core::win::waitFor(this->Worker.native_handle());
 		}
 		
 		template <typename R, typename P>
 		std::future_status
 		wait_for(chrono::duration<R,P> timeout) const {
-			Invariant(this->m_state);
-			return core::win::waitFor(this->m_thread.native_handle(), timeout) 
+			Invariant(this->Result);
+			return core::win::waitFor(this->Worker.native_handle(), timeout) 
 				? std::future_status::ready : std::future_status::timeout;
 		}
 		
 		template <nstd::Clock Clock>
 		std::future_status
 		wait_until(chrono::time_point<Clock> deadline) const {
-			Invariant(this->m_state);
-			return core::win::waitUntil(this->m_thread.native_handle(), deadline) 
+			Invariant(this->Result);
+			return core::win::waitUntil(this->Worker.native_handle(), deadline) 
 				? std::future_status::ready : std::future_status::timeout;
 		}
 		
@@ -201,20 +201,20 @@ namespace nstd
 	public:
 		value_type
 		get() {
-			Invariant(this->m_state);
-			return this->m_state->get_value();
+			Invariant(this->Result);
+			return this->Result->get_value();
 		}
 
 		::HANDLE
 		handle() {
-			Invariant(this->m_state);
-			return this->m_thread.native_handle();
+			Invariant(this->Result);
+			return this->Worker.native_handle();
 		}
 
 		void
 		swap(type& r) noexcept {
-			this->m_thread.swap(r.m_thread);
-			this->m_state.swap(r.m_state);
+			this->Worker.swap(r.Worker);
+			this->Result.swap(r.Result);
 		}
 	};
 }

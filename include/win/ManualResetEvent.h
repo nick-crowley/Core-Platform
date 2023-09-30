@@ -51,14 +51,14 @@ namespace core::win
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		SharedEvent  m_handle;
+		SharedEvent  Handle;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		explicit 
 		ManualResetEvent(bool initialState)
-		  : m_handle{::CreateEventW(Unsecured, TRUE, Boolean{initialState}, nullptr)}
+		  : Handle{::CreateEventW(Unsecured, TRUE, Boolean{initialState}, nullptr)}
 		{
-			if (!this->m_handle)
+			if (!this->Handle)
 				LastError{}.throwAlways("CreateEvent() failed");
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -76,12 +76,12 @@ namespace core::win
 	public:
 		SharedEvent 
 		handle() const {
-			return this->m_handle;
+			return this->Handle;
 		}
 
 		bool 
 		signalled() const {
-			return isSignalled(*this->m_handle);
+			return isSignalled(*this->Handle);
 		}
 		
 		implicit operator
@@ -92,12 +92,12 @@ namespace core::win
 	public:
 		void 
 		reset() {
-			::ResetEvent(*this->m_handle);
+			::ResetEvent(*this->Handle);
 		}
 
 		void 
 		signal() {
-			::SetEvent(*this->m_handle);
+			::SetEvent(*this->Handle);
 		}
 	};
 }
