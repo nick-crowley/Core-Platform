@@ -59,7 +59,7 @@ namespace core::win
 		  : m_handle{::CreateEventW(Unsecured, TRUE, Boolean{initialState}, nullptr)}
 		{
 			if (!this->m_handle)
-				LastError{}.throwAlways();
+				LastError{}.throwAlways("CreateEvent() failed");
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
