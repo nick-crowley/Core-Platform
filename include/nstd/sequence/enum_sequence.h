@@ -29,9 +29,8 @@
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "nstd/sequence/is_integer_sequence.h"
 #include "nstd/sequence/sequence_element.h"
-#include "nstd/Concepts.h"
+#include "nstd/sequence/is_value_sequence.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -43,15 +42,16 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace nstd
 {	
-	//! @brief	Calculate number of elements in @c std::integer_sequence<> (of any type)
+	//! @brief	Homogenous sequence of enumerator values
 	template <Enumeration E, E... Values>
-	using enum_sequence = std::integer_sequence<E,Values...>;
+	using enum_sequence = value_sequence<E,Values...>;
 	
-	//! @brief	Verify type is an @c std::integer_sequence<> of (any) enumeration type
+	//! @brief	Verify type is any homogenous value-sequence of enumerators
 	template <typename T>
-	concept EnumSequence = IntegerSequence<T> && std::is_enum_v<sequence_element_t<T>>;
+	concept EnumSequence = AnyValueSequence<T> 
+	                    && std::is_enum_v<sequence_element_t<T>>;
 	
-	//! @brief	Verify type is an @c std::integer_sequence<> of a specific enumeration type @c Element
+	//! @brief	Verify type is any homogenous value-sequence of enumerators of type @c Element
 	template <typename T, typename Element>
 	concept EnumSequenceOf = EnumSequence<T> 
 	                      && std::same_as<sequence_element_t<T>, Element>;
