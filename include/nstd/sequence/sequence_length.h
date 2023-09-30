@@ -29,9 +29,7 @@
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "nstd/sequence/type_sequence.h"
-#include "nstd/sequence/value_sequence.h"
-#include "nstd/sequence/value_tuple.h"
+#include "nstd/sequence/is_sequence.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -44,7 +42,7 @@
 namespace nstd
 {
 	//! @brief	Calculate number of elements in any sequence
-	template <typename Sequence>
+	template <AnySequence Sequence>
 	metafunc sequence_length : std::integral_constant<core::meta::undefined_t, core::undefined> {};
 
 	// Specialization for @c std::integer_sequence
@@ -65,7 +63,7 @@ namespace nstd
 
 
 	//! @brief	Number of elements in any sequence
-	template <typename Sequence>
+	template <AnySequence Sequence>
 	auto constexpr
 	sequence_length_v = sequence_length<Sequence>::value;
 }
@@ -75,9 +73,6 @@ namespace nstd
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace nstd::testing {
-	//! @test  Verify @c nstd::sequence_length is @c undefined for non-sequence types
-	static_assert(sequence_length_v<bool> == core::undefined);
-
 	//! @test  Verify @c nstd::sequence_length_v is @c 0 for empty @c std::integer_sequence
 	static_assert(sequence_length_v<std::integer_sequence<int>> == 0);
 
