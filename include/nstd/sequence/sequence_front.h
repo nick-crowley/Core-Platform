@@ -30,11 +30,8 @@
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "meta/TagTypes.h"
-#include "nstd/experimental/metafunc.h"
-#include "nstd/sequence/type_sequence.h"
-#include "nstd/sequence/value_sequence.h"
-#include "nstd/sequence/value_tuple.h"
-#include "../../../src/StdLibrary.h"
+#include "nstd/sequence/is_sequence.h"
+#include "nstd/sequence/is_value_sequence.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -47,7 +44,7 @@
 namespace nstd
 {
 	//! @brief  First element of any sequence [type or value]
-	template <typename Sequence>
+	template <AnySequence Sequence>
 	metafunc sequence_front : core::meta::undefined_t {};
 	
 	// Specialization for @c std::integer_sequence
@@ -69,7 +66,7 @@ namespace nstd
 
 
 	//! @brief  First value of any sequence
-	template <typename Sequence>
+	template <AnyValueSequence Sequence>
 	auto constexpr
 	inline sequence_front_v = core::undefined;
 	
@@ -92,7 +89,7 @@ namespace nstd
 
 	namespace detail {
 		//! @brief  Type of the front element of any sequence
-		template <typename Sequence>
+		template <AnySequence Sequence>
 		metafunc sequence_front_type : std::type_identity<core::meta::undefined_t> {};
 		
 		// Specialization for @c std::integer_sequence
@@ -113,7 +110,7 @@ namespace nstd
 	}
 
 	//! @brief  Type of the first element of any sequence
-	template <typename Sequence>
+	template <AnySequence Sequence>
 	using sequence_front_t = typename detail::sequence_front_type<Sequence>::type;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -122,12 +119,6 @@ namespace nstd
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace nstd::testing {
-	//! @test  Verify @c nstd::sequence_front is @c undefined for non-sequence types
-	static_assert(std::convertible_to<sequence_front<void>, core::meta::undefined_t>);
-
-	//! @test  Verify @c nstd::sequence_front is @c undefined for non-sequence types
-	static_assert(std::convertible_to<sequence_front<int>, core::meta::undefined_t>);
-
 	//! @test  Verify @c nstd::sequence_front_v returns first value of @c std::integer_sequence
 	static_assert(sequence_front_v<std::integer_sequence<int,1,2,3>> == 1);
 	
@@ -137,12 +128,6 @@ namespace nstd::testing {
 	//! @test  Verify @c nstd::sequence_front_v returns first value of @c nstd::value_tuple
 	static_assert(sequence_front_v<nstd::value_tuple<3,2,1>> == 3);
 
-	//! @test  Verify @c nstd::sequence_front_v returns first type of @c nstd::type_sequence
-	static_assert(sequence_front_v<nstd::type_sequence<float,bool>> == core::undefined);
-
-	//! @test  Verify @c nstd::sequence_front_v is undefined for non-sequence types
-	static_assert(sequence_front_v<int> == core::undefined);
-	
 	//! @test  Verify @c nstd::sequence_front_t returns type of @c std::integer_sequence values
 	static_assert(std::same_as<int, sequence_front_t<std::integer_sequence<int,1,2,3>>>);
 	
@@ -154,8 +139,5 @@ namespace nstd::testing {
 
 	//! @test  Verify @c nstd::sequence_front_t returns type of first @c nstd::value_tuple element
 	static_assert(std::same_as<int, sequence_front_t<nstd::value_tuple<3,2,1>>>);
-
-	//! @test  Verify @c nstd::sequence_front_t is undefined for non-sequence types
-	static_assert(std::same_as<core::meta::undefined_t, sequence_front_t<int>>);
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
