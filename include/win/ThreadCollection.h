@@ -48,13 +48,13 @@ namespace core::win
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		nstd::stop_token           m_stopToken;
-		std::vector<nstd::thread>  m_workers;
+		nstd::stop_token           IsCancelled;
+		std::vector<nstd::thread>  Workers;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		explicit
 		ThreadCollection(nstd::stop_token canx)
-		  : m_stopToken{std::move(canx)}
+		  : IsCancelled{std::move(canx)}
 		{
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -71,13 +71,13 @@ namespace core::win
 	public:
 		nstd::stop_token
 		getStopToken() const {
-			return this->m_stopToken;
+			return this->IsCancelled;
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void
 		asyncStop() {
-			this->m_stopToken.signal();
+			this->IsCancelled.signal();
 		}
 
 		void
@@ -86,13 +86,13 @@ namespace core::win
 			auto constexpr 
 			static selectHandle = [](nstd::thread& t) { return t.native_handle(); };
 
-			win::waitForAll(this->m_workers | views::transform(selectHandle), timeout);
+			win::waitForAll(this->Workers | views::transform(selectHandle), timeout);
 		}
 
 		ThreadCollection& 
 		operator+=(nstd::thread&& t) noexcept
 		{
-			this->m_workers.push_back(std::move(t));
+			this->Workers.push_back(std::move(t));
 			return *this;
 		}
 	};
