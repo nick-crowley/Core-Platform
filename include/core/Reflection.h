@@ -177,6 +177,10 @@ namespace core
 		requires nstd::Enumeration<decltype(Enumerator)>
 	bool constexpr
 	is_valid_enumerator_v = !enumerator_name_v<Enumerator>.empty();
+
+	//! @brief  Ensure @p Enumerator is a valid enumerator
+	template <auto Enumerator>
+	concept ValidEnumerator = is_valid_enumerator_v<Enumerator>;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::testing
