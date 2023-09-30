@@ -99,7 +99,7 @@ namespace nstd
 		}
 
 		bool 
-		wait(std::chrono::milliseconds timeout)
+		wait(chrono::milliseconds timeout)
 		{
 			if (timeout == timeout.zero()) 
 			{

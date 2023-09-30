@@ -85,12 +85,12 @@ namespace core::win
 		}
 
 		void
-		waitForAll(std::chrono::milliseconds timeout)
+		waitForAll(chrono::milliseconds timeout)
 		{	
 			auto constexpr 
 			static selectHandle = [](nstd::thread& t) { return t.native_handle(); };
 
-			win::waitForAll(this->m_workers | std::views::transform(selectHandle), timeout);
+			win::waitForAll(this->m_workers | views::transform(selectHandle), timeout);
 		}
 
 		ThreadCollection& 

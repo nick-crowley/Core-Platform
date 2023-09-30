@@ -28,7 +28,7 @@
 using namespace core;
 
 std::optional<::HANDLE>
-win::detail::waitForMultipleObjects(std::span<::HANDLE> handles, WaitStrategy strategy, std::optional<std::chrono::milliseconds> timeout)
+win::detail::waitForMultipleObjects(std::span<::HANDLE> handles, WaitStrategy strategy, std::optional<chrono::milliseconds> timeout)
 {   
     auto result = ::WaitForMultipleObjects(static_cast<::DWORD>(handles.size()), 
                                             handles.data(), 

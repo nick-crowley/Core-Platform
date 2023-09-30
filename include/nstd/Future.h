@@ -189,7 +189,7 @@ namespace nstd
 		
 		template <typename R, typename P>
 		std::future_status
-		wait_for(std::chrono::duration<R,P> timeout) const {
+		wait_for(chrono::duration<R,P> timeout) const {
 			Invariant(this->m_state);
 			return core::win::waitFor(this->m_thread.native_handle(), timeout) 
 				? std::future_status::ready : std::future_status::timeout;
@@ -197,7 +197,7 @@ namespace nstd
 		
 		template <nstd::Clock Clock>
 		std::future_status
-		wait_until(std::chrono::time_point<Clock> deadline) const {
+		wait_until(chrono::time_point<Clock> deadline) const {
 			Invariant(this->m_state);
 			return core::win::waitUntil(this->m_thread.native_handle(), deadline) 
 				? std::future_status::ready : std::future_status::timeout;
