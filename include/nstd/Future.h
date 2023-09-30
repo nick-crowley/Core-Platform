@@ -177,14 +177,14 @@ namespace nstd
 
 		void
 		wait() const {
-			Invariant(this->Result);
+			Invariant(this->Result != nullptr);
 			core::win::waitFor(this->Worker.native_handle());
 		}
 		
 		template <typename R, typename P>
 		std::future_status
 		wait_for(chrono::duration<R,P> timeout) const {
-			Invariant(this->Result);
+			Invariant(this->Result != nullptr);
 			return core::win::waitFor(this->Worker.native_handle(), timeout) 
 				? std::future_status::ready : std::future_status::timeout;
 		}
@@ -192,7 +192,7 @@ namespace nstd
 		template <nstd::Clock Clock>
 		std::future_status
 		wait_until(chrono::time_point<Clock> deadline) const {
-			Invariant(this->Result);
+			Invariant(this->Result != nullptr);
 			return core::win::waitUntil(this->Worker.native_handle(), deadline) 
 				? std::future_status::ready : std::future_status::timeout;
 		}
@@ -201,13 +201,13 @@ namespace nstd
 	public:
 		value_type
 		get() {
-			Invariant(this->Result);
+			Invariant(this->Result != nullptr);
 			return this->Result->get_value();
 		}
 
 		::HANDLE
 		handle() {
-			Invariant(this->Result);
+			Invariant(this->Result != nullptr);
 			return this->Worker.native_handle();
 		}
 
