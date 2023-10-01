@@ -135,7 +135,7 @@ namespace nstd
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		std::shared_ptr<state_type>  Result;
-		mutable thread               Worker;
+		thread                       mutable Worker;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		future(std::shared_ptr<state_type> state, thread thread)
