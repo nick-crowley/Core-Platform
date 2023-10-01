@@ -42,7 +42,7 @@ namespace core::win
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		using IdentVariant = std::variant<uint16_t, std::wstring>;
+		using IdentVariant = std::variant<uint16_t, std::wstring_view>;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		IdentVariant  Ident = uint16_t(0);
@@ -53,8 +53,8 @@ namespace core::win
 		{
 		}
 
-		explicit 
-		ResourceId(std::wstring_view name) : Ident{std::wstring{name}}
+		explicit constexpr
+		ResourceId(std::wstring_view name) : Ident{name}
 		{
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
