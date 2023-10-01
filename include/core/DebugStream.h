@@ -51,7 +51,7 @@ namespace core
 			using int_type = typename base::int_type;
 
 			size_t constexpr
-			static inline DefaultCapacity = 2048;
+			inline static DefaultCapacity = 2048;
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			std::vector<wchar_t>  Buffer;
