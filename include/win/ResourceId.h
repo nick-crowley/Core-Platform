@@ -87,26 +87,29 @@ namespace core::win
 		uint16_t constexpr
 		as_number() const 
 		{
-			return *std::get_if<uint16_t>(&this->Ident);
+			Invariant(this->is_numeric());
+			return std::get<uint16_t>(this->Ident);
 		}
 	
 		std::wstring_view constexpr
 		as_string() const 
 		{
-			return *std::get_if<std::wstring>(&this->Ident);
+			Invariant(!this->is_numeric());
+			return std::get<std::wstring_view>(this->Ident);
 		}
 	
-		constexpr operator 
+		constexpr 
+		implicit operator 
 		gsl::cwzstring() const 
 		{
-			if (auto* numeric = std::get_if<uint16_t>(&this->Ident))
-				return MAKEINTRESOURCE(*numeric);
-			else 
-				return std::get_if<std::wstring>(&this->Ident)->c_str(); 
+			if (this->is_numeric())
+				return MAKEINTRESOURCE(this->as_number());
+			else
+				return this->as_string().data();
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};
-	
+
 }	// namespace core::win
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::win
