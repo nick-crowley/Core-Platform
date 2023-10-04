@@ -137,11 +137,9 @@ namespace core
                 this->m_releaser(this->m_handle);
             }
         };
-        
         // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
     private:
         std::shared_ptr<IHandleResource> m_object;
-        
         // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
     public:
         template <std::invocable<RawHandle> ReleaseDelegate = decltype(Traits::release)>
@@ -155,14 +153,12 @@ namespace core
           : m_object{new BorrowedHandle{handle}}
         {
         }
-        
         // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
     public:
         satisfies(SmartHandle,
             IsRegular noexcept,
             NotSortable
         );
-        
         // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
     public:
         //! @brief  Close the managed handle prematurely thereby invalidating (but not releasing) it
@@ -172,7 +168,6 @@ namespace core
             if (!handle->empty())
                 handle.m_object->close();
         }
-        
         // o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
     public:
         bool
@@ -194,7 +189,6 @@ namespace core
         bool() const noexcept {
             return !this->empty();
         }
-        
         // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
     public:
         void 
