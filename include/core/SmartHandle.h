@@ -165,7 +165,7 @@ namespace core
         void
         static close(type& handle) noexcept
         {
-            if (!handle->empty())
+            if (!handle.empty())
                 handle.Object->close();
         }
         // o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
