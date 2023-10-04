@@ -65,8 +65,7 @@ namespace core
         struct IHandleResource
         {
             satisfies(IHandleResource,
-                protected: IsDefaultConstructible,
-                public: IsPolymorphic noexcept
+                IsInterface
             );
 
             bool
