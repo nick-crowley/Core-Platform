@@ -81,23 +81,23 @@ namespace core
         
         class BorrowedHandle : public IHandleResource 
         {
-            RawHandle const  m_handle;
+            RawHandle const  Handle;
 
         public:
             BorrowedHandle(RawHandle h) 
-              : m_handle{h}
+              : Handle{h}
             {}
             
         public:
             bool
             empty() const noexcept override {
-                return this->m_handle == Traits::empty;
+                return this->Handle == Traits::empty;
             }
 
         public:
             RawHandle
             get() const noexcept override {
-                return this->m_handle;
+                return this->Handle;
             }
 
             void
@@ -108,12 +108,12 @@ namespace core
         template <std::invocable<RawHandle> ReleaseDelegate>
         class ManagedHandle : public IHandleResource 
         {
-            RawHandle const        m_handle;
-            ReleaseDelegate const  m_releaser;
+            RawHandle const        Handle;
+            ReleaseDelegate const  Release;
 
         public:
             ManagedHandle(RawHandle h, ReleaseDelegate dx)
-              : m_handle{h}, m_releaser{std::move(dx)}
+              : Handle{h}, Release{std::move(dx)}
             {}
 
             ~ManagedHandle() noexcept {
@@ -123,34 +123,34 @@ namespace core
         public:
             bool
             empty() const noexcept override {
-                return this->m_handle == Traits::empty;
+                return this->Handle == Traits::empty;
             }
 
         public:
             RawHandle
             get() const noexcept override {
-                return this->m_handle;
+                return this->Handle;
             }
 
             void
             close() noexcept override {
-                this->m_releaser(this->m_handle);
+                this->Release(this->Handle);
             }
         };
         // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
     private:
-        std::shared_ptr<IHandleResource> m_object;
+        std::shared_ptr<IHandleResource> Object;
         // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
     public:
         template <std::invocable<RawHandle> ReleaseDelegate = decltype(Traits::release)>
         explicit
-        SmartHandle(RawHandle handle, ReleaseDelegate release = Traits::release) 
-          : m_object{new ManagedHandle{handle,std::move(release)}}
+        SmartHandle(RawHandle raw, ReleaseDelegate release = Traits::release) 
+          : Object{new ManagedHandle{raw,std::move(release)}}
         {
         }
         
-        SmartHandle(RawHandle handle, meta::weakref_t) 
-          : m_object{new BorrowedHandle{handle}}
+        SmartHandle(RawHandle raw, meta::weakref_t) 
+          : Object{new BorrowedHandle{raw}}
         {
         }
         // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -166,18 +166,18 @@ namespace core
         static close(type& handle) noexcept
         {
             if (!handle->empty())
-                handle.m_object->close();
+                handle.Object->close();
         }
         // o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
     public:
         bool
         empty() const noexcept {
-            return !this->m_object || this->m_object->empty();
+            return !this->Object || this->Object->empty();
         }
 
         RawHandle
         get() const noexcept {
-            return this->m_object ? this->m_object->get() : Traits::empty;
+            return this->Object ? this->Object->get() : Traits::empty;
         }
         
         RawHandle 
@@ -193,23 +193,23 @@ namespace core
     public:
         void 
         reset() {
-            this->m_object.reset();
+            this->Object.reset();
         }
         
         template <std::invocable<RawHandle> ReleaseDelegate = decltype(Traits::release)>
         void 
-        reset(RawHandle handle, ReleaseDelegate release = Traits::release) {
-            type{handle,release}.swap(*this);
+        reset(RawHandle raw, ReleaseDelegate release = Traits::release) {
+            type{raw,release}.swap(*this);
         }
         
         void 
-        reset(RawHandle handle, meta::weakref_t) {
-            type{handle}.swap(*this);
+        reset(RawHandle raw, meta::weakref_t) {
+            type{raw}.swap(*this);
         }
 
         void 
         swap(type& r) noexcept {
-            this->m_object.swap(r.m_object);
+            this->Object.swap(r.Object);
         }
     };
 }
