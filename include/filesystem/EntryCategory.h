@@ -43,7 +43,7 @@ namespace core::filesystem
 		File,		//!< Disk file
 		Directory,  //!< Directory
 		Pipe		//!< Socket, a named pipe, or an anonymous pipe
-	);
+	};
 } 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
