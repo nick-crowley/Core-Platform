@@ -24,6 +24,7 @@
 * the projects which contain it.
 */
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+#include "core/DateTime_UnitTests.cpp"
 #include "security/Token_UnitTests.cpp"
 #include "win/DebugStream_SystemTests.cpp"
 #include "win/LogStream_SystemTests.cpp"
