@@ -94,4 +94,39 @@ namespace nstd
 		}
 	}
 }
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace nstd::testing {
+    //! @test  Verify equality between @c nstd::istring and @c std::string is case-insensitive
+	static_assert(std::string{"HELLO"} == istring{"hello"});
+
+    //! @test  Verify equality between @c std::string and @c nstd::istring is case-insensitive
+	static_assert(istring{"HELLO"} == std::string{"hello"});
+    
+    //! @test  Verify inequality between @c nstd::istring and @c std::string detects differences
+	static_assert(std::string{"HELLO"} != istring{"world"});
+
+    //! @test  Verify inequality between @c std::string and @c nstd::istring detects differences
+	static_assert(istring{"WORLD"} != std::string{"hello"});
+    
+
+    //! @test  Verify equality between @c nstd::istring and @c std::string is case-insensitive
+	static_assert(std::string{"HELLO"} == istring{"hello"});
+
+    //! @test  Verify equality between @c std::string and @c nstd::istring is case-insensitive
+	static_assert(istring{"HELLO"} == std::string{"hello"});
+    
+    //! @test  Verify inequality between @c nstd::istring and @c std::string detects differences
+	static_assert(std::string{"HELLO"} != istring{"world"});
+
+    //! @test  Verify inequality between @c std::string and @c nstd::istring detects differences
+	static_assert(istring{"WORLD"} != std::string{"hello"});
+    
+
+    using namespace literals::string_literals;
+    //! @test  Verify @c _is literal operator creates @c constexpr narrow-character string
+	static_assert(std::string{"HELLO"} == "hello"_is);
+
+    //! @test  Verify @c _is literal operator creates @c constexpr wide-character string
+    static_assert(std::wstring{L"HELLO"} == L"hello"_is);
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

@@ -178,4 +178,39 @@ namespace nstd
         }
     }
 }
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace nstd::testing {
+    //! @test  Verify equality between @c nstd::istring_view and @c std::string_view is case-insensitive
+	static_assert(std::string_view{"HELLO"} == istring_view{"hello"});
+
+    //! @test  Verify equality between @c std::string_view and @c nstd::istring_view is case-insensitive
+	static_assert(istring_view{"HELLO"} == std::string_view{"hello"});
+    
+    //! @test  Verify inequality between @c nstd::istring_view and @c std::string_view detects differences
+	static_assert(std::string_view{"HELLO"} != istring_view{"world"});
+
+    //! @test  Verify inequality between @c std::string_view and @c nstd::istring_view detects differences
+	static_assert(istring_view{"WORLD"} != std::string_view{"hello"});
+    
+
+    //! @test  Verify equality between @c nstd::istring_view and @c std::string is case-insensitive
+	static_assert(std::string{"HELLO"} == istring_view{"hello"});
+
+    //! @test  Verify equality between @c std::string and @c nstd::istring_view is case-insensitive
+	static_assert(istring_view{"HELLO"} == std::string{"hello"});
+    
+    //! @test  Verify inequality between @c nstd::istring_view and @c std::string detects differences
+	static_assert(std::string{"HELLO"} != istring_view{"world"});
+
+    //! @test  Verify inequality between @c std::string and @c nstd::istring_view detects differences
+	static_assert(istring_view{"WORLD"} != std::string{"hello"});
+    
+
+    using namespace literals::string_view_literals;
+    //! @test  Verify @c _isv literal operator creates @c constexpr narrow-character string-view
+	static_assert(std::string_view{"HELLO"} == "hello"_isv);
+
+    //! @test  Verify @c _isv literal operator creates @c constexpr wide-character string-view
+    static_assert(std::wstring_view{L"HELLO"} == L"hello"_isv);
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
