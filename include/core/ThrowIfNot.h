@@ -40,13 +40,13 @@
 //! 
 //! @param	arg		Argument
 //! @param	expr	Boolean expression
-#define ThrowIf(arg,expr)     ::core::detail::ThrowIfImpl(expr, #arg, #expr)
+#define ThrowIf(arg,expr)     ::core::detail::ThrowIfImpl(arg, expr, #arg, #expr " is true")
 
 //! @brief	Throws if expression @c expr evaluates to @c false
 //! 
 //! @param	arg		Argument
 //! @param	expr	Boolean expression
-#define ThrowIfNot(arg,expr)  ::core::detail::ThrowIfImpl(!(expr), #arg, "!(" #expr ")")
+#define ThrowIfNot(arg,expr)  ::core::detail::ThrowIfNotImpl(arg, expr, #arg, #expr " is false")
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
@@ -57,11 +57,24 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::detail
 {
-	void
-	inline ThrowIfImpl(bool cond, gsl::czstring argName, gsl::czstring invariant, std::source_location loc = std::source_location::current())
+	template <typename T>
+	decltype(auto)
+	ThrowIfImpl(T&& arg, bool const expr, gsl::czstring argName, gsl::czstring invariant, std::source_location loc = std::source_location::current())
 	{
-		if (cond)
+		if (expr)
 			throw invalid_argument{"{}(..) Invalid '{}' argument: {}", loc.function_name(), argName, invariant};
+
+		return std::forward<T>(arg);
+	}
+	
+	template <typename T>
+	decltype(auto)
+	ThrowIfNotImpl(T&& arg, bool const expr, gsl::czstring argName, gsl::czstring invariant, std::source_location loc = std::source_location::current())
+	{
+		if (!expr)
+			throw invalid_argument{"{}(..) Invalid '{}' argument: {}", loc.function_name(), argName, invariant};
+
+		return std::forward<T>(arg);
 	}
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
