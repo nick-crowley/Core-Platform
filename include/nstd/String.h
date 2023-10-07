@@ -51,28 +51,28 @@ namespace nstd
 namespace nstd
 {
 	template <AnyOf<char,wchar_t> Char, typename Alloc>
-	bool
+	bool constexpr
 	operator==(std::basic_string<Char,std::char_traits<Char>,Alloc> const& lhs, 
 	           std::basic_string<Char,case_insensitive_char_traits<Char>,Alloc> const& rhs) {
 		return std::basic_string_view<Char>{lhs} == std::basic_string_view<Char,case_insensitive_char_traits<Char>>{rhs};
 	}
 
 	template <AnyOf<char,wchar_t> Char, typename Alloc>
-	bool
+	bool constexpr
 	operator==(std::basic_string<Char,case_insensitive_char_traits<Char>,Alloc> const& lhs, 
 	           std::basic_string<Char,std::char_traits<Char>,Alloc> const& rhs) {
 		return std::basic_string_view<Char,case_insensitive_char_traits<Char>>{lhs} == std::basic_string_view<Char>{rhs};
 	}
  
 	template <AnyOf<char,wchar_t> Char, typename Alloc>
-	bool
+	bool constexpr
 	operator==(Char const* lhs, 
 	           std::basic_string<Char,case_insensitive_char_traits<Char>,Alloc> const& rhs) {
 		return rhs.compare(lhs) == 0;
 	}
 	
 	template <AnyOf<char,wchar_t> Char, typename Alloc>
-	bool
+	bool constexpr
 	operator==(std::basic_string<Char,case_insensitive_char_traits<Char>,Alloc> const& lhs, 
 	           Char const* rhs) {
 		return lhs.compare(rhs) == 0;

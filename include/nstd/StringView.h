@@ -48,32 +48,52 @@ namespace nstd
         using type = case_insensitive_char_traits<Char>;
 	    using char_t = Char;
 
-        char
-	    static to_lower(char ch) {
-            return static_cast<char>(
-                std::tolower(static_cast<unsigned char>(ch))
-            );
+        template <AnyOf<char,wchar_t> Input>
+        Input constexpr
+	    static to_lower(Input ch) {
+            switch (ch) {
+            case 'A': return 'a';
+            case 'B': return 'b';
+            case 'C': return 'c';
+            case 'D': return 'd';
+            case 'E': return 'e';
+            case 'F': return 'f';
+            case 'G': return 'g';
+            case 'H': return 'h';
+            case 'I': return 'i';
+            case 'J': return 'j';
+            case 'K': return 'k';
+            case 'L': return 'l';
+            case 'M': return 'm';
+            case 'N': return 'n';
+            case 'O': return 'o';
+            case 'P': return 'p';
+            case 'Q': return 'q';
+            case 'R': return 'r';
+            case 'S': return 's';
+            case 'T': return 't';
+            case 'U': return 'u';
+            case 'V': return 'v';
+            case 'W': return 'w';
+            case 'X': return 'x';
+            case 'Y': return 'y';
+            case 'Z': return 'z';
+            default:  return ch;
+            }
         }
 
-	    wchar_t 
-	    static to_lower(wchar_t ch) {
-            return static_cast<wchar_t>(
-                ::towlower(ch)
-            );
-        }
- 
     public:
-        bool 
+        bool constexpr
         static eq(char_t c1, char_t c2) {
             return type::to_lower(c1) == type::to_lower(c2);
         }
  
-        bool 
+        bool constexpr
         static lt(char_t c1, char_t c2) {
              return type::to_lower(c1) < type::to_lower(c2);
         }
         
-        int 
+        int constexpr
         static compare(char_t const* s1, char_t const* s2, std::size_t n)
         {
             while (n-- != 0)
@@ -88,7 +108,7 @@ namespace nstd
             return 0;
         }
  
-        return_t<char_t const*>
+        return_t<char_t const*> constexpr
         static find(char_t const* s, std::size_t n, char_t a)
         {
             char_t const ua{type::to_lower(a)};
@@ -115,28 +135,28 @@ namespace nstd
 namespace nstd
 {
     template <AnyOf<char,wchar_t> Char>
-    bool 
+    bool constexpr
     operator==(std::basic_string_view<Char, std::char_traits<Char>> const& lhs, 
                std::basic_string_view<Char, case_insensitive_char_traits<Char>> const& rhs) {
 	    return rhs.compare(std::remove_reference_t<decltype(rhs)>{lhs.begin(), lhs.end()}) == 0;
     }
 
     template <AnyOf<char,wchar_t> Char>
-    bool 
+    bool constexpr
     operator==(std::basic_string_view<Char, case_insensitive_char_traits<Char>> const& lhs,
                std::basic_string_view<Char, std::char_traits<Char>> const& rhs) {
 	    return lhs.compare(std::remove_reference_t<decltype(lhs)>{rhs.begin(), rhs.end()}) == 0;
     }
     
 	template <AnyOf<char,wchar_t> Char, typename Alloc>
-	bool
+	bool constexpr
 	operator==(std::basic_string_view<Char, case_insensitive_char_traits<Char>> const& lhs, 
 	           std::basic_string<Char, std::char_traits<Char>, Alloc> const& rhs) {
 		return lhs == std::basic_string_view<Char>{rhs};
 	}
 
 	template <AnyOf<char,wchar_t> Char, typename Alloc>
-	bool
+	bool constexpr
 	operator==(std::basic_string<Char, std::char_traits<Char>, Alloc> const& lhs, 
 	           std::basic_string_view<Char, case_insensitive_char_traits<Char>> const& rhs) {
         return rhs == std::basic_string_view<Char>{lhs};
