@@ -216,7 +216,7 @@ SecurityApi::lookup_account(std::span<std::byte const>       sid,
 		res == 0) {
 		// [NOT-FOUND]
 		if (this->m_platform_api->get_last_error().value() == ERROR_NONE_MAPPED) {
-			return std::nullopt;
+			return nullopt;
 		}
 
 		// [FAILURE] Throw appropriate exception
@@ -251,7 +251,7 @@ SecurityApi::lookup_account(std::wstring_view                name,
 		res == 0) {
 		// [NOT-FOUND]
 		if (this->m_platform_api->get_last_error().value() == ERROR_NONE_MAPPED) {
-			return std::nullopt;
+			return nullopt;
 		}
 
 		// [FAILURE] Throw appropriate exception

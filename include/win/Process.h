@@ -122,7 +122,7 @@ namespace core::win
 				// o~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~o
 			public:
 				explicit
-				ConstIterator(ProcessRight rights, std::optional<meta::inherits_t> inheritance = std::nullopt) 
+				ConstIterator(ProcessRight rights, std::optional<meta::inherits_t> inheritance = nullopt) 
 				  : Idents{std::make_optional<ExistingProcessIdCollection>()},
 				    Index{this->Idents->empty() ? npos : 0},
 					Properties{rights, inheritance}
@@ -204,7 +204,7 @@ namespace core::win
 			template <typename Self>
 			const_iterator
 			begin(this Self&&, ProcessRight rights = ProcessRight::LimitedQuery, 
-			                   std::optional<meta::inherits_t> inheritance = std::nullopt) {
+			                   std::optional<meta::inherits_t> inheritance = nullopt) {
 				return const_iterator{rights, inheritance};
 			}
 
@@ -344,7 +344,7 @@ namespace core::win
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		Process
-		static fromPid(uint32_t pid, ProcessRight rights, std::optional<meta::inherits_t> inheritance = std::nullopt)
+		static fromPid(uint32_t pid, ProcessRight rights, std::optional<meta::inherits_t> inheritance = nullopt)
 		{
 			if (SharedProcess handle = Process::handleFromPid(pid,rights,inheritance); !handle)
 				LastError{}.throwAlways("OpenProcess() failed");
@@ -354,7 +354,7 @@ namespace core::win
 	
 	private:
 		SharedProcess
-		static handleFromPid(uint32_t pid, ProcessRight rights, std::optional<meta::inherits_t> inheritance = std::nullopt)
+		static handleFromPid(uint32_t pid, ProcessRight rights, std::optional<meta::inherits_t> inheritance = nullopt)
 		{
 			return SharedProcess{::OpenProcess(std::to_underlying(rights), Boolean{inheritance.has_value()}, pid)};
 		}

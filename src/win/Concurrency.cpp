@@ -36,7 +36,7 @@ win::detail::waitForMultipleObjects(std::span<::HANDLE> handles, WaitStrategy st
                                             timeout ? static_cast<::DWORD>(timeout->count()) : INFINITE);
     if (result == WAIT_TIMEOUT)
     {
-        return std::nullopt;
+        return nullopt;
     }
     else if (result >= WAIT_OBJECT_0 && result < WAIT_OBJECT_0+handles.size())
     {

@@ -101,6 +101,9 @@ namespace core {
 	namespace ranges = std::ranges;
 	namespace views = std::ranges::views;
 	namespace chrono = std::chrono;
+
+	std::nullopt_t constexpr
+	inline nullopt = std::nullopt;
 }
 
 namespace core::filesystem {

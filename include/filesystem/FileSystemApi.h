@@ -95,8 +95,8 @@ namespace core::filesystem
 		virtual createFile(path                         file,
 		                   CreateBehaviour              mode,
 		                   nstd::bitset<win::FileRight> rights = win::StandardRight::Read,
-		                   std::optional<FileShare>     sharing = std::nullopt,
-		                   std::optional<FileAttribute> attributes = std::nullopt) const abstract;
+		                   std::optional<FileShare>     sharing = nullopt,
+		                   std::optional<FileAttribute> attributes = nullopt) const abstract;
 
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 		* @brief  Copies an existing file to a new file

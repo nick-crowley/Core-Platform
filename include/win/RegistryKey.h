@@ -207,7 +207,7 @@ namespace core::win
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		RegistryKey
-		subkey(std::wstring_view child, std::optional<KeyRight> rights = std::nullopt) const;
+		subkey(std::wstring_view child, std::optional<KeyRight> rights = nullopt) const;
 
 		RegistryKey
 		operator/(std::wstring_view child) const {
@@ -220,7 +220,7 @@ namespace core::win
 		removeKey(std::wstring_view child);
 
 		RegistryKey
-		subkey(meta::create_new_t, std::wstring_view child, std::optional<KeyRight> rights = std::nullopt);
+		subkey(meta::create_new_t, std::wstring_view child, std::optional<KeyRight> rights = nullopt);
 	};
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

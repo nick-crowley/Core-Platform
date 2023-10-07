@@ -87,7 +87,7 @@ namespace core::win
     //! @brief	Wait for @p timeout until all handles in range are signalled
     template <nstd::InputRangeOf<::HANDLE> HandleCollection>
     bool
-    waitForAll(HandleCollection&& handles, std::optional<chrono::milliseconds> timeout = std::nullopt)
+    waitForAll(HandleCollection&& handles, std::optional<chrono::milliseconds> timeout = nullopt)
     {
         return detail::waitForMultipleObjects(handles, detail::WaitAll, timeout).has_value();
     }
@@ -95,7 +95,7 @@ namespace core::win
     //! @brief	Wait for @p timeout until any handles in range are signalled
     template <nstd::InputRangeOf<::HANDLE> HandleCollection>
     std::optional<::HANDLE>
-    waitForAny(HandleCollection&& handles, std::optional<chrono::milliseconds> timeout = std::nullopt)
+    waitForAny(HandleCollection&& handles, std::optional<chrono::milliseconds> timeout = nullopt)
     {
         return detail::waitForMultipleObjects(handles, detail::WaitAny, timeout);
     }
@@ -129,7 +129,7 @@ namespace core::win
 
     //! @brief	Wait at most @p timeout for @p handle to become signalled
     bool
-    inline waitFor(::HANDLE handle, std::optional<chrono::milliseconds> timeout = std::nullopt)
+    inline waitFor(::HANDLE handle, std::optional<chrono::milliseconds> timeout = nullopt)
     {
         return waitForAll(ranges::single_view{handle}, timeout);
     }
