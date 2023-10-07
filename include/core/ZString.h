@@ -52,7 +52,7 @@ namespace core
 		size_t const         Length;
 
 	public:
-		constexpr 
+		constexpr implicit
 		ZString(basic_zstring const str)
 		  : Text{str}, 
 		    Length{ZString::measure(str)}
@@ -71,9 +71,8 @@ namespace core
 		}
 
 	public:
-		constexpr
-		implicit operator
-		std::basic_string_view<Character>() const {
+		constexpr implicit
+		operator std::basic_string_view<Character>() const {
 			return {this->Text, this->Text+this->Length};
 		}
 	};

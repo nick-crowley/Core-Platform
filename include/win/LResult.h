@@ -60,16 +60,14 @@ namespace core::win
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		constexpr
-		implicit
+		constexpr implicit
 		LResult(::LRESULT val, std::source_location loc = std::source_location::current()) noexcept
 		  : Value{val}
 		{
 		}
 		
 		template <nstd::AnyArithmeticExcept<long,::LRESULT> T>
-		constexpr
-		implicit
+		constexpr implicit
 		LResult(T, std::source_location = std::source_location::current()) noexcept = delete;
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -95,15 +93,13 @@ namespace core::win
 			return detail::formatMessage(this->Value);
 		}
 		
-		[[noreturn]] 
-		void 
+		[[noreturn]] void 
 		throwAlways() const {
 			throw system_error{this->Value};
 		}
 		
 		template <typename... Params>
-		[[noreturn]] 
-		void 
+		[[noreturn]] void 
 		throwAlways(std::string_view msg, Params&&... args) const {
 			throw system_error{this->Value, 
 			                   std::vformat(msg,std::make_format_args(args...))};
@@ -117,22 +113,19 @@ namespace core::win
 				                   std::vformat(msg,std::make_format_args(args...))};
 		}
 
-		constexpr 
-		explicit operator
-		bool() const noexcept {
+		constexpr explicit 
+		operator bool() const noexcept {
 			return this->Value == ERROR_SUCCESS;
 		}
 
-		constexpr
-		implicit operator
-		::LRESULT() const noexcept {
+		constexpr implicit 
+		operator ::LRESULT() const noexcept {
 			return this->Value;
 		}
 		
 		template <nstd::AnyArithmeticExcept<::LRESULT> T>
-		constexpr
-		implicit operator
-		T() const noexcept = delete;
+		constexpr implicit 
+		operator T() const noexcept = delete;
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};

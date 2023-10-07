@@ -61,13 +61,13 @@ namespace core::nt
 										std::vformat(msg,std::make_format_args(args...)) + ". " + this->str()};
 		}
 
-		explicit operator
-		bool() const {
+		explicit
+		operator bool() const {
 			return this->m_value >= 0;
 		}
 
-		implicit operator
-		::NTSTATUS() const {
+		implicit 
+		operator ::NTSTATUS() const {
 			return this->m_value;
 		}
 	};
@@ -95,13 +95,13 @@ namespace core::nt
 			return detail::formatMessage(this->m_value);
 		}
 
-		explicit operator
-		bool() const {
+		explicit 
+		operator bool() const {
 			return this->m_value >= 0;
 		}
 
-		implicit operator
-		::NTSTATUS() const {
+		implicit
+		operator ::NTSTATUS() const {
 			return this->m_value;
 		}
 	};

@@ -82,8 +82,8 @@ namespace core
 		{
 		}
 
-		constexpr
-		type& operator=(type const& r) noexcept 
+		constexpr type& 
+		operator=(type const& r) noexcept 
 		{
 			type{r}.swap(*this);
 			return *this;
@@ -183,16 +183,14 @@ namespace core
 			return LiteralString<Character,Capacity+1>{this->m_text, c};
 		}
 
-		constexpr
-		implicit operator 
-		std::basic_string_view<Character>() const noexcept
+		constexpr implicit
+		operator std::basic_string_view<Character>() const noexcept
 		{
 			return {this->begin(), this->end()};
 		}
 	
-		constexpr
-		implicit operator 
-		std::basic_string_view<other_char_t>() const noexcept = delete;
+		constexpr implicit
+		operator std::basic_string_view<other_char_t>() const noexcept = delete;
 		
 	public:
 		void constexpr

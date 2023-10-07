@@ -94,10 +94,12 @@ namespace core
 	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	protected:
+		implicit
 		VarLengthStructure(value_type* instance) 
 			: m_object{ThrowIfNull(instance)}
 		{}
 
+		implicit
 		VarLengthStructure(std::span<std::byte> bytes)
 			: m_object{reinterpret_cast<value_type*>(ThrowIfEmpty(bytes).data())}
 		{}
@@ -130,21 +132,21 @@ namespace core
 #if BUGGED
 		//! @brief	Implicit conversion to pointer-to-mutable
 		template <typename Self, nstd::AnyOf<value_type,void> Output>
-		implicit operator
-		nstd::mirror_cv_t<std::remove_reference_t<Self>,Output>*(this Self&& derived) {
+		implicit 
+		operator nstd::mirror_cv_t<std::remove_reference_t<Self>,Output>*(this Self&& derived) {
 			return derived.m_object;
 		}
 #endif
 
-		implicit operator
-		value_type const*() const {
+		implicit 
+		operator value_type const*() const {
 			return this->m_object;
 		}
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		implicit operator
-		value_type*() {
+		implicit
+		operator value_type*() {
 			return this->m_object;
 		}
 	};
@@ -176,10 +178,12 @@ namespace core
 	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	protected:
+		implicit
 		VarLengthStructure(value_type* instance)
 			: m_object{ThrowIfNull(instance)}
 		{}
 	
+		implicit
 		VarLengthStructure(std::span<std::byte const> bytes)
 			: m_object{reinterpret_cast<value_type*>(ThrowIfEmpty(bytes).data())}
 		{}
@@ -220,8 +224,8 @@ namespace core
 		}
 
 		//! @brief	Implicit conversion to pointer-to-const
-		implicit operator 
-		value_type*() const {
+		implicit
+		operator value_type*() const {
 			return this->m_object;
 		}
 

@@ -84,8 +84,8 @@ namespace core::win
 			return isSignalled(*this->Handle);
 		}
 		
-		implicit operator
-		bool() const {
+		implicit 
+		operator bool() const {
 			return this->signalled();
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o

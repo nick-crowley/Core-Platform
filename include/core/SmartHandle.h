@@ -184,8 +184,8 @@ namespace core
             return this->get();
         }
 
-        implicit operator 
-        bool() const noexcept {
+        implicit 
+        operator bool() const noexcept {
             return !this->empty();
         }
         // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o

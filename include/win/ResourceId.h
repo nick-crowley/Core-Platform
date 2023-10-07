@@ -98,9 +98,8 @@ namespace core::win
 			return std::get<std::wstring_view>(this->Ident);
 		}
 	
-		constexpr 
-		implicit operator 
-		gsl::cwzstring() const 
+		constexpr implicit 
+		operator gsl::cwzstring() const 
 		{
 			if (this->is_numeric())
 				return MAKEINTRESOURCE(this->as_number());

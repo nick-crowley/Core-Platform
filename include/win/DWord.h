@@ -56,8 +56,7 @@ namespace core::win
 		ValueType const& m_value;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		constexpr 
-		explicit 
+		explicit constexpr
 		DWord(ValueType const& val)
 		  : m_value{val}
 		{
@@ -68,9 +67,8 @@ namespace core::win
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		constexpr 
-		implicit operator 
-		::DWORD() const
+		constexpr implicit 
+		operator ::DWORD() const
 		{
 			return static_cast<::DWORD>(this->m_value);
 		}

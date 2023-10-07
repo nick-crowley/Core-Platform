@@ -86,8 +86,8 @@ namespace core::win
 
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			implicit operator
-			RegistryValue() const;
+			implicit 
+			operator RegistryValue() const;
 
 			std::wstring
 			wstr() {
