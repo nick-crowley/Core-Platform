@@ -57,14 +57,6 @@ namespace core::win
 {
     namespace detail 
     {
-        struct FileHandleTraits {
-            ::HANDLE constexpr
-            inline static empty = INVALID_HANDLE_VALUE;
-
-            auto constexpr
-            inline static release = &::CloseHandle;
-        };
-
         struct ServiceManagerHandleTraits : core::detail::HandleTraits<::SC_HANDLE>
         {};
     }
@@ -74,9 +66,6 @@ namespace core::win
 
     //! @brief  Shared @c ::HANDLE released using @c ::CloseHandle()
     using SharedEvent = SharedHandle;
-    
-    //! @brief  Shared @c ::HANDLE released using @c ::CloseHandle() and @c INVALID_HANDLE_VALUE sentinel value
-    using SharedFile = SmartHandle<::HANDLE, detail::FileHandleTraits>;
     
     //! @brief  Shared @c ::HKEY released using @c ::RegCloseKey()
     using SharedRegistryKey = SmartHandle<::HKEY>;
