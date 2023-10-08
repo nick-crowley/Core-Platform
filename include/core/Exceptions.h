@@ -49,7 +49,12 @@ namespace core
 		using base = BaseException;
 
 	public:
+		exception(std::string_view msg)
+			: base{msg}
+		{}
+
 		template <typename... Params>
+			requires nstd::AtLeastOneType<Params...>
 		exception(std::string_view msg, Params&&... args)
 			: base{std::vformat(msg,std::make_format_args(args...))}
 		{}

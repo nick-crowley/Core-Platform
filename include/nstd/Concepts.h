@@ -78,6 +78,9 @@ namespace nstd
 	template <auto... Values>
 	concept AtLeastOneValue = sizeof...(Values) >= 1;
 
+	template <typename... Types>
+	concept AtLeastOneType = sizeof...(Types) >= 1;
+
 	template <typename T>
 	concept Character = AnyOf<T,char,wchar_t,char8_t,char16_t,char32_t>;
 	
