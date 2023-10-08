@@ -44,23 +44,22 @@ namespace core
 	template <nstd::Character Character>
 	class ZString
 	{
-		using basic_zstring = gsl::basic_zstring<Character>;
-		using basic_czstring = gsl::basic_zstring<Character const>;
+		using char_t = Character;
 
 	public:
-		basic_zstring const  Text;
-		size_t const         Length;
+		char_t* const  Text;
+		size_t const   Length;
 
 	public:
 		constexpr implicit
-		ZString(basic_zstring const str)
+		ZString(char_t* const str)
 		  : Text{str}, 
 		    Length{ZString::measure(str)}
 		{}
 
 	public:
 		constexpr size_t
-		static measure(basic_czstring str) {
+		static measure(char_t const* const str) {
 			if (!str)
 				return 0;
 
@@ -72,7 +71,7 @@ namespace core
 
 	public:
 		constexpr implicit
-		operator std::basic_string_view<Character>() const {
+		operator std::basic_string_view<char_t>() const {
 			return {this->Text, this->Text+this->Length};
 		}
 	};
