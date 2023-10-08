@@ -134,6 +134,12 @@ namespace nstd
 		|| std::is_function_v<T>
 		|| is_function_pointer_v<T>;
 	
+	//! @brief  Ensure type models at least one of the supplied type-traits
+	//! @remarks  Concepts and variable templates are unsupported
+	template <typename T, template <typename> typename... TypeTraits>
+	concept ModelsAnyOf = sizeof...(TypeTraits) >= 1 
+	                   && (TypeTraits<T>::value || ...);
+
 	template <auto... Values>
 	concept NonEmptyPack = sizeof...(Values) >= 1;
 
@@ -160,6 +166,15 @@ namespace nstd
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace nstd::testing {
+	//! @test  Verify @c nstd::ModelsAnyOf is @c true for a single matching trait
+	static_assert(ModelsAnyOf<int,std::is_signed>);
+
+	//! @test  Verify @c nstd::ModelsAnyOf is @c true when at least one matching trait is present
+	static_assert(ModelsAnyOf<int,std::is_signed,std::is_unsigned>);
+
+	//! @test  Verify @c nstd::ModelsAnyOf is @c false when not traits match
+	static_assert(!ModelsAnyOf<int,std::is_enum,std::is_pointer,std::is_function>);
+	
 	struct TestClass {};
 	static_assert(FunctionObject<decltype([](){})>);
 	static_assert(FunctionObject<decltype([](){ return 42; })>);
