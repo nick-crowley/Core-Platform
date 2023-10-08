@@ -68,7 +68,7 @@ namespace nstd
 	concept AtLeastOneType = sizeof...(Types) >= 1;
 
 	template <typename T>
-	concept Character = AnyOf<T,char,wchar_t,char8_t,char16_t,char32_t>;
+	concept Character = AnyCvOrSignOf<T,char,wchar_t,char8_t,char16_t,char32_t>;
 	
 	template <typename T>
 	concept Class = std::is_class_v<T> || std::is_union_v<T>;
