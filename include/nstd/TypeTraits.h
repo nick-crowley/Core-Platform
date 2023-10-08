@@ -59,6 +59,31 @@ namespace nstd
 	template <typename T>
 	using toggle_const_t = std::conditional_t<std::is_const_v<T>, std::remove_cv_t<T>, std::add_const_t<T>>;
 	
+	namespace detail {
+		
+		template <std::integral T>
+			requires (!std::is_const_v<T>) 
+		          && (!std::is_volatile_v<T>)
+		metafunc remove_sign : std::type_identity<T> {};
+		
+		template <> metafunc remove_sign<char signed> : std::type_identity<char> {};
+		template <> metafunc remove_sign<char unsigned> : std::type_identity<char> {};
+		template <> metafunc remove_sign<short signed> : std::type_identity<short> {};
+		template <> metafunc remove_sign<short unsigned> : std::type_identity<short> {};
+		template <> metafunc remove_sign<signed> : std::type_identity<int> {};
+		template <> metafunc remove_sign<unsigned> : std::type_identity<int> {};
+		template <> metafunc remove_sign<long signed> : std::type_identity<long> {};
+		template <> metafunc remove_sign<long unsigned> : std::type_identity<long> {};
+		template <> metafunc remove_sign<long long signed> : std::type_identity<long long> {};
+		template <> metafunc remove_sign<long long unsigned> : std::type_identity<long long> {};
+		
+		template <typename T>
+		using remove_sign_t = typename remove_sign<T>::type;
+	}
+
+	template <std::integral T>
+	using remove_cv_sign_t = detail::remove_sign_t<std::remove_cv_t<T>>;
+	
 	// clang-format on
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
