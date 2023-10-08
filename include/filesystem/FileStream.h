@@ -217,7 +217,7 @@ namespace core::filesystem
 			auto const initialPosition = this->Api->setFilePointer(this->Handle, Origin::Current, 0);
 			this->Api->setFilePointer(this->Handle, Origin::Begin, length);
 			this->Api->setEndOfFile(this->Handle);
-			if (initialPosition < length)
+			if (static_cast<size_type>(initialPosition) < length)
 				this->Api->setFilePointer(this->Handle, Origin::Begin, initialPosition);
 		}
 	
