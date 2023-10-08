@@ -234,6 +234,40 @@ namespace core
 	is_valid_enumerator(E value) {
 		return ranges::any_of(enumerator_dictionary_v<E> | views::values, lambda(=, e, e == value));
 	}
+
+	
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief  Identifies any enumerator from its string-representation
+	*
+	* @param  name   String-representation of any enumerator
+	* 
+	* @returns  Matching enumerator, if any, otherwise @c std::nullopt
+	*/
+	template <nstd::Enumeration E>
+	std::optional<E> constexpr
+	from_string(std::nothrow_t, std::string_view name) {
+		for (auto const [n, v] : enumerator_dictionary_v<E>) 
+            if (name == n)
+                return v;
+
+		return {};
+	}
+	
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief  Identifies any enumerator from its string-representation
+	*
+	* @param  name   String-representation of any enumerator
+	* 
+	* @throws  std::invalid_argument  
+	*/
+	template <nstd::Enumeration E>
+	E 
+	from_string(std::string_view name) {
+		if (auto const e = core::from_string<E>(std::nothrow, name); e.has_value())
+			return *e;
+
+		ThrowInvalidArg(name, "{} is not a valid {} enumerator", name, enumeration_name_v<E>);
+	}
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::testing
@@ -246,6 +280,12 @@ namespace core::testing
 
 	//! @test	Verify @c core::is_valid_enumerator() correctly identifies invalid enumerators (of enumerations who underlying type is unsigned)
 	static_assert(!is_valid_enumerator(E2{21}));
+
+	//! @Test	Verify @c core::from_string() correctly identifies enumerators from string-representation
+	static_assert(from_string<E2>(std::nothrow, "Twenty") == E2::Twenty);
+	
+	//! @Test	Verify @c core::from_string() correctly rejects unrecognised string-representation
+	static_assert(from_string<E2>(std::nothrow, "Sixty") == nullopt);
 
 	//! @test	Verify @c core::enumerator_dictionary_v returns @c std::array containing all enumerators
 	static_assert(enumerator_dictionary_v<N1::E1> == std::array<EnumName<N1::E1>,1>{ 
