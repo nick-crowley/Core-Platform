@@ -77,7 +77,7 @@ namespace core::filesystem
 		struct OperationIsSupportedSentry {
 			OperationIsSupportedSentry(type const& obj, Operation op) {
 				if (!obj.supports().test(op)) 
-					throw core::logic_error{"{} operations are not supported", op};
+					throw core::logic_error{"{} operations are not supported", core::to_string(op)};
 			}
 		};
 	
