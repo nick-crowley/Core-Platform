@@ -62,7 +62,7 @@ namespace nstd
 	}
 
 	template <typename T, typename... Types>
-	concept AnyCvOrSignOf = (std::is_same_v<detail::comparable_arithmetic_t<T>, Types> || ...);
+	concept AnyCvOrSignOf = (std::is_same_v<detail::comparable_arithmetic_t<std::remove_cv_t<T>>, Types> || ...);
 	
 	template <typename T>
 	concept Arithmetic = std::is_arithmetic_v<T>;
