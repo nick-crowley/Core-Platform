@@ -48,7 +48,7 @@ namespace core
 //! @brief	Throws if enumerator @c e is not a valid enumerator
 //! 
 //! @param	e		Enumerator
-#define ThrowIfUndefined(e)  ::core::detail::ThrowIfUndefinedImpl(e, #e)
+#define ThrowIfUndefined(e)  ::core::detail::ThrowIfUndefinedImpl(e, nameof(e))
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 

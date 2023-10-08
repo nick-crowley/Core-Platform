@@ -39,7 +39,7 @@
 //! @brief	Throws if expression <tt>arg == nullptr</tt> evaluates to @c true
 //! 
 //! @param	arg		Argument
-#define ThrowIfNull(arg)  ::core::detail::ThrowIfNullImpl(arg, #arg)
+#define ThrowIfNull(arg)  ::core::detail::ThrowIfNullImpl(arg, nameof(arg))
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 

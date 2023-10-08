@@ -39,7 +39,7 @@
 //! @brief	Throws if expression <tt>arg == 0</tt> evaluates to @c true
 //! 
 //! @param	arg		Argument
-#define ThrowIfZero(arg)  ::core::detail::ThrowIfZeroImpl(arg, #arg)
+#define ThrowIfZero(arg)  ::core::detail::ThrowIfZeroImpl(arg, nameof(arg))
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
@@ -52,7 +52,7 @@ namespace core::detail
 {
 	template <std::equality_comparable_with<decltype(0)> T> 
 	decltype(auto) 
-	inline ThrowIfNullImpl(T&& value, char const* argName, std::source_location loc = std::source_location::current())
+	inline ThrowIfZeroImpl(T&& value, char const* argName, std::source_location loc = std::source_location::current())
 	{
 		if (value == 0)
 			throw invalid_argument{"{}(..) '{}' argument is zero", loc.function_name(), argName};

@@ -39,7 +39,7 @@
 //! @brief	Throws if expression <tt>empty(arg)</tt> evaluates to @c true
 //! 
 //! @param	arg		Argument
-#define ThrowIfEmpty(arg)  ::core::detail::ThrowIfEmptyImpl(arg, #arg)
+#define ThrowIfEmpty(arg)  ::core::detail::ThrowIfEmptyImpl(arg, nameof(arg))
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 

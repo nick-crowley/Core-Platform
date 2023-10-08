@@ -40,13 +40,13 @@
 //! 
 //! @param	arg		Argument
 //! @param	expr	Boolean expression
-#define ThrowIf(arg,expr)     ::core::detail::ThrowIfImpl(arg, expr, #arg, #expr " is true")
+#define ThrowIf(arg,expr)     ::core::detail::ThrowIfImpl(arg, expr, nameof(arg), #expr " is true")
 
 //! @brief	Throws if expression @c expr evaluates to @c false
 //! 
 //! @param	arg		Argument
 //! @param	expr	Boolean expression
-#define ThrowIfNot(arg,expr)  ::core::detail::ThrowIfNotImpl(arg, expr, #arg, #expr " is false")
+#define ThrowIfNot(arg,expr)  ::core::detail::ThrowIfNotImpl(arg, expr, nameof(arg), #expr " is false")
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
