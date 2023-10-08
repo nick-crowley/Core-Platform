@@ -169,7 +169,7 @@ namespace core
 	* @tparam	Values...	Sequence of valid enumerators (of the same type)
 	*/
 	template <auto... Values>
-		requires nstd::NonEmptyPack<Values...>
+		requires nstd::AtLeastOneValue<Values...>
 		      && nstd::HomogenousValues<Values...>
 		      && ValidEnumerators<Values...>
 	using SuppliedValues = nstd::enum_sequence<nstd::sequence_element_t<nstd::value_tuple<Values...>>, Values...>;

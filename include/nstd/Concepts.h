@@ -74,6 +74,9 @@ namespace nstd
 	//! @brief	Any integral type except any cv-qualified or signed variant of [...]
 	template <typename T, typename... Types>
 	concept AnyIntegralExcept = std::is_integral_v<T> && !AnyCvOrSignOf<T,Types...>;
+	
+	template <auto... Values>
+	concept AtLeastOneValue = sizeof...(Values) >= 1;
 
 	template <typename T>
 	concept Character = AnyOf<T,char,wchar_t,char8_t,char16_t,char32_t>;
@@ -140,9 +143,6 @@ namespace nstd
 	template <typename T, template <typename> typename... TypeTraits>
 	concept ModelsAnyOf = sizeof...(TypeTraits) >= 1 
 	                   && (TypeTraits<T>::value || ...);
-
-	template <auto... Values>
-	concept NonEmptyPack = sizeof...(Values) >= 1;
 
 	template <typename T>
 	concept OutputStreamCompatible = requires(T& t) { std::declval<std::ostream>() << t; };
