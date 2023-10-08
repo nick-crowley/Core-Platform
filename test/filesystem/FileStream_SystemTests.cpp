@@ -23,19 +23,45 @@
 * and should not be interpreted as representing official policies, either expressed or implied, of
 * the projects which contain it.
 */
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Preprocessor Directives o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+#ifndef DISABLE_FILES_STREAM_SYSTEM_TESTS
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "core/DateTime_UnitTests.cpp"
-#include "filesystem/FileStream_SystemTests.cpp"
-#include "filesystem/FileSystemApi_UnitTests.cpp"
-#include "security/Token_UnitTests.cpp"
-#include "win/DebugStream_SystemTests.cpp"
-#include "win/PackedInteger_UnitTests.cpp"
-#include "win/LogStream_SystemTests.cpp"
-#include "win/HResult_UnitTests.cpp"
-#include "win/LResult_UnitTests.cpp"
-#include "win/Process_SystemTests.cpp"
-#include "win/Reflection_UnitTests.cpp"
-#include "win/RegistryKey_SystemTests.cpp"
-#include "win/ServiceManager_SystemTests.cpp"
-#include "win/SharedLibrary_SystemTests.cpp"
-#include "win/SystemError_UnitTests.cpp"
+#include <gtest/gtest.h>
+#include <filesystem/FileStream.h>
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+using namespace core;
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+TEST(FileStream_ST, Constructor_CanOpenExistingFile) 
+{
+	//! @test  Verify @c filesystem::FileStream can open an existing file
+	EXPECT_NO_THROW(
+		filesystem::FileStream{"CorePlatform.pdb"}
+	);
+}
+
+TEST(FileStream_ST, Constructor_CanCreateNewFile) 
+{
+	wchar_t filename[MAX_PATH] {};
+	::GetTempFileNameW(L".", L"test", 42, &filename[0]);
+
+	//! @test  Verify @c filesystem::FileStream can create a temp file
+	EXPECT_NO_THROW(
+		filesystem::FileStream(core::create_new, filename)
+	);
+}
+
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+#endif	// DISABLE_FILES_STREAM_SYSTEM_TESTS
