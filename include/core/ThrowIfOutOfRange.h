@@ -26,81 +26,31 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Preprocessor Directives o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #pragma once
 #ifndef CorePlatform_h_included
-#	define CorePlatform_h_included
-#endif
-
-#if (defined(_MSVC_LANG) && _MSVC_LANG <= 202002L)                                                \
- || (defined(__clang__) && __cplusplus <= 202002L)
-#	error Core-Platform requires C++23
-#endif
-
-#ifdef __clang__
-#	error Core-Platform doesn't yet support clang compiler
+#	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "../../src/PlatformSdk.h"
-#include "../../src/StdLibrary.h"
-#include "../../src/libBoost.h"
-
-#include "../../src/library/PlatformExport.h"
-
-#include "nstd/experimental/abstract.h"
-#include "nstd/experimental/implicit.h"
-#include "nstd/experimental/intern.h"
-#include "nstd/experimental/lambda.h"
-#include "nstd/experimental/metafunc.h"
-#include "nstd/experimental/nameof.h"
-#include "nstd/experimental/satisfies.h"
-#include "nstd/experimental/scoped.h"
-#include "nstd/experimental/lengthof.h"
-#include "nstd/experimental/finally.h"
-#include "nstd/TypeTraits.h"
-#include "nstd/Concepts.h"
-#include "nstd/Bitset.h"
-#include "nstd/FormatString.h"
-#include "nstd/Iterator.h"
-#include "nstd/IoManip.h"
-#include "nstd/IndexedTuple.h"
-#include "nstd/Memory.h"
-#include "nstd/Sequence.h"
-#include "nstd/SizeOf.h"
-#include "nstd/SourceLocation.h"
-#include "nstd/StringView.h"
-#include "nstd/String.h"
-#include "nstd/Tuple.h"
-#include "nstd/Utility.h"
-
-#include "meta/TagTypes.h"
-#include "meta/Settings.h"
-
 #include "core/Exceptions.h"
-#include "core/ThrowIfEmpty.h"
-#include "core/ThrowIfNot.h"
-#include "core/ThrowIfNull.h"
-#include "core/ThrowIfOutOfRange.h"
-#include "core/ThrowIfZero.h"
-#include "core/ThrowInvalidArg.h"
-#include "core/Invariant.h"
-#include "core/PostCondition.h"
-
-#include "core/CharacterConversion.h"
-#include "core/BitwiseEnum.h"
-#ifndef __clang__
-#	include "core/EnumNames.h"
-#	include "core/ThrowIfUndefined.h"
-#endif
-#include "core/ToHexString.h"
-#include "core/ToString.h"
-
-#include "nt/NtStatus.h"
-#include "win/LResult.h"
-#include "win/HResult.h"
-#include "win/DWord.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+* @brief  Verifies an argument (of any type) is out of (an implementation-defined) range
+*
+* @param[in]  arg   Argument (or property) to be verified (e.g. "arg", "arg.size()")
+* @param[in]  minimum   Inclusive minimum
+* @param[in]  maximum   Exclusive maximum
+* 
+* @returns	Reference to @p arg
+* 
+* @throws  std::invalid_argument   @p arg is outside the defined range
+*
+* @invariant  @p minimum <= @p arg < @p maximum
+*/
+#define ThrowIfOutOfRange(arg, minimum, maximum)                                                  \
+	::core::detail::ThrowIfOutOfRangeImpl(arg, nameof(arg), minimum, maximum)
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
@@ -109,5 +59,18 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace core::detail
+{
+	template <typename T, typename MinValue, typename MaxValue>
+		requires requires(T&& val, MinValue&& limit) { val < limit; }
+	          && requires(T&& val, MaxValue&& limit) { val >= limit; }
+	decltype(auto) 
+	ThrowIfOutOfRangeImpl(T&& arg, char const* argName, MinValue&& inclusiveMin, MaxValue&& exlusiveMax, std::source_location loc = std::source_location::current())
+	{
+		if (arg < inclusiveMin || arg >= exlusiveMax) 
+			throw invalid_argument{"{}(..) '{}' argument is outside range [{}...{}] (its {})", loc.function_name(), argName, inclusiveMin, exlusiveMax, arg};
 
+		return std::forward<T>(arg);
+	}
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
