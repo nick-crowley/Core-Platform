@@ -48,6 +48,7 @@ set(GSL_ASSERTION_BEHAVIOUR "GSL_THROW_ON_CONTRACT_VIOLATION")
 # /std:c++latest	: Preview ISO C++ 23 Standard
 # /std:c17			: ISO C 17 Standard
 # /Zc:preprocessor	: ISO C++20 Preprocessor
+# /Zc:__cplusplus   : Define __cplusplus macro
 # /ZI				: PDBs for edit & continue
 # /EHa				: Enable SEH and C++ exceptions
 # /W4				: Warning level 4
@@ -55,7 +56,7 @@ set(GSL_ASSERTION_BEHAVIOUR "GSL_THROW_ON_CONTRACT_VIOLATION")
 # /wd4251			: Disable W4251: Classes containing fields of STL type (CRT compatibility warning)
 # /wd4275			: Disable W4275: Classes containing bases of STL type (CRT compatibility warning)
 # /wd4467           : Disable C4467: Usage of ATL attributes is deprecated
-set(GLOBAL_COMPILER_OPTIONS "/std:c++latest /std:c17 /Zc:preprocessor /ZI /EHa /W4 /wd4100 /wd4251 /wd4275 /wd4467")
+set(GLOBAL_COMPILER_OPTIONS "/std:c++latest /std:c17 /Zc:preprocessor /Zc:__cplusplus /ZI /EHa /W4 /wd4100 /wd4251 /wd4275 /wd4467")
 
 # Set linker options used by all modules
 set(GLOBAL_LINKER_OPTIONS "${GLOBAL_LINKER_OPTIONS} /SAFESEH:NO")

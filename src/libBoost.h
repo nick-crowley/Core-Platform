@@ -37,6 +37,7 @@
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include <boost/preprocessor/arithmetic/add.hpp>
+#include <boost/preprocessor/facilities/va_opt.hpp>
 #include <boost/preprocessor/list/adt.hpp>
 #include <boost/preprocessor/list/append.hpp>
 #include <boost/preprocessor/list/enum.hpp>
@@ -51,6 +52,7 @@
 #include <boost/preprocessor/seq/reverse.hpp>
 #include <boost/preprocessor/seq/subseq.hpp>
 #include <boost/preprocessor/seq/transform.hpp>
+#include <boost/preprocessor/variadic/size.hpp>
 #include <boost/preprocessor/variadic/to_list.hpp>
 #include <boost/preprocessor/variadic/to_seq.hpp>
 #include <boost/preprocessor/comparison/less.hpp>
@@ -71,4 +73,8 @@
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+#if BOOST_PP_VARIADIC_HAS_OPT() == 0
+#	error Boost prepreprocessor BOOST_PP_VA_OPT macro not supported; check C++20 preprocessor and __cplusplus macro are enabled
+#endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
