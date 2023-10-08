@@ -543,12 +543,14 @@ namespace core::filesystem
 		* @param[in]  file   Open handle to file
 		* @param[in]  from   Start position of seek
 		* @param[in]  n      Distance to move
+		* 
+		* @returns  Position after seek completed
 		*
 		* @throws  std::invalid_argument  Missing or invalid argument
 		* @throws  std::system_error      Operation failed
 		*/
 		int64_t
-		virtual setFilePointer(SharedFile file, Origin from, ptrdiff_t n = 0) const {
+		virtual setFilePointer(SharedFile file, Origin from, ptrdiff_t n) const {
 			ThrowIfEmpty(file);
 			ThrowIfUndefined(from);
 
