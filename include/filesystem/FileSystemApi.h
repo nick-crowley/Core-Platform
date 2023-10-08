@@ -506,6 +506,21 @@ namespace core::filesystem
 		}
 	
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+		* @brief  Sets the file length to the current position of the file pointer
+		*
+		* @param[in]  file   Open handle to file
+		*
+		* @throws  std::invalid_argument  Missing argument
+		* @throws  std::system_error      Operation failed
+		*/
+		void
+		virtual setEndOfFile(SharedFile file) const {
+			ThrowIfEmpty(file);
+			if (!::SetEndOfFile(*file))
+				win::LastError{}.throwAlways("SetEndOfFile() failed");
+		}
+
+		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 		* @brief  Sets the attributes for a file or directory
 		*
 		* @param[in]  file        Name of the file whose attributes are to be set.
