@@ -47,7 +47,12 @@ set(GSL_ASSERTION_BEHAVIOUR "GSL_THROW_ON_CONTRACT_VIOLATION")
 # Set compiler options used by all modules
 # /std:c++latest	: Preview ISO C++ 23 Standard
 # /std:c17			: ISO C 17 Standard
+# /permissive-		: ISO standard conformance mode
+# /Zc:enumTypes     : Deduce enumeration underlying type from enumerators, not vice versa
+# /Zc:externC       : Strict enforcement of parameter types allowed in functions with C language linkage
+# /Zc:externConstexpr : Allow external linkage of constexpr variables
 # /Zc:preprocessor	: ISO C++20 Preprocessor
+# /Zc:templateScope : Prevent shadowing template parameters
 # /Zc:__cplusplus   : Define __cplusplus macro
 # /ZI				: PDBs for edit & continue
 # /EHa				: Enable SEH and C++ exceptions
@@ -56,7 +61,7 @@ set(GSL_ASSERTION_BEHAVIOUR "GSL_THROW_ON_CONTRACT_VIOLATION")
 # /wd4251			: Disable W4251: Classes containing fields of STL type (CRT compatibility warning)
 # /wd4275			: Disable W4275: Classes containing bases of STL type (CRT compatibility warning)
 # /wd4467           : Disable C4467: Usage of ATL attributes is deprecated
-set(GLOBAL_COMPILER_OPTIONS "/std:c++latest /std:c17 /Zc:preprocessor /Zc:__cplusplus /ZI /EHa /W4 /wd4100 /wd4251 /wd4275 /wd4467")
+set(GLOBAL_COMPILER_OPTIONS "/std:c++latest /std:c17 /permissive- /Zc:enumTypes /Zc:externC /Zc:externConstexpr /Zc:preprocessor /Zc:templateScope /Zc:__cplusplus /ZI /EHa /W4 /wd4100 /wd4251 /wd4275 /wd4467")
 
 # Set linker options used by all modules
 set(GLOBAL_LINKER_OPTIONS "${GLOBAL_LINKER_OPTIONS} /SAFESEH:NO")
