@@ -39,22 +39,17 @@
 
 //! @brief	Throws immediately if expression @c invarExpr evaluates to @c false
 //! 
-//! @param	invarExpr	Boolean expression
+//! @param	invarExpr  Boolean expression
 //! 
-//! @throws	std::runtime_error		Invariant violated
-#define Invariant(invarExpr)		if (!(invarExpr)) throw ::nstd::invariant_violated{#invarExpr};
+//! @throws	std::logic_error  Invariant violated
+#define Invariant(invarExpr)                                                                      \
+	if (!(invarExpr))                                                                             \
+		throw ::core::logic_error{"'{}' is false", #invarExpr};
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-namespace nstd
-{
-	struct invariant_violated : ::core::runtime_error {
-		invariant_violated(std::string_view expression)
-			: core::runtime_error{"'{}' is false", expression}
-		{}
-	};
-}
+
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

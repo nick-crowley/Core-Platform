@@ -44,10 +44,11 @@
 namespace core
 {
 	template <std::derived_from<std::exception> BaseException>
-	struct exception : public BaseException
+	class exception : public BaseException
 	{
 		using base = BaseException;
 
+	public:
 		template <typename... Params>
 		exception(std::string_view msg, Params&&... args)
 			: base{std::vformat(msg,std::make_format_args(args...))}
@@ -55,6 +56,7 @@ namespace core
 	};
 
 	using invalid_argument = exception<std::invalid_argument>;
+	using logic_error = exception<std::logic_error>;
 	using runtime_error = exception<std::runtime_error>;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
