@@ -50,17 +50,19 @@ namespace core::filesystem {
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		nstd::bitset<FileAttribute> Attributes;    //!< File/directory attributes
-		path                        AbsolutePath;  //!< Absolute path of file/directory
-		filesize_t                  Size = 0;      //!< [file-only] File size, in bytes
+		path                        File;          //!< Name of file
+		path                        Folder;        //!< Containing directory
 		FileTime                    LastModified;  //!< Last access/modification times
+		filesize_t                  Size = 0;      //!< [file-only] File size, in bytes
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		//! @brief  Construct from components
-		SearchResult(FileAttribute attr, path absPath, filesize_t size, FileTime modified)
+		//! @brief  Construct first result (with folder)
+		SearchResult(FileAttribute attr, path file, path folder, FileTime modified, filesize_t size)
 		  : Attributes{attr}, 
-		    AbsolutePath{absPath},
-		    Size{size}, 
-			LastModified{modified}
+		    File{file},
+		    Folder{folder},
+			LastModified{modified},
+		    Size{size}
 		{}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
@@ -73,6 +75,11 @@ namespace core::filesystem {
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		path
+		absolute() const {
+			return this->Folder / this->File;
+		}
+
 		//! @brief  Query whether result is a directory
 		bool
 		directory() const {
@@ -86,6 +93,14 @@ namespace core::filesystem {
 			                                                       : EntryCategory::File;
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
+		void
+		update(FileAttribute attr, path file, FileTime modified, filesize_t size) {
+		    this->Attributes = attr; 
+		    this->File = file;
+		    this->Size = size;
+			this->LastModified = modified; 
+		}
 	};
 
 }

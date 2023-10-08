@@ -36,6 +36,11 @@
 #include "filesystem/VolumeSpace.h"
 #include "security/FileRight.h"
 #include "security/StandardRights.h"
+#include "win/ConstMultiStringIterator.h"
+#include "win/ApiHelpers.h"
+#include "win/Boolean.h"
+#include "win/LResult.h"
+#include "win/PackedInteger.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -72,19 +77,29 @@ namespace core::filesystem
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
+	public:
+		satisfies(FileSystemApi, 
+			constexpr IsRegular noexcept
+		);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
+	private:		
+		//! @brief  Convert Windows file-time to POSIX epoch
+		//! @see  https://learn.microsoft.com/en-us/windows/win32/sysinfo/converting-a-time-t-value-to-a-file-time
+		std::time_t 
+		static toEpoch(::FILETIME const& ft) {
+			win::PackedInteger<unsigned> const dateTime{ft.dwLowDateTime,ft.dwHighDateTime};
+			return (dateTime.Whole / 10'000'000) - 11'644'473'600;
+		};
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
-		* @brief  Creates or opens a file or I/O device
+		* @brief  Create or open a file (or handle to I/O device)
 		*
 		* @param[in] file       Name of the file or device to be created or opened
 		* @param[in] mode       Action to take when file/device exists (or does not exist)
 		* @param[in] rights     [optional] Requested access for (the handle to) the file/device
 		* @param[in] sharing    [optional] Requested sharing mode of the file or device
-		* @param[in] attributes [optional] File/device attributes
+		* @param[in] attributes [optional] Attributes to apply upon creation
 		*
 		* @returns  Valid file handle
 		*
@@ -95,11 +110,25 @@ namespace core::filesystem
 		virtual createFile(path                         file,
 		                   CreateBehaviour              mode,
 		                   nstd::bitset<win::FileRight> rights = win::StandardRight::Read,
-		                   std::optional<FileShare>     sharing = nullopt,
-		                   std::optional<FileAttribute> attributes = nullopt) const abstract;
+		                   nstd::bitset<FileShare>      sharing = FileShare::DenyAll,
+		                   nstd::bitset<FileAttribute>  attributes = FileAttribute::None) const 
+		{
+			ThrowIfEmpty(file);
+
+			if (::HANDLE handle = ::CreateFileW(file.c_str(),
+												rights.value(),
+												win::DWord{sharing.value()},
+												win::Unsecured,
+												win::DWord{mode},
+												win::DWord{attributes.value()},
+												nullptr); handle == INVALID_HANDLE_VALUE) 
+				win::LastError{}.throwAlways("CreateFile() failed");
+			else
+				return SharedFile{handle};
+		}
 
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
-		* @brief  Copies an existing file to a new file
+		* @brief  Copies an existing file to a new location
 		*
 		* @param[in] source       Source path
 		* @param[in] destination  Destination path
@@ -109,7 +138,13 @@ namespace core::filesystem
 		* @throws  std::system_error      Operation failed
 		*/
 		void
-		virtual copyFile(path source, path destination, CopyBehaviour overwrite) const abstract;
+		virtual copyFile(path source, path destination, CopyBehaviour overwrite) const {
+			ThrowIfEmpty(source);
+			ThrowIfEmpty(destination);
+
+			if (!::CopyFileW(source.c_str(), destination.c_str(), win::Boolean{overwrite == FailIfExists}))
+				win::LastError{}.throwAlways("CopyFile() failed");
+		}
 
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 		* @brief  Deletes an existing file
@@ -120,7 +155,13 @@ namespace core::filesystem
 		* @throws  std::system_error      Operation failed
 		*/
 		void
-		virtual deleteFile(path file) const abstract;
+		virtual deleteFile(path file) const {
+			ThrowIfEmpty(file);
+
+			// Attempt to delete file
+			if (!::DeleteFileW(file.c_str())) 
+				win::LastError{}.throwAlways("DeleteFile() failed");
+		}
 
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 		* @brief  Searches a directory for a file (or subdirectory) with a name that matches a specific name
@@ -135,7 +176,32 @@ namespace core::filesystem
 		* @throws  std::system_error      Operation failed
 		*/
 		[[nodiscard]] SharedFileSearch
-		virtual findFirstFile(path folder, path pattern, SearchResult& result) const abstract;
+		virtual findFirstFile(path folder, path pattern, SearchResult& result) const {
+			ThrowIfEmpty(folder);
+			ThrowIfEmpty(pattern);
+
+			::WIN32_FIND_DATAW raw{};
+			if (::HANDLE h = ::FindFirstFileW((folder / pattern).c_str(), &raw); h != INVALID_HANDLE_VALUE) {
+				// [SUCCESS] Return first result and query handle
+				result = SearchResult{ 
+					static_cast<FileAttribute>(raw.dwFileAttributes), 
+					raw.cFileName, 
+					folder,
+					FileTime{
+						DateTime{FileSystemApi::toEpoch(raw.ftCreationTime)},
+						DateTime{FileSystemApi::toEpoch(raw.ftLastAccessTime)},
+						DateTime{FileSystemApi::toEpoch(raw.ftLastWriteTime)}
+					},
+					win::PackedInteger<unsigned>{raw.nFileSizeLow,raw.nFileSizeHigh}.Whole
+				};
+				return SharedFileSearch{h};
+			}
+			// [NO-RESULTS] 
+			else if (win::LastError err; err == ERROR_FILE_NOT_FOUND)
+				return SharedFileSearch{};
+			else
+				err.throwAlways("FindFirstFile() failed");
+		}
 
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 		* @brief  Continues a file search from a previous call to the @c findFirstFile()
@@ -149,7 +215,31 @@ namespace core::filesystem
 		* @throws  std::system_error      Operation failed
 		*/
 		[[nodiscard]] bool
-		virtual findNextFile(SharedFileSearch search, SearchResult& result) const abstract;
+		virtual findNextFile(SharedFileSearch search, SearchResult& result) const {
+			ThrowIfEmpty(search);
+
+			// Continue file search
+			::WIN32_FIND_DATAW raw{};
+			if (::FindNextFileW(*search, &raw)) {
+				// [SUCCESS] Convert search result data
+				result.update(
+					static_cast<FileAttribute>(raw.dwFileAttributes), 
+					raw.cFileName, 
+					FileTime{
+						DateTime{FileSystemApi::toEpoch(raw.ftCreationTime)},
+						DateTime{FileSystemApi::toEpoch(raw.ftLastAccessTime)},
+						DateTime{FileSystemApi::toEpoch(raw.ftLastWriteTime)}
+					},
+					win::PackedInteger<unsigned>{raw.nFileSizeLow,raw.nFileSizeHigh}.Whole
+				);
+				return true;
+			}
+			// [EXHAUSTED] Return negative
+			else if (win::LastError err; err == ERROR_NO_MORE_FILES)
+				return false;
+			else
+				err.throwAlways("FindNextFile() failed");
+		}
 
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 		* @brief  Searches for volumes
@@ -162,7 +252,15 @@ namespace core::filesystem
 		* @throws  std::system_error      Operation failed
 		*/
 		[[nodiscard]] SharedVolumeSearch
-		virtual findFirstVolume(std::wstring& guid) const abstract;
+		virtual findFirstVolume(std::wstring& guid) const {
+			wchar_t ident[128]{};
+			if (::HANDLE handle = ::FindFirstVolumeW(ident, win::DWord{lengthof(ident)}); handle == INVALID_HANDLE_VALUE) 
+				win::LastError{}.throwAlways("FindFirstVolume() failed");
+			else {
+				guid = ident;
+				return SharedVolumeSearch{handle};
+			}
+		}
 
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 		* @brief  Continues a volume search started by a call to the @c findFirstVolume()
@@ -176,7 +274,21 @@ namespace core::filesystem
 		* @throws  std::system_error      Operation failed
 		*/
 		[[nodiscard]] bool
-		virtual findNextVolume(SharedVolumeSearch search, std::wstring& guid) const abstract;
+		virtual findNextVolume(SharedVolumeSearch search, std::wstring& guid) const {
+			ThrowIfEmpty(search);
+			
+			// Continue volume search
+			wchar_t ident[128]{};
+			if (::FindNextVolumeW(*search, ident, win::DWord{lengthof(ident)})) {
+				guid = ident;
+				return true;
+			}
+			// [EXHAUSTED] Return negative
+			else if (win::LastError err; err == ERROR_NO_MORE_FILES)
+				return false;
+			else
+				err.throwAlways("FindNextVolume() failed");
+		}
 	
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 		* @brief  Retrieves file system attributes for a specified file or directory.
@@ -189,7 +301,14 @@ namespace core::filesystem
 		* @throws  std::system_error      Operation failed
 		*/
 		[[nodiscard]] FileAttribute
-		virtual getFileAttributes(path file) const abstract;
+		virtual getFileAttributes(path file) const {
+			ThrowIfEmpty(file);
+
+			if (::DWORD attr = ::GetFileAttributesW(file.c_str()); attr == INVALID_FILE_ATTRIBUTES) 
+				win::LastError{}.throwAlways("GetFileAttributes() failed");
+			else
+				return static_cast<FileAttribute>(attr);
+		}
 	
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 		* @brief  Query whether a file/directory exists
@@ -200,7 +319,11 @@ namespace core::filesystem
 		* @throws  std::system_error      Operation failed
 		*/
 		[[nodiscard]] bool
-		virtual getFileExists(path path) const abstract;
+		virtual getFileExists(path path) const {
+			ThrowIfEmpty(path);
+
+			return ::PathFileExistsW(path.c_str()) != FALSE;
+		}
 
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 		* @brief  Retrieves the date and time that a file or directory was created, last accessed, and last modified
@@ -213,7 +336,20 @@ namespace core::filesystem
 		* @throws  std::system_error      Operation failed
 		*/
 		[[nodiscard]] FileTime
-		virtual getFileTime(SharedFile handle) const abstract;
+		virtual getFileTime(SharedFile handle) const {
+			ThrowIfEmpty(handle);
+
+			// Query file access times
+			::FILETIME creation{}, access{}, modification{};
+			if (!::GetFileTime(*handle, &creation, &access, &modification)) 
+				win::LastError{}.throwAlways("GetFileTime() failed");
+			else
+				return FileTime{
+					DateTime(toEpoch(creation)), 
+					DateTime(toEpoch(access)), 
+					DateTime(toEpoch(modification))
+				};
+		}
 
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 		* @brief  Retrieves the size of the specified file
@@ -227,12 +363,20 @@ namespace core::filesystem
 		* @throws  std::system_error       Operation failed
 		*/
 		[[nodiscard]] filesize_t
-		virtual getFileSize(SharedFile handle) const abstract;
+		virtual getFileSize(SharedFile handle) const {
+			ThrowIfEmpty(handle);
+
+			::LARGE_INTEGER size{};
+			if (!::GetFileSizeEx(*handle, &size)) 
+				win::LastError{}.throwAlways("GetFileSizeEx() failed");
+			else
+				return static_cast<filesize_t>(size.QuadPart);
+		}
 
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 		* @brief  Retrieves unique volume identifier path
 		*
-		* @param[in]  drive  Volume drive letter
+		* @param[in]  drive  Volume mount point
 		*
 		* @returns  Volume GUID path of the form "\\?\Volume{GUID}\"
 		*
@@ -240,17 +384,31 @@ namespace core::filesystem
 		* @throws  std::system_error      Operation failed
 		*/
 		[[nodiscard]] path
-		virtual getVolumeGuid(path drive) const abstract;
+		virtual getVolumeGuid(path drive) const {
+			ThrowIfEmpty(drive);
+
+			wchar_t guid[64]{};
+			if (!::GetVolumeNameForVolumeMountPointW(drive.c_str(), guid, win::DWord{lengthof(guid)})) 
+				win::LastError{}.throwAlways("GetVolumeNameForVolumeMountPoint() failed");
+			else
+				return guid;
+		}
 	
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
-		* @brief  Retrieve collection of volume (ie. logical drive) specifiers
+		* @brief  Retrieve collection of volume identifiers
 		*
 		* @returns  Collection of volume drive letters
 		*
 		* @throws  std::system_error  Operation failed
 		*/
 		[[nodiscard]] std::vector<path>
-		virtual getVolumeLetters() const abstract;
+		virtual getVolumeLetters() const {
+			wchar_t drives[256]{};
+			if (!::GetLogicalDriveStringsW(win::DWord{lengthof(drives)}, drives)) 
+				win::LastError{}.throwAlways("GetLogicalDriveStrings() failed");
+			else
+				return {win::ConstMultiStringIterator{drives}, win::ConstMultiStringIterator{}};
+		}
 
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 		* @brief  Retrieves properties of a volume
@@ -263,7 +421,37 @@ namespace core::filesystem
 		* @throws  std::system_error      Operation failed
 		*/
 		[[nodiscard]] VolumeProperties
-		virtual getVolumeProperties(path drive) const abstract;
+		virtual getVolumeProperties(path drive) const {
+			ThrowIfEmpty(drive);
+			ThrowIfNot(drive, drive.native().ends_with('\\'));
+			
+			// Query volume properties
+			::DWORD attributes{};
+			wchar_t label[32]{};
+			::DWORD maxFilename{};
+			::DWORD serial{};
+			wchar_t system[32]{};
+			if (!::GetVolumeInformationW(drive.c_str(),
+			                             label,
+				                         win::DWord{lengthof(label)},
+			                             &serial,
+			                             &maxFilename,
+			                             &attributes,
+			                             system,
+				                         win::DWord{lengthof(system)})) 
+				win::LastError{}.throwAlways("GetVolumeInformation() failed");
+			// Query drive category
+			else if (::DWORD const category = ::GetDriveTypeW(drive.c_str()); category == DRIVE_UNKNOWN) 
+				win::LastError{}.throwAlways("GetDriveType() failed");
+			else 
+				// [SUCCESS] Convert volume properties
+				return VolumeProperties{static_cast<VolumeAttribute>(attributes),
+										static_cast<DriveCategory>(category),
+										label,
+										std::to_string(serial),
+										static_cast<std::uint32_t>(maxFilename),
+										from_string<FileSystem>(core::narrow(system, CodePage::Latin1))};
+		}
 	
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 		* @brief  Retrieves the total capacity and free space of a volume
@@ -276,7 +464,16 @@ namespace core::filesystem
 		* @throws  std::system_error      Operation failed
 		*/
 		[[nodiscard]] VolumeSpace
-		virtual getVolumeSpace(path drive) const abstract;
+		virtual getVolumeSpace(path drive) const {
+			ThrowIfEmpty(drive);
+
+			// Attempt to query volume capacities
+			::ULARGE_INTEGER free{}, total{}, user{};
+			if (::GetDiskFreeSpaceExW(drive.c_str(), &user, &total, &free)) 
+				win::LastError{}.throwAlways("GetDiskFreeSpaceEx() failed");
+			else
+				return VolumeSpace{total.QuadPart, (total.QuadPart - free.QuadPart), user.QuadPart};
+		}
 
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 		* @brief  Moves an existing file or a directory, including its children
@@ -292,7 +489,13 @@ namespace core::filesystem
 		* @remarks  Directories can only be moved to destination upon the same drive 
 		*/
 		void
-		virtual moveFile(path source, path destination) const abstract;
+		virtual moveFile(path source, path destination) const {
+			ThrowIfEmpty(source);
+			ThrowIfEmpty(destination);
+
+			if (!::MoveFileW(source.c_str(), destination.c_str())) 
+				win::LastError{}.throwAlways("MoveFile() failed");
+		}
 	
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 		* @brief  Sets the attributes for a file or directory
@@ -304,7 +507,12 @@ namespace core::filesystem
 		* @throws  std::system_error      Operation failed
 		*/
 		void
-		virtual setFileAttributes(path file, FileAttribute attributes) const abstract;
+		virtual setFileAttributes(path file, FileAttribute attributes) const {		
+			ThrowIfEmpty(file);
+
+			if (!::SetFileAttributesW(file.c_str(), std::to_underlying(attributes))) 
+				win::LastError{}.throwAlways("SetFileAttributes() failed");
+		}
 
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 		* @brief  Sets the label of a file system volume
@@ -319,12 +527,18 @@ namespace core::filesystem
 		* @remarks  Maximum volume label length is 32 characters (or 11 characers on FAT16)
 		*/
 		void
-		virtual setVolumeLabel(path drive, std::wstring label) const abstract;
+		virtual setVolumeLabel(path drive, std::wstring label) const {
+			ThrowIfEmpty(drive);
+			ThrowIfOutOfRange(label.length(), 0u, 32u);
+
+			if (!::SetVolumeLabelW(drive.c_str(), !label.empty() ? label.c_str() : nullptr)) 
+				win::LastError{}.throwAlways("SetVolumeLabel() failed");
+		}
 
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 		* @brief  Reads data from the specified file or input/output (I/O) device
 		*
-		* @param[in]  handle  Handle to the file or device
+		* @param[in]  file    Handle to the file (or device)
 		* @param[in]  count   Maximum number of bytes to be read
 		*
 		* @returns  Collection of bytes, possibly fewer than @p count
@@ -333,19 +547,44 @@ namespace core::filesystem
 		* @throws  std::system_error      Operation failed
 		*/
 		[[nodiscard]] std::vector<std::byte>
-		virtual readFile(SharedFile handle, std::uint32_t count) const abstract;
+		virtual readFile(SharedFile file, std::uint32_t count) const {		
+			ThrowIfEmpty(file);
+			ThrowIfZero(count);
+
+			// Attempt to read data from handle
+			std::vector<std::byte> buffer(count);
+			if (::DWORD n{}; !::ReadFile(*file, buffer.data(), win::DWord{count}, &n, nullptr)) 
+				win::LastError{}.throwAlways("ReadFile() failed");
+			else if (n == 0)
+				win::LastError{}.throwAlways("ReadFile() no data received");
+
+			// [LESS] Truncate buffer before return
+			else if (n != count)
+				buffer.resize(n);
+
+			return buffer;
+		}
 
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 		* @brief  Writes data to the specified file or input/output (I/O) device.
 		*
-		* @param[in]  handle  Handle to the file or I/O device 
+		* @param[in]  file    Handle to the file (or I/O device)
 		* @param[in]  buffer  Buffer containing the data to be written 
 		*
 		* @throws  std::invalid_argument  Missing argument
 		* @throws  std::system_error      Operation failed
 		*/
 		[[nodiscard]] void
-		virtual writeFile(SharedFile handle, std::span<std::byte const> buffer) const abstract;
+		virtual writeFile(SharedFile file, std::span<std::byte const> buffer) const {
+			ThrowIfEmpty(file);
+			ThrowIfEmpty(buffer);
+
+			// Attempt to write data to handle
+			if (::DWORD n{}; !::WriteFile(*file, buffer.data(), win::DWord{buffer.size()}, &n, nullptr))
+				win::LastError{}.throwAlways("WriteFile() failed");
+			else if (n < buffer.size())
+				win::LastError{}.throwAlways("WriteFile() failed to write all data");
+		}
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};

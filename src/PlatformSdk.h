@@ -48,6 +48,8 @@
 	#pragma comment(lib, "psapi")
 #endif
 #include <psapi.h>          // Process functions
+
+#include <shlwapi.h>        // Filepath functions
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
