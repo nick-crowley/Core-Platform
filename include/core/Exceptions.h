@@ -50,7 +50,7 @@ namespace core
 
 	public:
 		exception(std::string_view msg)
-			: base{msg}
+			: base{msg.data()}
 		{}
 
 		template <typename... Params>
