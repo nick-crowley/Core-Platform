@@ -23,18 +23,39 @@
 * and should not be interpreted as representing official policies, either expressed or implied, of
 * the projects which contain it.
 */
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Preprocessor Directives o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+#ifndef DISABLE_PACKED_INTEGER_UNIT_TESTS
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "core/DateTime_UnitTests.cpp"
-#include "filesystem/FileSystemApi_SystemTests.cpp"
-#include "security/Token_UnitTests.cpp"
-#include "win/DebugStream_SystemTests.cpp"
-#include "win/PackedInteger_UnitTests.cpp"
-#include "win/LogStream_SystemTests.cpp"
-#include "win/HResult_UnitTests.cpp"
-#include "win/LResult_UnitTests.cpp"
-#include "win/Process_SystemTests.cpp"
-#include "win/Reflection_UnitTests.cpp"
-#include "win/RegistryKey_SystemTests.cpp"
-#include "win/ServiceManager_SystemTests.cpp"
-#include "win/SharedLibrary_SystemTests.cpp"
-#include "win/SystemError_UnitTests.cpp"
+#include <gtest/gtest.h>
+#include <win/PackedInteger.h>
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+using namespace core;
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+TEST(PackedInteger_UT, signed_negativeNumberPreservesSign) 
+{
+	//! @test  Verify low-order 32-bits of @c win::PackedInteger are correct
+	EXPECT_EQ(
+		0u,
+		win::PackedInteger<signed>{INT64_MIN}.Split.Low
+	);
+
+	//! @test  Verify high-order 32-bits of @c win::PackedInteger are correct
+	EXPECT_EQ(
+		INT32_MIN,
+		win::PackedInteger<signed>{INT64_MIN}.Split.High
+	);
+}
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+#endif	// DISABLE_INT_UNION_UNIT_TESTS
