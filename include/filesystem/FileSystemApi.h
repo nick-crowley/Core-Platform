@@ -48,7 +48,15 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
+namespace core::filesystem
+{
+	//! @brief	Start position for seek operations
+	enum class Origin {
+		Begin = FILE_BEGIN,       //!< The beginning of the file.
+		Current = FILE_CURRENT,   //!< The current value of the file pointer.
+		End = FILE_END,           //!< The current end-of-file position.
+	};
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::filesystem
 {
@@ -512,6 +520,29 @@ namespace core::filesystem
 
 			if (!::SetFileAttributesW(file.c_str(), std::to_underlying(attributes))) 
 				win::LastError{}.throwAlways("SetFileAttributes() failed");
+		}
+		
+		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+		* @brief  Moves the file pointer of a specified file
+		*
+		* @param[in]  file   Open handle to file
+		* @param[in]  from   Start position of seek
+		* @param[in]  n      Distance to move
+		*
+		* @throws  std::invalid_argument  Missing or invalid argument
+		* @throws  std::system_error      Operation failed
+		*/
+		int64_t
+		virtual setFilePointer(SharedFile file, Origin from, ptrdiff_t n = 0) const {
+			ThrowIfEmpty(file);
+			ThrowIfUndefined(from);
+
+			win::PackedInteger<signed> const distance{static_cast<int64_t>(n)};
+			::LONG hoNewPos = distance.Split.High;
+			if (::LONG const loNewPos = ::SetFilePointer(*file, distance.Split.Low, &hoNewPos, win::DWord{from}); loNewPos == INVALID_SET_FILE_POINTER)
+				win::LastError{}.throwAlways("SetFilePointer() failed");
+			else
+				return win::PackedInteger<signed>(loNewPos, hoNewPos).Whole;
 		}
 
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
