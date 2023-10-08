@@ -43,25 +43,19 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core
 {
-	struct invalid_argument : public std::invalid_argument
+	template <std::derived_from<std::exception> BaseException>
+	struct exception : public BaseException
 	{
-		using base = std::invalid_argument;
+		using base = BaseException;
 
 		template <typename... Params>
-		invalid_argument(std::string_view msg, Params&&... args)
+		exception(std::string_view msg, Params&&... args)
 			: base{std::vformat(msg,std::make_format_args(args...))}
 		{}
 	};
 
-	struct runtime_error : public std::runtime_error
-	{
-		using base = std::runtime_error;
-		
-		template <typename... Params>
-		runtime_error(std::string_view msg, Params&&... args)
-			: base{std::vformat(msg,std::make_format_args(args...))}
-		{}
-	};
+	using invalid_argument = exception<std::invalid_argument>;
+	using runtime_error = exception<std::runtime_error>;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
