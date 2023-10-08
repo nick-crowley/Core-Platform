@@ -40,8 +40,14 @@
 //! 
 //! @param	arg		Argument
 //! @param	reason	Reason why argument is invalid
-#define ThrowInvalidArg(arg,reason)     ::core::detail::ThrowInvalidArgImpl(#arg, reason)
-
+//! @param  ...     [optional] Formatting arguments
+#define ThrowInvalidArg(arg,reason,...)                                                           \
+	::core::detail::ThrowInvalidArgImpl(nameof(arg),                                              \
+		BOOST_PP_VA_OPT(                                                                          \
+			(std::format(reason, __VA_ARGS__)),                                                   \
+			(reason),                                                                             \
+			__VA_ARGS__                                                                           \
+		))
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
