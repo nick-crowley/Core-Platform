@@ -59,7 +59,7 @@ namespace core::filesystem
 		* @brief  Construct from already opened handle
 		*
 		* @param[in]  h    Opened file handle
-		* @param[in]  api  Api implementation (or mock)
+		* @param[in]  api  [optional] Implementation of filesystem API (or mock)
 		* 
 		* @throws  std::invalid_argument  Missing argument
 		*/
@@ -69,6 +69,51 @@ namespace core::filesystem
 			Api{ThrowIfEmpty(api)}
 		{
 			//! @todo	Query whether handle @p h posseses rights for reading and/or writing
+		}
+		
+		/*!
+		* @brief  Open existing file (or handle to device)
+		*
+		* @param[in] location   Name of the file (or device) to open
+		* @param[in] rights     [optional] Requested access for (the handle to) the file/device
+		* @param[in] sharing    [optional] Requested sharing mode of the file/device
+		* @param[in] attributes [optional] Attributes to apply upon creation
+		* @param[in] api        [optional] Implementation of filesystem API (or mock)
+		* 
+		* @throws  std::invalid_argument  Missing argument
+		* @throws  std::runtime_error     File does not exist
+		*/
+		FileStream(path                         location, 
+		           nstd::bitset<win::FileRight> rights = win::StandardRight::Read,
+		           nstd::bitset<FileShare>      sharing = FileShare::AllowRead,
+		           nstd::bitset<FileAttribute>  attributes = FileAttribute::Normal,
+		           SharedFileSystemApi          api = filesystemApi()
+		) : Handle{ThrowIfEmpty(api)->createFile(location, FileSystemApi::OpenExisting, rights, sharing, attributes)},
+			Api{ThrowIfEmpty(api)}
+		{
+		}
+		
+		/*!
+		* @brief  Create new file (or handle to device)
+		*
+		* @param[in] location   Name of the file (or device) to be created
+		* @param[in] rights     [optional] Requested access for (the handle to) the file/device
+		* @param[in] sharing    [optional] Requested sharing mode of the file/device
+		* @param[in] attributes [optional] Attributes to apply upon creation
+		* @param[in] api        [optional] Implementation of filesystem API (or mock)
+		* 
+		* @throws  std::invalid_argument  Missing argument
+		* @throws  std::runtime_error     File already exists
+		*/
+		FileStream(meta::create_new_t, 
+		           path                         location, 
+		           nstd::bitset<win::FileRight> rights = win::StandardRight::Read|win::StandardRight::Write,
+		           nstd::bitset<FileShare>      sharing = FileShare::DenyAll,
+		           nstd::bitset<FileAttribute>  attributes = FileAttribute::Normal,
+		           SharedFileSystemApi          api = filesystemApi()
+		) : Handle{ThrowIfEmpty(api)->createFile(location, FileSystemApi::CreateNew, rights, sharing, attributes)},
+			Api{ThrowIfEmpty(api)}
+		{
 		}
 		
 		//! @brief  Close stream upon destruction
