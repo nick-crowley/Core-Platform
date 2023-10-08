@@ -141,9 +141,9 @@ namespace core
 
         // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
     public:
-        template <typename... Values>
+        template <typename... Types>
         LoggingSentry& 
-        onEntry(gsl::czstring context, NameValuePair<Values>... args) 
+        onEntry(gsl::czstring context, NameValuePair<Types>... args) 
         {
             this->print(context, args...);
             this->outputStream.indent();
@@ -164,14 +164,14 @@ namespace core
             this->exitFunctor = fx;
         }
 
-        template <typename... Values>
+        template <typename... Types>
         void 
-        print(gsl::czstring context, NameValuePair<Values>... args) 
+        print(gsl::czstring context, NameValuePair<Types>... args) 
         {
             this->write<Bare>(prettyFunction(context));
             this->write<Bare>("(");
 
-            if constexpr (sizeof...(Values) > 0) 
+            if constexpr (nstd::AtLeastOneType<Types...>) 
                 this->writeArgs(args...);
 
             this->write<Bare>(")");
@@ -179,11 +179,11 @@ namespace core
             this->lineBuffer = std::stringstream{};
         }
     
-        template <typename... Values>
+        template <typename... Types>
         void 
-        print(NameValuePair<Values>... args) 
+        print(NameValuePair<Types>... args) 
         {
-            if constexpr (sizeof...(Values) > 0) {
+            if constexpr (nstd::AtLeastOneType<Types...>) {
                 this->write<Bare>(LoggingSentry::ReturnMarker);
                 this->writeArgs(args...);
                 this->outputStream << Verbose{noformat,this->lineBuffer.str()};
