@@ -61,7 +61,7 @@ namespace nstd
 	
 	namespace detail {
 		
-		template <std::integral T>
+		template <typename T>
 			requires (!std::is_const_v<T>) 
 		          && (!std::is_volatile_v<T>)
 		metafunc remove_sign : std::type_identity<T> {};
@@ -81,7 +81,7 @@ namespace nstd
 		using remove_sign_t = typename remove_sign<T>::type;
 	}
 
-	template <std::integral T>
+	template <typename T>
 	using remove_cv_sign_t = detail::remove_sign_t<std::remove_cv_t<T>>;
 	
 	// clang-format on
