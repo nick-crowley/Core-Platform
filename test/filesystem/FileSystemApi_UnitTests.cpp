@@ -44,7 +44,7 @@ using namespace core;
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
-TEST(FileSystemApi_ST, defaultConstructor_Succeeds) 
+TEST(FileSystemApi_UT, defaultConstructor_Succeeds) 
 {
 	//! @test  Verify @c filesystem::FileSystemApi default c-tor succeeds
 	/*EXPECT_NO_THROW(
