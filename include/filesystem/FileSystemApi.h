@@ -299,6 +299,23 @@ namespace core::filesystem
 		}
 	
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+		* @brief  Flushes data and meta-data buffers from caches, if used
+		*
+		* @param[in]  file   Open handle to file
+		*
+		* @throws  std::invalid_argument  Missing argument
+		* @throws  std::system_error      Operation failed
+		* 
+		* @see  https://learn.microsoft.com/en-us/windows/win32/fileio/file-caching
+		*/
+		void
+		virtual flushFileBuffers(SharedFile file) const {
+			ThrowIfEmpty(file);
+			if (!::FlushFileBuffers(*file))
+				win::LastError{}.throwAlways("FlushFileBuffers() failed");
+		}
+
+		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 		* @brief  Retrieves file system attributes for a specified file or directory.
 		*
 		* @param[in]  file   Path of the file/directory
