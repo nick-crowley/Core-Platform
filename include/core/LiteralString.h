@@ -222,4 +222,23 @@ namespace core
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace core::testing {
+	//! @test  Verify @c core::LiteralString addition and equality operators are correct
+	static_assert(LiteralString{"abc"} + LiteralString{"def"} == LiteralString{"abcdef"});
+	
+	//! @test  Verify @c core::LiteralString::size() returns length in characters
+	static_assert(LiteralString{"abc"}.size() == 3);
+
+	//! @test  Verify @c core::LiteralString::size() returns length in characters for wide-character strings
+	static_assert(LiteralString{L"abc"}.size() == 3);
+	
+	//! @test  Verify @c core::LiteralString converts to @c std::basic_string_view
+	using namespace std::string_view_literals;
+	static_assert(LiteralString{"abc"} == "abc"sv);
+	
+	//! @test  Verify @c core::operator""_str() produces a valid @c core::LiteralString
+	using namespace core::string_literals;
+	static_assert(LiteralString{L"abc"} == L"abc"_str);
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

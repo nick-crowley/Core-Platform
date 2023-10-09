@@ -47,19 +47,19 @@ namespace core
 		using char_t = Character;
 
 	public:
-		char_t* const  Text;
-		size_t const   Length;
+		char_t const*  Text;
+		size_t         Length;
 
 	public:
-		constexpr implicit
-		ZString(char_t* const str)
+		implicit constexpr
+		ZString(char_t const* str)
 		  : Text{str}, 
 		    Length{ZString::measure(str)}
 		{}
 
 	public:
-		constexpr size_t
-		static measure(char_t const* const str) {
+		size_t constexpr
+		static measure(char_t const* str) {
 			if (!str)
 				return 0;
 
@@ -70,7 +70,7 @@ namespace core
 		}
 
 	public:
-		constexpr implicit
+		implicit constexpr
 		operator std::basic_string_view<char_t>() const {
 			return {this->Text, this->Text+this->Length};
 		}
