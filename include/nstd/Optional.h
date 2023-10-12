@@ -46,12 +46,12 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace nstd
 {
-	template <typename T, typename U>
-		requires std::is_constructible_v<T, U>
+	template <typename T, typename... Params>
+		requires std::is_constructible_v<T, Params...>
 	std::optional<T>
-	make_optional_if(bool condition, U&& value) noexcept {
+	make_optional_if(bool condition, Params&&... args) noexcept {
 		if (condition)
-			return std::make_optional<T>(std::forward<U>(value));
+			return std::make_optional<T>(std::forward<Params>(args)...);
 
 		return std::nullopt;
 	}
