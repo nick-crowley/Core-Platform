@@ -93,7 +93,7 @@ namespace nstd
 #define NotArithmetic               _MakeDeletedConceptMacro(_AddableDecl, _AddAssignableDecl, _SubtractableDecl, _SubtractAssignableDecl, _NegatableDecl, _MultipliableDecl, _MultiplyAssignableDecl, _DividableDecl, _DivideAssignableDecl)
 
 // Custom concepts
-#define IsInterface                 protected: IsDefaultConstructible,                             \
+#define IsInterface                 protected: IsDefaultConstructible noexcept,                    \
 									public: IsPolymorphic
 
 //! @brief	Expand 4-tuple: {prefix, class-name, postfix, enabled} with concept-name 'prefix concept(class-name) postfix enabled'
