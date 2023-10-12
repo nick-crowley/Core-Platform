@@ -45,13 +45,14 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core
 {
-	std::string
-	inline to_hexString(std::span<std::byte const> bytes)
+	template <nstd::Character Char>
+	std::basic_string<Char> constexpr
+	to_hexString(std::span<std::byte const> bytes)
 	{
 		char constexpr
-		static digits[] = {'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'};
+		digits[] = {'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'};
 	
-		std::string buffer(2*bytes.size(), '\0');
+		std::basic_string<Char> buffer(2*bytes.size(), '\0');
 		auto out = buffer.begin();
 		for (auto const& byte : bytes) {
 			*(out++) = digits[static_cast<uint8_t>(byte) / 16];
