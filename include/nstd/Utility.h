@@ -46,6 +46,16 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace nstd
 {
+	//! @brief  Explicitly requests a C-style cast
+	//! @details  Attempts a well-defined sequence of 5 casts, starting with @c const_cast, then
+	//!            proceeding to @c static_cast, and ending with @c reinterpret_cast
+	template <typename Result, typename Input>
+		requires requires (Input const& v) { (Result)v; }
+	Result
+	cstyle_cast(Input const& value) {
+		return (Result)value;
+	}
+
 	template <Integer Integral>
 	bool constexpr
 	is_pow2(Integral n) 
