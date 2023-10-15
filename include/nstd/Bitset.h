@@ -78,6 +78,12 @@ namespace nstd
 			: Value{static_cast<value_type>(v)}
 		{}
 		
+		template <Enumeration E2>
+		constexpr 
+		explicit(!core::meta::CompatibleEnumeration<E,E2>)
+		bitset(bitset<E2> const& r) noexcept
+			: Value{static_cast<value_type>(r.value())}
+		{}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		satisfies(bitset,
