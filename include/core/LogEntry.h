@@ -54,10 +54,16 @@ namespace core
 		  : Text{msg}
 		{}
 		
-		template <nstd::ConvertibleToAnyOf<std::string_view,std::wstring_view> StringView, typename... Params>
+		template <typename... Params>
 		explicit
-		LogEntry(StringView msg, Params&&... args)
-		  : Text{std::vformat(msg,std::make_format_args(args...))}
+		LogEntry(std::string_view msg, Params&&... args)
+		  : Text{std::vformat(msg, std::make_format_args(args...))}
+		{}
+		
+		template <typename... Params>
+		explicit
+		LogEntry(std::wstring_view wmsg, Params&&... args)
+		  : Text{std::vformat(wmsg, std::make_wformat_args(args...))}
 		{}
 	};
 
