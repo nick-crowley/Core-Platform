@@ -41,7 +41,7 @@ namespace core::filesystem
 {	
 	//! @brief  Stream abstraction over a fixed-length buffer
 	template <nstd::AnyCvOrSignOf<std::byte,char,wchar_t,char8_t,char16_t> Element>
-	struct MemoryStream : public IStream<Element>
+	class MemoryStream : public IStream<Element>
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
@@ -58,37 +58,21 @@ namespace core::filesystem
 		using base::size_type;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		std::span<element_t const> Content;
-		size_type                  Position = 0;
-		bool                       IsWritable;
+		std::span<element_t> Content;
+		size_type            Position = 0;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		/*!
-		* @brief  Construct from range of mutable bytes
+		* @brief  Construct from range of (possibly const-qualified) bytes
 		*
 		* @param[in]  source  Input range of bytes
 		* 
-		* @throws  std::invalid_argument  Missing argument
+		* @throws  std::invalid_argument  Range is empty
 		*/
 		explicit
 		MemoryStream(std::span<element_t> source)
-		  : Content{ThrowIfEmpty(source)},
-		    IsWritable{true}
-		{
-		}
-
-		/*!
-		* @brief  Construct from range of read-only bytes
-		*
-		* @param[in]  source  Input range of bytes
-		* 
-		* @throws  std::invalid_argument  Missing argument
-		*/
-		MemoryStream(meta::readonly_t, std::span<element_t const> source)
-		  : Content{ThrowIfEmpty(source)},
-		    IsWritable{false}
-		{
-		}
+		  : Content{ThrowIfEmpty(source)}
+		{}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		satisfies(MemoryStream, 
@@ -112,7 +96,6 @@ namespace core::filesystem
 		virtual length() const override {
 			StreamIsOpenSentry{*this};
 			OperationIsSupportedSentry{*this, Operation::Seek};
-
 			return this->Content.size();
 		}
 
@@ -120,14 +103,16 @@ namespace core::filesystem
 		size_type 
 		virtual position() const override {
 			StreamIsOpenSentry{*this};
-			
 			return this->Position;
 		}
 
 		//! @brief  Implements IStream::supports() const
 		nstd::bitset<Operation>
 		virtual supports() const noexcept override {
-			return Operation::Read | Operation::Seek | (this->IsWritable ? Operation::Write : Operation::None);
+			if constexpr (std::is_const_v<element_t>)
+				return Operation::Read | Operation::Seek;
+			else
+				return Operation::Read | Operation::Seek | Operation::Write;
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
@@ -135,7 +120,6 @@ namespace core::filesystem
 		void
 		virtual close() override {
 			StreamIsOpenSentry{*this};
-
 			/*no-op*/
 		}
 	
@@ -143,12 +127,11 @@ namespace core::filesystem
 		void
 		virtual flush() override {
 			StreamIsOpenSentry{*this};
-
 			/*no-op*/
 		}
 
 		//! @brief  Implements IStream::read()
-		std::vector<element_t>
+		std::vector<std::remove_const_t<element_t>>
 		virtual read(size_type n) override {
 			ThrowIfZero(n);
 			ThrowIf(n, n > this->remaining());
@@ -158,11 +141,11 @@ namespace core::filesystem
 			// Read from current position
 			auto bytes = this->Content.subspan(this->position(), n);
 			this->Position += n;
-			return std::vector<element_t>(bytes.begin(), bytes.end());
+			return std::vector<std::remove_const_t<element_t>>(bytes.begin(), bytes.end());
 		}
 
 		//! @brief	Implements IStream::readAll()
-		std::vector<element_t>
+		std::vector<std::remove_const_t<element_t>>
 		virtual readAll() override {
 			StreamIsOpenSentry{*this};
 			OperationIsSupportedSentry{*this, Operation::Read};
@@ -222,12 +205,15 @@ namespace core::filesystem
 			ThrowIf(data, data.size() > this->remaining());
 			StreamIsOpenSentry{*this};
 			OperationIsSupportedSentry{*this, Operation::Write};
-
-			// Write data to current position
-			auto& mutableContent = reinterpret_cast<std::span<element_t>&>(this->Content);
-			ranges::copy(data, mutableContent.begin());
-			this->Position += data.size();
-			return data.size();
+			
+			// Write data to stream at current position
+			if constexpr (std::is_const_v<element_t>)
+				std::unreachable();
+			else {
+				ranges::copy(data, this->Content.begin());
+				this->Position += data.size();
+				return data.size();
+			}
 		}
 
 		//! @brief  Implements IStream::write_all()
@@ -248,6 +234,9 @@ namespace core::filesystem
 			return this->length() - this->position();
 		}
 	};
+
+	template <nstd::AnyCvOrSignOf<std::byte,char,wchar_t,char8_t,char16_t> Element>
+	MemoryStream(std::span<Element>) -> MemoryStream<Element>;
 } 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 

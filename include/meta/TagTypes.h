@@ -76,9 +76,6 @@ namespace core::meta
 	struct program_version_t {} constexpr 
 	inline program_version;
 
-	struct readonly_t {} constexpr 
-	inline readonly;
-	
 	struct unconstrained_t {} constexpr 
 	inline unconstrained;
 

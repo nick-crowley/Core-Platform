@@ -39,8 +39,8 @@ using namespace core;
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 struct TriviallyCopyable {
-	float  v1 = 42.0f;
-	double v2 = 42.0f;
+	long v1 = 0, 
+	     v2 = 0;
 
 	satisfies(TriviallyCopyable, 
 		IsEqualityComparable
@@ -52,16 +52,16 @@ static_assert(std::is_trivially_copyable_v<TriviallyCopyable>);
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-TEST(BinaryReader_ST, read_readsElements) 
+TEST(BinaryReader_ST, read_readsContentFromStream) 
 {
-	std::vector<TriviallyCopyable> values{size_t{4}};
+	std::vector<TriviallyCopyable> values{{1,2},{3,4},{5,6},{7,8}};
 
-	//! @test  Verify @c filesystem::BinaryReader can wrap a buffer
-	auto stream = std::static_pointer_cast<filesystem::IStream<std::byte>>(
-		std::make_shared<filesystem::MemoryStream<std::byte>>(std::as_writable_bytes(std::span{values.begin(),4}))
+	//! @test  Verify @c filesystem::BinaryReader::read() returns content in @c values
+	filesystem::MemoryStream stream{std::as_writable_bytes(std::span{values.begin(),4})};
+	EXPECT_EQ(
+		filesystem::BinaryReader{stream}.read<TriviallyCopyable>(4),
+		values
 	);
-	auto result = filesystem::BinaryReader<std::byte>{stream}.read<TriviallyCopyable>(4);
-	EXPECT_EQ(result, values);
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #endif	// DISABLE_BINARY_READER_SYSTEM_TESTS

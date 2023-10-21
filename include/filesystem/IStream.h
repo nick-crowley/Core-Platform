@@ -78,7 +78,7 @@ namespace core::filesystem
 		struct OperationIsSupportedSentry {
 			OperationIsSupportedSentry(type const& obj, Operation op) {
 				if (!obj.supports().test(op)) 
-					throw core::logic_error{"{} operations are not supported", core::to_string(op)};
+					throw logic_error{"{} operations are not supported", core::to_string(op)};
 			}
 		};
 	
@@ -87,7 +87,7 @@ namespace core::filesystem
 			explicit
 			StreamIsOpenSentry(type const& obj) {
 				if (obj.closed()) 
-					throw std::logic_error{"Stream has been closed"};
+					throw logic_error{"Stream has been closed"};
 			}
 		};
 
@@ -177,7 +177,7 @@ namespace core::filesystem
 		* @throws  std::logic_error       Read operations not supported
 		* @throws  std::system_error      Operation failed
 		*/
-		std::vector<element_t>
+		std::vector<std::remove_const_t<element_t>>
 		virtual read(size_type n) abstract;
 
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
@@ -190,7 +190,7 @@ namespace core::filesystem
 		* @throws  std::logic_error       Read operations not supported
 		* @throws  std::system_error      Operation failed
 		*/
-		std::vector<element_t>
+		std::vector<std::remove_const_t<element_t>>
 		virtual readAll() abstract;
 
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!

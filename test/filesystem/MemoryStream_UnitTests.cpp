@@ -74,5 +74,38 @@ TEST(MemoryStream_UT, Read_ReturnsContents)
 		expected
 	);
 }
+
+TEST(MemoryStream_UT, Write_WritesContents) 
+{
+	char buffer[] {"abcdefgh"};
+	std::string const expected {'e','f','g','h','e','f','g','h'};
+
+	//! @test  Verify @c filesystem::MemoryStream::read() returns content of buffer
+	EXPECT_EQ(
+		filesystem::MemoryStream<char>{buffer}.write(std::vector{'e','f','g','h'}),
+		4
+	);
+	EXPECT_EQ(
+		buffer,
+		expected
+	);
+}
+
+TEST(MemoryStream_UT, Write_ThrowsWhenStreamIsConst)
+{
+	char const buffer[] {"abcdefgh"};
+	
+	//! @test  Verify @c filesystem::MemoryStream::write() throws when element type is @c const
+	EXPECT_THROW(
+		filesystem::MemoryStream<char const>{buffer}.write(std::vector<char>{'e','f','g','h'}),
+		std::logic_error
+	);
+	
+	//! @post  @c filesystem::MemoryStream::write() didn't write to the stream
+	EXPECT_STREQ(
+		buffer,
+		"abcdefgh"
+	);
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #endif	// DISABLE_MEMORY_STREAM_UNIT_TESTS

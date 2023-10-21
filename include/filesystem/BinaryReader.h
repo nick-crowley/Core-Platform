@@ -41,27 +41,25 @@ namespace core::filesystem
 {	
 	//! @brief  Reads trivially-copyable objects from a stream
 	template <nstd::AnyCvOrSignOf<std::byte,char,wchar_t,char8_t,char16_t> Element>
-	struct BinaryReader
+	class BinaryReader
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		using type = BinaryReader<Element>;      //!< Aliases our specialization
-		using element_t = typename Element;      //!< Stream element type
+		using element_t = Element;               //!< Stream element type
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		SharedStream<element_t> Input;
+		IStream<element_t>* Input;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		/*!
 		* @brief  Construct from input stream
 		*
 		* @param[in]  input  Input stream
-		* 
-		* @throws  std::invalid_argument  Missing argument
 		*/
 		explicit
-		BinaryReader(SharedStream<element_t> source)
-		  : Input{ThrowIfEmpty(source)}
+		BinaryReader(IStream<element_t>& source)
+		  : Input{&source}
 		{
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -114,8 +112,10 @@ namespace core::filesystem
 			return values;
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
 	};
+
+	template <nstd::AnyCvOrSignOf<std::byte,char,wchar_t,char8_t,char16_t> Element>
+	BinaryReader(IStream<Element>&) -> BinaryReader<Element>;
 } 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
