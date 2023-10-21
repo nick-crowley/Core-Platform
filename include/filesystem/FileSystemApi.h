@@ -31,6 +31,7 @@
 #include "filesystem/FileAttribute.h"
 #include "filesystem/FileSize.h"
 #include "filesystem/FileShare.h"
+#include "filesystem/Origin.h"
 #include "filesystem/SearchResult.h"
 #include "filesystem/SharedHandle.h"
 #include "filesystem/VolumeProperties.h"
@@ -49,15 +50,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-namespace core::filesystem
-{
-	//! @brief	Start position for seek operations
-	enum class Origin {
-		Begin = FILE_BEGIN,       //!< The beginning of the file.
-		Current = FILE_CURRENT,   //!< The current value of the file pointer.
-		End = FILE_END,           //!< The current end-of-file position.
-	};
-}
+
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::filesystem
 {
