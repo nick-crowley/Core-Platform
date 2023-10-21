@@ -47,10 +47,10 @@ namespace core::filesystem
 	//! @brief	Supported stream operations
 	enum class Operation{
 		None,
-		Read,
-		Write,
-		Seek,
-		Resize,
+		Read   = nstd::bit<0>,
+		Write  = nstd::bit<1>,
+		Seek   = nstd::bit<2>,
+		Resize = nstd::bit<3>,
 	};
 } 
 
