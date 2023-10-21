@@ -248,6 +248,9 @@ namespace core::filesystem
 		void
 		virtual writeAll(gsl::span<element_t const> data) abstract;
 	};
+	
+	template <nstd::AnyCvOrSignOf<std::byte,char,wchar_t,char8_t,char16_t> Element>
+	using SharedStream = std::shared_ptr<IStream<Element>>;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
