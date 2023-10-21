@@ -27,6 +27,7 @@
 #include "core/DateTime_UnitTests.cpp"
 #include "filesystem/FileStream_SystemTests.cpp"
 #include "filesystem/FileSystemApi_UnitTests.cpp"
+#include "filesystem/MemoryStream_UnitTests.cpp"
 #include "win/DebugStream_SystemTests.cpp"
 #include "win/PackedInteger_UnitTests.cpp"
 #include "win/LogStream_SystemTests.cpp"
