@@ -130,6 +130,7 @@ namespace core::filesystem
 	public:
 		satisfies(FileStream, 
 			NotDefaultConstructible, 
+			NotCopyable,
 			IsMovable, 
 			NotEqualityComparable, 
 			NotSortable
