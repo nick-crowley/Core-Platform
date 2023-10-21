@@ -25,6 +25,7 @@
 */
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "core/DateTime_UnitTests.cpp"
+#include "filesystem/BinaryReader_SystemTests.cpp"
 #include "filesystem/FileStream_SystemTests.cpp"
 #include "filesystem/FileSystemApi_UnitTests.cpp"
 #include "filesystem/MemoryStream_UnitTests.cpp"
