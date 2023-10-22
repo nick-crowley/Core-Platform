@@ -138,9 +138,6 @@ namespace core
 	inline program_version = meta::program_version;
 	
 	auto constexpr 
-	inline readonly = meta::readonly;
-
-	auto constexpr 
 	inline unconstrained = meta::unconstrained;
 
 	auto constexpr 
