@@ -128,6 +128,27 @@ namespace core::filesystem
 				values[idx] = this->read<T>();
 			return values;
 		}
+		
+		/*!
+		* @brief  Skip arbitrary number of elements in the input stream
+		* 
+		* @param  n  Number of elements to skip
+		*/
+		void
+		skip(size_t n) {
+			this->Input->seek(Origin::Current, n);
+		}
+		
+		/*!
+		* @brief  Skip arbitrary number of objects in the input stream
+		* 
+		* @param  n  Number of objects to skip
+		*/
+		template <typename T>
+		void
+		skip(size_t n) {
+			this->skip(nstd::sizeof_n<T>(n));
+		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};
 
