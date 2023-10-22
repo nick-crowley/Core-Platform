@@ -84,7 +84,7 @@ namespace core::filesystem
 		* @throws  std::runtime_error     File does not exist
 		*/
 		FileStream(path                         location, 
-		           nstd::bitset<win::FileRight> rights = win::StandardRight::Read,
+		           nstd::bitset<win::FileRight> rights = win::GenericRight::Read,
 		           nstd::bitset<FileShare>      sharing = FileShare::AllowRead,
 		           nstd::bitset<FileAttribute>  attributes = FileAttribute::Normal,
 		           SharedFileSystemApi          api = filesystemApi()
