@@ -155,6 +155,12 @@ namespace core::filesystem
 			this->close();
 			return bytes;
 		}
+		
+		//! @brief  Number of elements between current position and end-of-stream
+		size_type
+		remaining() const noexcept {
+			return this->length() - this->position();
+		}
 
 		//! @brief  Implements IStream::resize()
 		[[noreturn]]
@@ -226,12 +232,6 @@ namespace core::filesystem
 			// Write data and close handle
 			this->write(data);
 			this->close();
-		}
-
-	private:
-		size_type
-		remaining() const noexcept {
-			return this->length() - this->position();
 		}
 	};
 
