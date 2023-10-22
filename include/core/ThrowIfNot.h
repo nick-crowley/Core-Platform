@@ -62,7 +62,7 @@ namespace core::detail
 	ThrowIfImpl(T&& arg, bool const expr, gsl::czstring argName, gsl::czstring invariant, std::source_location loc = std::source_location::current())
 	{
 		if (expr)
-			throw invalid_argument{"{}(..) Invalid '{}' argument: {}", loc.function_name(), argName, invariant};
+			throw invalid_argument{"Invalid '{}' argument: {}", argName, invariant};
 
 		return std::forward<T>(arg);
 	}
@@ -72,7 +72,7 @@ namespace core::detail
 	ThrowIfNotImpl(T&& arg, bool const expr, gsl::czstring argName, gsl::czstring invariant, std::source_location loc = std::source_location::current())
 	{
 		if (!expr)
-			throw invalid_argument{"{}(..) Invalid '{}' argument: {}", loc.function_name(), argName, invariant};
+			throw invalid_argument{"Invalid '{}' argument: {}", argName, invariant};
 
 		return std::forward<T>(arg);
 	}
