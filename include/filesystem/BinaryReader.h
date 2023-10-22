@@ -113,7 +113,7 @@ namespace core::filesystem
 		* 
 		* @param  n  Number of objects to read
 		* 
-		* @throws  std::invalid_argument  Insufficient space remaining to read an object of @c T
+		* @throws  std::exception         Insufficient space remaining to read an object of @c T
 		* @throws  std::logic_error       Stream has been closed
 		* @throws  std::logic_error       Read operations on input stream not supported
 		* @throws  std::system_error      Operation failed
@@ -121,7 +121,7 @@ namespace core::filesystem
 		template <typename T>
 			requires std::is_trivially_copyable_v<T>
 		std::vector<T> 
-		read(size_t n) const {
+		read(size_t n) {
 			ThrowIfZero(n);
 			std::vector<T> values{n};
 			for (auto idx = 0; idx < n; ++idx)

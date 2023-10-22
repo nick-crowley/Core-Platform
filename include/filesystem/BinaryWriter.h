@@ -59,7 +59,7 @@ namespace core::filesystem
 		*/
 		explicit
 		BinaryWriter(IStream<element_t>& dest)
-		  : Output{&source}
+		  : Output{&dest}
 		{
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -106,7 +106,7 @@ namespace core::filesystem
 		void
 		write(std::span<T const> objects) {
 			ThrowIfEmpty(objects);
-			for (auto idx = 0; idx < n; ++idx)
+			for (size_t idx = 0; idx < objects.size(); ++idx)
 				this->write(objects[idx]);
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
