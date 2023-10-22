@@ -44,6 +44,11 @@ namespace core::win
 	//! @brief	Null-value passed only for optional DACL parameters of Windows API functions
 	SECURITY_ATTRIBUTES constexpr*
 	Unsecured {};
+	
+	//! @brief	Zero-value passed for unused parameters of Windows API functions
+	template <typename Value>
+	constexpr Value 
+	Unused {};
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
