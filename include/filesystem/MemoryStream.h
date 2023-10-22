@@ -216,7 +216,7 @@ namespace core::filesystem
 			if constexpr (std::is_const_v<element_t>)
 				std::unreachable();
 			else {
-				ranges::copy(data, this->Content.begin());
+				ranges::copy(data, this->Content.begin() + this->Position);
 				this->Position += data.size();
 				return data.size();
 			}
