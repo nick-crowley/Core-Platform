@@ -86,7 +86,24 @@ namespace core::filesystem
 		template <typename T>
 			requires std::is_trivially_copyable_v<T>
 		T 
-		read() const {
+		peek() const {
+			T value = this->read<T>();
+			this->Input->seek(Origin::Current, 0 - sizeof(T));
+			return value;
+		}
+		
+		/*!
+		* @brief  Reads an object from the current position in the stream
+		* 
+		* @throws  std::exception         Insufficient space remaining to read an object of @c T
+		* @throws  std::logic_error       Stream has been closed
+		* @throws  std::logic_error       Read operations on input stream not supported
+		* @throws  std::system_error      Operation failed
+		*/
+		template <typename T>
+			requires std::is_trivially_copyable_v<T>
+		T 
+		read() {
 			std::vector<std::byte> bytes = this->Input->read(sizeof(T));
 			return *reinterpret_cast<T*>(bytes.data());
 		}
