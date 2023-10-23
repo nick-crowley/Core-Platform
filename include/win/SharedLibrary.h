@@ -58,7 +58,7 @@ namespace core::win
 		  : m_module{::LoadLibraryW(ThrowIfEmpty(path).data())}
 		{
 			if (!this->m_module)
-				LastError{}.throwAlways();
+				LastError{}.throwAlways("LoadLibrary() failed");
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
@@ -81,7 +81,7 @@ namespace core::win
 		{
 			using proc_signature_t = nstd::add_function_pointer_t<Signature>;
 			if (auto* const pfx = reinterpret_cast<proc_signature_t>(::GetProcAddress(*this->m_module, name.data())); !pfx)
-				LastError{}.throwAlways();
+				LastError{}.throwAlways("GetProcAddress() failed");
 			else
 				return pfx;
 		}

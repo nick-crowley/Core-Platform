@@ -57,7 +57,7 @@ TEST(LResult, ThrowAlways_ThrowsForSuccessCode)
 {
 	//! @test	Verify @c throwAlways() throws even for success codes
 	EXPECT_THROW(
-		win::LResult{ERROR_SUCCESS}.throwAlways(),
+		win::LResult{ERROR_SUCCESS}.throwAlways(""),
 		win::system_error
 	);
 }
@@ -66,7 +66,7 @@ TEST(LResult, ThrowAlways_ThrowsForFailureCode)
 {
 	//! @test	Verify @c throwAlways() throws for failure codes
 	EXPECT_THROW(
-		win::LResult{ERROR_ACCESS_DENIED}.throwAlways(),
+		win::LResult{ERROR_ACCESS_DENIED}.throwAlways(""),
 		win::system_error
 	);
 }

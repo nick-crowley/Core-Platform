@@ -94,24 +94,38 @@ namespace core::win
 		}
 		
 		[[noreturn]] void 
-		throwAlways() const {
-			throw system_error{this->Value};
+		throwAlways(std::string_view msg) const {
+			throw system_error{this->Value, msg};
 		}
 		
 		template <typename... Params>
+			requires nstd::AtLeastOneType<Params...>
 		[[noreturn]] void 
 		throwAlways(std::string_view msg, Params&&... args) const {
-			throw system_error{this->Value, 
-			                   std::vformat(msg,std::make_format_args(args...))};
+			throw system_error{this->Value, std::vformat(msg,std::make_format_args(args...))};
 		}
-		
+
 		template <typename... Params>
+		[[noreturn]] void 
+		throwAlways(std::wstring_view, Params&&...) const = delete;
+		
+		void 
+		throwIfError(std::string_view msg) const {
+			if (this->Value != ERROR_SUCCESS)
+				throw system_error{this->Value};
+		}
+
+		template <typename... Params>
+			requires nstd::AtLeastOneType<Params...>
 		void 
 		throwIfError(std::string_view msg, Params&&... args) const {
 			if (this->Value != ERROR_SUCCESS)
-				throw system_error{this->Value, 
-				                   std::vformat(msg,std::make_format_args(args...))};
+				throw system_error{this->Value, std::vformat(msg,std::make_format_args(args...))};
 		}
+
+		template <typename... Params>
+		[[noreturn]] void 
+		throwIfError(std::wstring_view, Params&&...) const = delete;
 
 		constexpr explicit 
 		operator bool() const noexcept {
