@@ -86,11 +86,29 @@ namespace core::win
 
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			implicit 
-			operator RegistryValue() const;
+			std::vector<std::byte>
+			as_bytes() const;
 
+			std::vector<std::wstring>
+			as_wstrings() const;
+			
+			RegistryValue
+			get() const;
+			
 			std::wstring
-			wstr();
+			to_wstring() const;
+			
+			uint32_t
+			to_uint32() const;
+			
+			uint64_t
+			to_uint64() const;
+			
+			std::wstring
+			wstr() const;
+
+			implicit 
+			operator RegistryValue() const;			
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		};
 		

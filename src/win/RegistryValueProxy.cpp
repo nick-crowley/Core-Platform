@@ -47,22 +47,101 @@ win::RegistryKey::RegistryValueProxy::RegistryValueProxy(RegistryKey& key, std::
 	: base{key,name}
 {}
 
+std::vector<std::byte>
+win::RegistryKey::ConstRegistryValueProxy::as_bytes() const {
+	RegistryValue const v = this->get();
+	Invariant(std::holds_alternative<std::vector<std::byte>>(v));
+	return std::get<std::vector<std::byte>>(v);
+}
+
+std::vector<std::wstring>
+win::RegistryKey::ConstRegistryValueProxy::as_wstrings() const {
+	RegistryValue const v = this->get();
+	Invariant(std::holds_alternative<std::vector<std::wstring>>(v));
+	return std::get<std::vector<std::wstring>>(v);
+}
+
+win::RegistryValue
+win::RegistryKey::ConstRegistryValueProxy::get() const {
+	return this->m_key->m_api->getValue(this->m_key->m_handle, this->m_valueName);
+}
+
 std::wstring
-win::RegistryKey::ConstRegistryValueProxy::wstr() 
-{
-	RegistryValue v{*this};
-	Invariant(std::holds_alternative<std::wstring>(v) || std::holds_alternative<std::wstring_view>(v));
+win::RegistryKey::ConstRegistryValueProxy::to_wstring() const {
+	RegistryValue const v = this->get();
+	Invariant(!std::holds_alternative<std::vector<std::byte>>(v)
+	       && !std::holds_alternative<std::vector<std::wstring>>(v));
+	
 	if (std::holds_alternative<std::wstring>(v))
 		return std::get<std::wstring>(v);
-				 
-	auto const sv = std::get<std::wstring_view>(v);
-	return {sv.begin(), sv.end()};
+
+	else if (std::holds_alternative<std::wstring_view>(v)) {
+		auto const sv = std::get<std::wstring_view>(v);
+		return {sv.begin(), sv.end()};
+	}
+	else if (std::holds_alternative<uint32_t>(v)) {
+		return std::to_wstring(std::get<uint32_t>(v));
+	}
+	else 
+		return std::to_wstring(std::get<uint64_t>(v));
+	
+	static_assert(std::variant_size_v<win::RegistryValue> == 6);
+}
+
+uint32_t
+win::RegistryKey::ConstRegistryValueProxy::to_uint32() const {
+	RegistryValue const v = this->get();
+	Invariant(!std::holds_alternative<std::vector<std::byte>>(v)
+	       && !std::holds_alternative<std::vector<std::wstring>>(v));
+	
+	if (std::holds_alternative<std::wstring>(v))
+		return std::stoul(std::get<std::wstring>(v));
+
+	else if (std::holds_alternative<std::wstring_view>(v)) {
+		auto const sv = std::get<std::wstring_view>(v);
+		return std::stoul(std::wstring{sv.begin(), sv.end()});
+	}
+	else if (std::holds_alternative<uint32_t>(v)) 
+		return std::get<uint32_t>(v);
+	else {
+		Invariant(std::get<uint64_t>(v) <= UINT32_MAX);
+		return static_cast<uint32_t>(std::get<uint64_t>(v));
+	}
+	
+	static_assert(std::variant_size_v<win::RegistryValue> == 6);
+}
+
+uint64_t
+win::RegistryKey::ConstRegistryValueProxy::to_uint64() const {
+	RegistryValue const v = this->get();
+	Invariant(!std::holds_alternative<std::vector<std::byte>>(v)
+	       && !std::holds_alternative<std::vector<std::wstring>>(v));
+	
+	if (std::holds_alternative<std::wstring>(v))
+		return std::stoull(std::get<std::wstring>(v));
+
+	else if (std::holds_alternative<std::wstring_view>(v)) {
+		auto const sv = std::get<std::wstring_view>(v);
+		return std::stoull(std::wstring{sv.begin(), sv.end()});
+	}
+	else if (std::holds_alternative<uint32_t>(v)) 
+		return std::get<uint32_t>(v);
+	else 
+		return std::get<uint64_t>(v);
+	
+	static_assert(std::variant_size_v<win::RegistryValue> == 6);
+}
+
+std::wstring
+win::RegistryKey::ConstRegistryValueProxy::wstr() const
+{
+	return this->to_wstring();
 }
 
 win::RegistryKey::ConstRegistryValueProxy::operator
 win::RegistryValue() const
 {
-	return this->m_key->m_api->getValue(this->m_key->m_handle, this->m_valueName);
+	return this->get();
 }
 
 win::RegistryKey::RegistryValueProxy&
