@@ -25,6 +25,7 @@
 */
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "win/RegistryKey.h"
+#include "win/ApiHelpers.h"
 using namespace core;
 
 win::RegistryKey::ConstRegistryValueProxy::ConstRegistryValueProxy(RegistryKey const& key, meta::use_default_t)
@@ -47,12 +48,12 @@ win::RegistryValue() const
 win::RegistryKey::RegistryValueProxy&
 win::RegistryKey::RegistryValueProxy::operator=(RegistryValue value)
 {
-	this->m_key->m_api->setValue(this->m_key->m_handle, {/*no-child*/}, this->m_valueName, value);
+	this->m_key->m_api->setValue(this->m_key->m_handle, win::Unused<std::wstring_view>, this->m_valueName, value);
 	return *this;
 }
 
 void
 win::RegistryKey::RegistryValueProxy::remove()
 {
-	this->m_key->m_api->removeValue(this->m_key->m_handle, {/*no-child*/}, this->m_valueName);
+	this->m_key->m_api->removeValue(this->m_key->m_handle, win::Unused<std::wstring_view>, this->m_valueName);
 }
