@@ -61,7 +61,7 @@ namespace core::detail
 	void
 	inline ThrowInvalidArgImpl(gsl::czstring argName, std::string_view reason, std::source_location loc = std::source_location::current())
 	{
-		throw invalid_argument{"{}(..) Invalid '{}' argument: {}", loc.function_name(), argName, reason};
+		throw invalid_argument{"Invalid '{}' argument: {}", argName, reason};
 	}
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
