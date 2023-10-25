@@ -136,7 +136,6 @@ namespace core::win
 			
 			RegistryValueProxy&
 			operator=(RegistryValue value);
-
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -145,6 +144,9 @@ namespace core::win
 		public:
 			void
 			remove();
+			
+			void
+			set(RegistryValue value);
 		};
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o

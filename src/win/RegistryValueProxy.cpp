@@ -147,7 +147,7 @@ win::RegistryValue() const
 win::RegistryKey::RegistryValueProxy&
 win::RegistryKey::RegistryValueProxy::operator=(RegistryValue value)
 {
-	this->m_key->m_api->setValue(this->m_key->m_handle, win::Unused<std::wstring_view>, this->m_valueName, value);
+	this->set(value);
 	return *this;
 }
 
@@ -155,4 +155,10 @@ void
 win::RegistryKey::RegistryValueProxy::remove()
 {
 	this->m_key->m_api->removeValue(this->m_key->m_handle, win::Unused<std::wstring_view>, this->m_valueName);
+}
+
+void
+win::RegistryKey::RegistryValueProxy::set(RegistryValue value)
+{
+	this->m_key->m_api->setValue(this->m_key->m_handle, win::Unused<std::wstring_view>, this->m_valueName, value);
 }
