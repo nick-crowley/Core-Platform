@@ -162,7 +162,7 @@ namespace nstd
         return rhs == std::basic_string_view<Char>{lhs};
 	}
 
-    namespace literals 
+    inline namespace literals 
     {
         inline namespace string_view_literals 
         {

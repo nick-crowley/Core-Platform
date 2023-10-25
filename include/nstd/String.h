@@ -78,7 +78,7 @@ namespace nstd
 		return lhs.compare(rhs) == 0;
 	}
 	
-	namespace literals 
+	inline namespace literals 
     {
         inline namespace string_literals 
         {
