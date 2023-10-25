@@ -24,6 +24,7 @@
 * the projects which contain it.
 */
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+#include "core/CharacterConversion_UnitTests.cpp"
 #include "core/DateTime_UnitTests.cpp"
 #include "filesystem/BinaryReader_SystemTests.cpp"
 #include "filesystem/FileStream_SystemTests.cpp"
