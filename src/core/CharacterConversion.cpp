@@ -31,10 +31,11 @@ using namespace core;
 std::string
 core::narrow(std::wstring_view wstr, CodePage destination) 
 {
-	auto constexpr flags = WC_NO_BEST_FIT_CHARS|WC_ERR_INVALID_CHARS;
+	bool const isDestUtf8 = (destination == CodePage::Utf8);
+	auto const flags = WC_NO_BEST_FIT_CHARS | (isDestUtf8 ? WC_ERR_INVALID_CHARS : 0);
 		
-	char const* NoDefaultChar = nullptr;
-	BOOL* UsedDefaultChar = nullptr;
+	char constexpr* SystemDefaultChar = nullptr;
+	BOOL UnrepresentableChars = FALSE;
 
 	if (wstr.empty())
 		return {};
@@ -43,7 +44,7 @@ core::narrow(std::wstring_view wstr, CodePage destination)
 		                                        flags, 
 					                            wstr.data(), win::DWord{wstr.size()}, 
 		                                        nullptr, 0, 
-		                                        NoDefaultChar, UsedDefaultChar); !capacity) 
+		                                        SystemDefaultChar, nullptr); !capacity) 
 		ThrowInvalidArg(wstr, win::LastError{}.str());
 	else {
 		std::string result(capacity, L'\0');
@@ -51,9 +52,11 @@ core::narrow(std::wstring_view wstr, CodePage destination)
 			                        flags, 
 			                        wstr.data(), win::DWord{wstr.size()}, 
 			                        result.data(), win::DWord{capacity},
-			                        NoDefaultChar, UsedDefaultChar))
+			                        SystemDefaultChar, isDestUtf8 ? nullptr : &UnrepresentableChars))
 			ThrowInvalidArg(wstr, win::LastError{}.str());
 		
+		if (UnrepresentableChars)
+			ThrowInvalidArg(wstr, "Contains unrepresentable characters");
 		return result;
 	}
 }
