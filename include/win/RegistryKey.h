@@ -90,16 +90,7 @@ namespace core::win
 			operator RegistryValue() const;
 
 			std::wstring
-			wstr() {
-				RegistryValue v{*this};
-				Invariant(std::holds_alternative<std::wstring>(v) || std::holds_alternative<std::wstring_view>(v));
-				if (std::holds_alternative<std::wstring>(v))
-					return std::get<std::wstring>(v);
-				 
-				auto const sv = std::get<std::wstring_view>(v);
-				return {sv.begin(), sv.end()};
-			}
-
+			wstr();
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		};
 		
@@ -112,13 +103,9 @@ namespace core::win
 
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			RegistryValueProxy(RegistryKey& key, meta::use_default_t)
-			  : base{key,use_default}
-			{}
+			RegistryValueProxy(RegistryKey& key, meta::use_default_t);
 
-			RegistryValueProxy(RegistryKey& key, std::wstring_view name)
-			  : base{key,name}
-			{}
+			RegistryValueProxy(RegistryKey& key, std::wstring_view name);
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			satisfies(RegistryValueProxy,

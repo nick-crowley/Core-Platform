@@ -39,6 +39,26 @@ win::RegistryKey::ConstRegistryValueProxy::ConstRegistryValueProxy(RegistryKey c
 {
 }
 
+win::RegistryKey::RegistryValueProxy::RegistryValueProxy(RegistryKey& key, meta::use_default_t)
+	: base{key,use_default}
+{}
+
+win::RegistryKey::RegistryValueProxy::RegistryValueProxy(RegistryKey& key, std::wstring_view name)
+	: base{key,name}
+{}
+
+std::wstring
+win::RegistryKey::ConstRegistryValueProxy::wstr() 
+{
+	RegistryValue v{*this};
+	Invariant(std::holds_alternative<std::wstring>(v) || std::holds_alternative<std::wstring_view>(v));
+	if (std::holds_alternative<std::wstring>(v))
+		return std::get<std::wstring>(v);
+				 
+	auto const sv = std::get<std::wstring_view>(v);
+	return {sv.begin(), sv.end()};
+}
+
 win::RegistryKey::ConstRegistryValueProxy::operator
 win::RegistryValue() const
 {
