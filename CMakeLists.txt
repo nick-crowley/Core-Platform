@@ -137,7 +137,7 @@ set(PROJECT_STATIC_MACRO "CORE_PLATFORM_STATIC")
 #       /_______  /|__| (____  /__| |__|\___  > |_______ \__||___  /         #
 #               \/           \/             \/          \/       \/          #
 ##############################################################################
-message("StaticLib: Generating project from ./src with ./include folders")
+message("libCorePlatform: Generating static library project")
 
 # Project: libCorePlatform
 add_library(libCorePlatform STATIC 
@@ -178,7 +178,7 @@ target_compile_options(libCorePlatform
 #  /_______  / ____|___|  (____  /__|_|  /__|\___  >  |_______ \__||___  /  #
 #          \/\/         \/     \/      \/        \/           \/       \/   #
 #############################################################################
-message("DynamicLib: Generating project from ./src with ./include folders")
+message("dllCorePlatform: Generating dynamic library project")
 
 # Project: dllCorePlatform
 add_library(dllCorePlatform SHARED 
@@ -226,6 +226,7 @@ target_compile_options(dllCorePlatform
 #    |____| \___  >____  > |__|   \____|__  /   __/|   __/   #
 #               \/     \/                 \/|__|   |__|      #
 ##############################################################
+message("appService: Generating legacy dev-test sample")
 
 # Project: appCorePlatform
 add_executable(appCorePlatform
@@ -280,6 +281,7 @@ add_dependencies(appCorePlatform
 #       /_______  /\___  >__|    \_/ |__|\___  >___  >		 #
 #               \/     \/                    \/    \/ 		 #
 ##############################################################
+message("appService: Generating win32 service sample")
 
 # Project: appService
 add_executable(appService
@@ -332,7 +334,7 @@ add_dependencies(appService
 #  \______  /\____/ \____/\___  /|____/\___  >   |____| \___  >____  > |__|   #
 #         \/             /_____/           \/               \/     \/         #
 ###############################################################################
-message("dllGoogleTest: Generating project from ./3rdparty/googletest and ./3rdparty/googlemock folders")
+message("dllGoogleTest: Generating GoogleTest project")
 
 # Project: dllGoogleTest
 add_library(dllGoogleTest SHARED 
@@ -378,7 +380,7 @@ target_compile_options(dllGoogleTest
 # |______/|___|  /__||__|     |____| \___  >____  > |__| /____  >  #
 #              \/                        \/     \/            \/   #
 ####################################################################
-message("exePlatformTests: Generating project from ./test and ./mock with ./src and ./include folders")
+message("exePlatformTests: Generating unit-test project")
 
 # Test files
 file(GLOB_RECURSE PROJECT_TEST_FILES
