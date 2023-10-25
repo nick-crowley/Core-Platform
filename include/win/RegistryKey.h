@@ -95,6 +95,26 @@ namespace core::win
 			RegistryValue
 			get() const;
 			
+			template <nstd::Enumeration Enum>
+			Enum
+			to_enum() const {
+				RegistryValue const v = this->get();
+				Invariant(!std::holds_alternative<std::vector<std::byte>>(v)
+					   && !std::holds_alternative<std::vector<std::wstring>>(v));
+	
+				if (std::holds_alternative<std::wstring>(v))
+					return from_string<Enum>(narrow(std::get<std::wstring>(v), CodePage::Latin1));
+				else if (std::holds_alternative<std::wstring_view>(v)) 
+					return from_string<Enum>(narrow(std::get<std::wstring_view>(v), CodePage::Latin1));
+				
+				else if (std::holds_alternative<uint32_t>(v)) 
+					return static_cast<Enum>(std::get<uint32_t>(v));
+				else 
+					return static_cast<Enum>(std::get<uint64_t>(v));
+				
+				static_assert(std::variant_size_v<win::RegistryValue> == 6);
+			}
+			
 			std::wstring
 			to_wstring() const;
 			
@@ -136,6 +156,18 @@ namespace core::win
 			
 			RegistryValueProxy&
 			operator=(RegistryValue value);
+			
+			template <nstd::Enumeration Enum>
+			RegistryValueProxy&
+			operator=(Enum value) {
+				if (is_valid_enumerator<Enum>(value)) 
+					this->set(widen(enumerator_name<Enum>(value), CodePage::Latin1));
+				else if (sizeof(std::underlying_type_t<Enum>) <= sizeof(uint32_t))
+					this->set(static_cast<uint32_t>(std::to_underlying(value)));
+				else
+					this->set(static_cast<uint64_t>(std::to_underlying(value)));
+				return *this;
+			}
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -145,6 +177,12 @@ namespace core::win
 			void
 			remove();
 			
+			void
+			set(std::string) = delete;
+			
+			void
+			set(std::string_view) = delete;
+
 			void
 			set(RegistryValue value);
 		};
