@@ -187,7 +187,9 @@ namespace core::win
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		implicit
-		ThrowingLResult(::LRESULT val, std::source_location loc = std::source_location::current()) {
+		ThrowingLResult(::LRESULT val, std::source_location loc = std::source_location::current())
+		  : Value{val}
+		{
 			if (val != ERROR_SUCCESS)
 				throw system_error{val};
 		}
