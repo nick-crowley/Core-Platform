@@ -29,7 +29,6 @@
 #include "library/core.Platform.h"
 #include "win/SharedHandle.h"
 #include "win/Boolean.h"
-#include "win/ApiHelpers.h"
 #include "win/Concurrency.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 

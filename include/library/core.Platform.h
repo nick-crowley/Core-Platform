@@ -94,9 +94,9 @@
 #include "core/ToString.h"
 
 #include "nt/NtStatus.h"
+#include "win/ApiHelpers.h"
 #include "win/LResult.h"
 #include "win/HResult.h"
-#include "win/DWord.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

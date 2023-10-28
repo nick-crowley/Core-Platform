@@ -26,8 +26,6 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "win/RegistryApi.h"
 #include "win/Function.h"
-#include "win/ApiHelpers.h"
-#include "win/DWord.h"
 #include "win/LResult.h"
 #include "win/ConstMultiStringIterator.h"
 using namespace core;

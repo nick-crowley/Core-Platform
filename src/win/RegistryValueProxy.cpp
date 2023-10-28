@@ -25,7 +25,6 @@
 */
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "win/RegistryKey.h"
-#include "win/ApiHelpers.h"
 using namespace core;
 
 win::RegistryKey::ConstRegistryValueProxy::ConstRegistryValueProxy(RegistryKey const& key, meta::use_default_t)

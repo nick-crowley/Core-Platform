@@ -25,8 +25,11 @@
 */
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Preprocessor Directives o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #pragma once
+#ifndef CorePlatform_h_included
+#	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
+#endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "library/core.Platform.h"
+#include "../src/PlatformSdk.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -51,7 +54,52 @@ namespace core::win
 	Unused {};
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace core::win
+{
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief	Shorthand for converting any compatible argument using @c static_cast
+	*/
+	template <typename Output, nstd::ExplicitlyConvertible<Output> Input>
+	class StaticCast
+	{
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	private:
+		Input const&  Value;
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
+		explicit constexpr
+		StaticCast(Input const& val)
+		  : Value{val}
+		{
+		}
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+		satisfies(StaticCast,
+			NotDefaultConstructible,
+            NotCopyable,
+			NotEqualityComparable,
+			NotSortable
+		);
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
+		implicit constexpr
+		operator Output() const {
+			return static_cast<Output>(this->Value);
+		}
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	};
+
+	//! @brief  Short-hand for converting any value (of compatible type) to @c ::DWORD
+	template <typename Input>
+	using DWord = StaticCast<::DWORD, Input>;
+
+	//! @brief  Short-hand for converting any value (of compatible type) to @c ::BOOL
+	template <typename Input>
+	using Bool = StaticCast<::BOOL, Input>;
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
