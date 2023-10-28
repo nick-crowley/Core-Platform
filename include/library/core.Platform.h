@@ -58,6 +58,7 @@
 #include "nstd/Concepts.h"
 #include "nstd/Bitset.h"
 #include "nstd/FormatString.h"
+#include "nstd/Functional.h"
 #include "nstd/Iterator.h"
 #include "nstd/IoManip.h"
 #include "nstd/IndexedTuple.h"
