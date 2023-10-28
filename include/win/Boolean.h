@@ -47,14 +47,12 @@ namespace core::win
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		bool value;
+		bool Value;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		constexpr 
-		explicit 
-		Boolean(bool expr) : value{expr}
-		{
-		}
+		explicit constexpr
+		Boolean(bool expr) : Value{expr}
+		{}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		satisfies(Boolean,
@@ -68,10 +66,9 @@ namespace core::win
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		constexpr implicit 
-		operator BOOL() const 
-		{
-			return this->value ? TRUE : FALSE;
+		implicit constexpr
+		operator ::BOOL() const {
+			return this->Value ? TRUE : FALSE;
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};
