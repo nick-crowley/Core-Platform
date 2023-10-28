@@ -95,6 +95,7 @@
 
 #include "nt/NtStatus.h"
 #include "win/ApiHelpers.h"
+#include "win/Boolean.h"
 #include "win/LResult.h"
 #include "win/HResult.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

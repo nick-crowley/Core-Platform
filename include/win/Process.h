@@ -30,7 +30,6 @@
 #include "security/ProcessRight.h"
 #include "security/Token.h"
 #include "security/TokenRight.h"
-#include "win/Boolean.h"
 #include "win/Function.h"
 #include "win/SharedHandle.h"
 #include "win/Module.h"

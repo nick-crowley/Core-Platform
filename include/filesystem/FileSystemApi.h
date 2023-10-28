@@ -39,7 +39,6 @@
 #include "security/FileRight.h"
 #include "security/StandardRights.h"
 #include "win/ConstMultiStringIterator.h"
-#include "win/Boolean.h"
 #include "win/PackedInteger.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
