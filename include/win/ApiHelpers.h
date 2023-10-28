@@ -99,6 +99,10 @@ namespace core::win
 	//! @brief  Short-hand for converting any value (of compatible type) to @c ::BOOL
 	template <typename Input>
 	using Bool = StaticCast<::BOOL, Input>;
+	
+	//! @brief  Short-hand for converting any value (of compatible type) to @c ::WORD
+	template <typename Input>
+	using Word = StaticCast<::WORD, Input>;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
