@@ -31,8 +31,9 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "../../src/StdLibrary.h"
 #include "../../src/PlatformSdk.h"
+#include "../../src/libBoost.h"
 #include "../../src/library/PlatformExport.h"
-
+#include "nstd/Functional.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -54,6 +55,19 @@ namespace core
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core
 {
+	std::string constexpr
+	cnarrow(std::wstring_view wstr) {
+		return {
+			boost::make_transform_iterator(wstr.cbegin(), nstd::convert_to<char>),
+			boost::make_transform_iterator(wstr.cend(), nstd::convert_to<char>)
+		};
+	}
+	
+	std::wstring constexpr
+	cwiden(std::string_view str) {
+		return {str.begin(), str.end()};
+	}
+
 	std::string
 	PlatformExport narrow(std::wstring_view wstr, CodePage destination);
 
@@ -62,7 +76,7 @@ namespace core
 	
 	std::string
 	inline to_utf8(std::wstring_view wstr) {
-		return core::narrow(wstr, CodePage::Utf8);
+		return narrow(wstr, CodePage::Utf8);
 	}
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
