@@ -59,6 +59,13 @@ namespace core
 	{
 		return value == static_cast<std::remove_reference_t<T>>(0);
 	}
+			  
+	template <typename T>
+	bool
+	empty(std::optional<T> const& value)
+	{
+		return !value.has_value();
+	}
 
 	template <typename T>
 	bool
