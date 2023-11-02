@@ -52,8 +52,6 @@ namespace core
 		auto constexpr
 		__cdecl nameof() noexcept 
 		{
-			using namespace std::string_view_literals;
-			
 			std::string_view constexpr Signature{__FUNCSIG__, sizeof(__FUNCSIG__)-1};
 			static_assert(Signature.starts_with("auto __cdecl core::detail::nameof<"));
 			static_assert(Signature.ends_with(">(void) noexcept"));
@@ -104,8 +102,6 @@ namespace core
 		auto constexpr
 		__cdecl nameof() noexcept 
 		{
-			using namespace std::string_view_literals;
-
 			std::string_view constexpr Signature{__FUNCSIG__, sizeof(__FUNCSIG__)-1};
 			static_assert(Signature.starts_with("auto __cdecl core::detail::nameof<enum "));
 			static_assert(Signature.ends_with(">(void) noexcept"));
@@ -134,7 +130,6 @@ namespace core
 		auto constexpr
 		__cdecl nameof() noexcept 
 		{
-			using namespace std::string_view_literals;
 			//__FUNCSIG__: auto __cdecl nameof<E1::None>(void) noexcept
 			//             auto __cdecl nameof<N1::E1::None>(void) noexcept
 			//             auto __cdecl nameof<(enum N1::E1)0x16>(void) noexcept

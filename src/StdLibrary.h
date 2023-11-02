@@ -102,6 +102,8 @@ namespace core {
 	namespace views = std::ranges::views;
 	namespace chrono = std::chrono;
 
+	using namespace std::string_view_literals;
+
 	std::nullopt_t constexpr
 	inline nullopt = std::nullopt;
 }

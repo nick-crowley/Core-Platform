@@ -234,7 +234,6 @@ namespace core::testing {
 	static_assert(LiteralString{L"abc"}.size() == 3);
 	
 	//! @test  Verify @c core::LiteralString converts to @c std::basic_string_view
-	using namespace std::string_view_literals;
 	static_assert(LiteralString{"abc"} == "abc"sv);
 	
 	//! @test  Verify @c core::operator""_str() produces a valid @c core::LiteralString
