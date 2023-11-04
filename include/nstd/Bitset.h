@@ -100,10 +100,10 @@ namespace nstd
 			return static_cast<E2>(this->Value);
 		}
 	
-		template <Enumeration E2>
+		template <core::meta::CompatibleEnumeration<E> E2>
 		bool constexpr
 		test(E2 bits) const noexcept {
-			return (this->Value & static_cast<value_type>(bits)) != Zero;
+			return (this->value() & std::to_underlying(bits)) != 0;
 		}
 
 		underlying_type constexpr
@@ -242,6 +242,12 @@ namespace nstd::testing
 
 	//! @test  Verify @c nstd::bitset::value() returns value provided at construction
 	static_assert(nstd::bitset<B1>{B1::Zero}.value() == 0);
+	
+	//! @test  Verify @c nstd::bitset::test() returns @c true when specified bit is set
+	static_assert(nstd::bitset<B1>{B1::Two}.test(B1::Two));
+
+	//! @test  Verify @c nstd::bitset::test() returns @c false when specified bit is not set
+	static_assert(!nstd::bitset<B1>{B1::Two}.test(B1::One));
 	
 	//! @test  Verify @c nstd::bitset equality operator returns @c true when operands are equal
 	static_assert(nstd::bitset<B1>{B1::Zero} == nstd::bitset<B1>{B1::Zero});
