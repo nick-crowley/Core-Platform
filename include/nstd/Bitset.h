@@ -87,7 +87,7 @@ namespace nstd
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		satisfies(bitset,
-			constexpr IsSemiRegular noexcept,
+			constexpr IsRegular noexcept,
 			NotSortable
 		);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -123,18 +123,33 @@ namespace nstd
 			return static_cast<value_type>(this->value() | std::to_underlying(r));
 		}
 
+		type constexpr 
+		operator|(type const& r) const noexcept {
+			return static_cast<value_type>(this->value() | r.value());
+		}
+
 		template <core::meta::CompatibleEnumeration<E> E2>
 		type constexpr 
 		operator&(E2 const& r) const noexcept {
 			return static_cast<value_type>(this->value() & std::to_underlying(r));
 		}
 	
+		type constexpr 
+		operator&(type const& r) const noexcept {
+			return static_cast<value_type>(this->value() & r.value());
+		}
+
 		template <core::meta::CompatibleEnumeration<E> E2>
 		type constexpr 
 		operator^(E2 const& r) const noexcept {
 			return static_cast<value_type>(this->value() ^ std::to_underlying(r));
 		}
 	
+		type constexpr 
+		operator^(type const& r) const noexcept {
+			return static_cast<value_type>(this->value() ^ r.value());
+		}
+
 		type constexpr 
 		operator~() const noexcept {
 			return static_cast<value_type>(~this->value());
@@ -145,12 +160,6 @@ namespace nstd
 		operator==(E2 const& rhs) const noexcept {
 			return this->value() == std::to_underlying(rhs);
 		}
-
-		template <core::meta::CompatibleEnumeration<E> E2>
-		bool constexpr
-		operator!=(E2 const& rhs) const noexcept {
-			return this->value() != std::to_underlying(rhs);
-		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		template <core::meta::CompatibleEnumeration<E> E2>
@@ -160,17 +169,35 @@ namespace nstd
 			return *this;
 		}
 		
+		reference constexpr 
+		operator|=(type const& r) noexcept {
+			this->Value = static_cast<value_type>(this->value() | r.value());
+			return *this;
+		}
+		
 		template <core::meta::CompatibleEnumeration<E> E2>
 		reference constexpr 
 		operator&=(E2 const& r) noexcept {
 			this->Value = static_cast<value_type>(this->value() & std::to_underlying(r));
 			return *this;
 		}
-			
+		
+		reference constexpr 
+		operator&=(type const& r) noexcept {
+			this->Value = static_cast<value_type>(this->value() & r.value());
+			return *this;
+		}
+
 		template <core::meta::CompatibleEnumeration<E> E2>
 		reference constexpr 
 		operator^=(E2 const& r) noexcept {
 			this->Value = static_cast<value_type>(this->value() ^ std::to_underlying(r));
+			return *this;
+		}
+
+		reference constexpr 
+		operator^=(type const& r) noexcept {
+			this->Value = static_cast<value_type>(this->value() ^ r.value());
 			return *this;
 		}
 	};
@@ -207,5 +234,35 @@ template <nstd::Enumeration E1, core::meta::CompatibleEnumeration<E1> E2>
 bool constexpr
 operator!=(E1 lhs, nstd::bitset<E2> rhs) noexcept {
 	return nstd::bitset<E1>{lhs} != rhs;
+}
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace nstd::testing 
+{
+	enum class B1 { Zero, One, Two=2, Four=4, Six=6 };
+
+	//! @test  Verify @c nstd::bitset::value() returns value provided at construction
+	static_assert(nstd::bitset<B1>{B1::Zero}.value() == 0);
+	
+	//! @test  Verify @c nstd::bitset equality operator returns @c true when operands are equal
+	static_assert(nstd::bitset<B1>{B1::Zero} == nstd::bitset<B1>{B1::Zero});
+
+	//! @test  Verify @c nstd::bitset inequality operator returns @c true when operands are not equal
+	static_assert(nstd::bitset<B1>{B1::Zero} != nstd::bitset<B1>{B1::One});
+	
+	//! @test  Verify @c nstd::bitset equality operator supports enumerator operands
+	static_assert(nstd::bitset<B1>{B1::Zero} == B1::Zero);
+
+	//! @test  Verify @c nstd::bitset bitwise-OR operator returns expected value
+	static_assert((nstd::bitset<B1>{B1::Two} | nstd::bitset<B1>{B1::Four}) == nstd::bitset<B1>{B1::Six});
+	
+	//! @test  Verify @c nstd::bitset bitwise-OR assignment-operator returns expected value
+	static_assert((nstd::bitset<B1>{B1::Two} |= nstd::bitset<B1>{B1::Four}) == B1::Six);
+	
+	//! @test  Verify @c nstd::bitset bitwise-OR operator supports enumeration operands
+	static_assert((nstd::bitset<B1>{B1::Two} | B1::Four) == nstd::bitset<B1>{B1::Six});
+
+	//! @test  Verify global @c nstd::bitset bitwise-OR operator supports enumeration operands
+	static_assert((B1::Two | nstd::bitset<B1>{B1::Four}) == nstd::bitset<B1>{B1::Six});
+	
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
