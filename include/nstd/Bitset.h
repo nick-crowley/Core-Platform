@@ -48,21 +48,21 @@ namespace nstd
 	{
 		template <Enumeration>
 		friend class bitset;
-
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	private:
 		using type = bitset<E>;
 		using reference = type&;
+		using underlying_type = std::underlying_type_t<E>;
+
+	public:
 		using value_type = E;
-		using underlying_t = std::underlying_type_t<value_type>;
 		
 	private:
 		value_type constexpr
 		inline static Zero = static_cast<value_type>(0);
-		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		value_type  Value = Zero;
-		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		constexpr 
@@ -106,9 +106,9 @@ namespace nstd
 			return (this->Value & static_cast<value_type>(bits)) != Zero;
 		}
 
-		underlying_t constexpr
+		underlying_type constexpr
 		value() const noexcept {
-			return static_cast<underlying_t>(this->Value);
+			return static_cast<underlying_type>(this->Value);
 		}
 
 		constexpr 
@@ -151,7 +151,6 @@ namespace nstd
 		operator!=(E2 const& rhs) const noexcept {
 			return this->value() != std::to_underlying(rhs);
 		}
-		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		template <core::meta::CompatibleEnumeration<E> E2>
@@ -209,5 +208,4 @@ bool constexpr
 operator!=(E1 lhs, nstd::bitset<E2> rhs) noexcept {
 	return nstd::bitset<E1>{lhs} != rhs;
 }
-
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
