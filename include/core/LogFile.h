@@ -52,7 +52,7 @@ namespace core
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		LogFile(std::string_view fileName) 
-		  : base{win::ProcessModule.path().parent_path() / ThrowIfEmpty(fileName), std::ios::out|std::ios::app}
+		  : base{win::ProcessModule.path().parent_path() / ThrowIfEmpty(fileName), std::ios::out|std::ios::trunc}
 		{
 #ifdef SUPPORT_UTF8_LOGFILE
 			this->imbue(std::locale(this->getloc(), new std::codecvt_utf8<char16_t, 0x10ffff, std::generate_header>));
