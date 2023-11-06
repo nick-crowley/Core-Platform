@@ -163,6 +163,15 @@ namespace nstd
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		template <core::meta::CompatibleEnumeration<E> E2>
+		void constexpr
+		set(E2 bits, bool state) noexcept {
+			if (state)
+				this->Value = static_cast<value_type>(this->value() | std::to_underlying(bits));
+			else
+				this->Value = static_cast<value_type>(this->value() & ~std::to_underlying(bits));
+		}
+
+		template <core::meta::CompatibleEnumeration<E> E2>
 		reference constexpr 
 		operator|=(E2 const& r) noexcept {
 			this->Value = static_cast<value_type>(this->value() | std::to_underlying(r));
