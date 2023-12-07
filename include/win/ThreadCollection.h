@@ -80,13 +80,13 @@ namespace core::win
 			this->IsCancelled.signal();
 		}
 
-		void
+		bool
 		waitForAll(chrono::milliseconds timeout)
 		{	
 			auto constexpr 
 			static selectHandle = [](nstd::thread& t) { return t.native_handle(); };
 
-			win::waitForAll(this->Workers | views::transform(selectHandle), timeout);
+			return win::waitForAll(this->Workers | views::transform(selectHandle), timeout);
 		}
 
 		ThreadCollection& 
