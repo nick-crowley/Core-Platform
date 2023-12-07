@@ -103,6 +103,10 @@ namespace core::win
 	//! @brief  Short-hand for converting any value (of compatible type) to @c ::WORD
 	template <typename Input>
 	using Word = StaticCast<::WORD, Input>;
+	
+	//! @brief  Short-hand for converting any value (of compatible type) to @c ::LONG
+	template <typename Input>
+	using Long = StaticCast<::LONG, Input>;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
