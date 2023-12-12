@@ -64,6 +64,27 @@ intern convertStringToDescriptorW = win::function<2>(::ConvertStringSecurityDesc
 auto constexpr
 intern getTokenInformation = win::function<1>(::GetTokenInformation);
 
+template <size_t N>
+struct CountedByteBuffer {
+	DWORD     Length = 0;
+	std::byte Buffer[N];
+
+	std::span<std::byte const>
+	bytes() const {
+		return {&this->Buffer[0], &this->Buffer[this->Length]};
+	}
+};
+
+template <size_t N>
+struct CountedStringBuffer {
+	DWORD    Length = 0;
+	wchar_t  Buffer[N];
+
+	std::wstring
+	wstr() const {
+		return {&this->Buffer[0], &this->Buffer[this->Length]};
+	}
+};
 // o~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~o Construction & Destruction o~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~o
 
 // o~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-o Copy & Move Semantics o~-~+~-~+~-~+~-~+~-~+~-~+~-~+~-~+~o
@@ -195,77 +216,68 @@ SecurityApi::get_path_security(filesystem::FilePath file[[maybe_unused]],
 
 	return this->_get_descriptor(file, SE_FILE_OBJECT, components);
 }
-
+#endif
 // ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ //
 std::optional<Account>
-SecurityApi::lookup_account(std::span<std::byte const>       sid,
-							std::optional<std::wstring_view> system) const
+SecurityApi::lookupAccount(std::wstring_view                account,
+                           std::optional<std::wstring_view> system) const
 {
-	ThrowIfEmpty(sid);
-	ThrowMissingIfNot(system, !system || !system->empty());
+	ThrowIfEmpty(account);
+	ThrowIfNot(system, !system || !system->empty());
 
-	const wchar_t* origin = system ? system->data() : nullptr;
-	wchar_t        name[128]{}, domain[128]{};
-	::DWORD        name_len = lengthof(name), domain_len = lengthof(domain);
-	std::byte*     mutable_sid = const_cast<std::byte*>(sid.data());
-	::SID_NAME_USE usage{};
+	using CountedSidBuffer = CountedByteBuffer<SECURITY_MAX_SID_SIZE>;
+	wchar_t const*           origin = system ? system->data() : nullptr;
+	CountedSidBuffer         sid{.Length = SECURITY_MAX_SID_SIZE};
+	CountedStringBuffer<128> domain{.Length = 128};
+	::SID_NAME_USE           usage{};
 
 	// Lookup account name
-	if (auto res = ::LookupAccountSidW(
-		  origin, mutable_sid, name, &name_len, domain, &domain_len, &usage);
-		res == 0) {
-		// [NOT-FOUND]
-		if (this->m_platform_api->get_last_error().value() == ERROR_NONE_MAPPED) {
-			return nullopt;
-		}
-
-		// [FAILURE] Throw appropriate exception
-		platform::throw_exception_from_error(HERE, this->m_platform_api->get_last_error());
-	}
-
-	// [FOUND] Return all components
-	return Account{
-		{sid.begin(),sid.end()}, 
-		{&name[0], &name[name_len]}, 
-		{&domain[0], &domain[domain_len]}
-	};
+	if (::LookupAccountNameW(origin, account.data(), sid.Buffer, &sid.Length, domain.Buffer, &domain.Length, &usage)) 
+		// [FOUND] Return matching account
+		return Account{
+			.Domain = domain.wstr(),
+			.Name = {std::from_range, account},
+			.Sid = {std::from_range, sid.bytes()}
+		};
+	else if (win::LastError err; err == win::LResult{ERROR_NONE_MAPPED})
+		// [NOT-FOUND] Account does not exist
+		return nullopt;
+	else
+		// [FAILED]
+		err.throwAlways("LookupAccountName() failed");
 }
 
 // ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ //
 std::optional<Account>
-SecurityApi::lookup_account(std::wstring_view                name,
-							std::optional<std::wstring_view> system) const
+SecurityApi::lookupAccount(ConstByteSpan                    account,
+                           std::optional<std::wstring_view> system) const
 {
-	ThrowIfEmpty(name);
-	ThrowMissingIfNot(system, !system || !system->empty());
-	
-	const wchar_t* origin = system ? system->data() : nullptr;
-	wchar_t        domain[128]{};
-	std::byte      sid[SECURITY_MAX_SID_SIZE];
-	::DWORD        sid_len = lengthof(sid), domain_len = lengthof(domain);
-	::SID_NAME_USE usage{};
+	ThrowIfEmpty(account);
+	ThrowIfNot(system, !system || !system->empty());
 
-	// Lookup account identifier
-	if (auto res = ::LookupAccountNameW(
-		  origin, name.data(), sid, &sid_len, domain, &domain_len, &usage);
-		res == 0) {
-		// [NOT-FOUND]
-		if (this->m_platform_api->get_last_error().value() == ERROR_NONE_MAPPED) {
-			return nullopt;
-		}
+	wchar_t const*           origin = system ? system->data() : nullptr;
+	CountedStringBuffer<128> name{.Length = 128};
+	CountedStringBuffer<128> domain{.Length = 128};
+	SidWrapper               sid = ConstSidWrapper{account}.as_mutable();
+	::SID_NAME_USE           usage{};
 
-		// [FAILURE] Throw appropriate exception
-		platform::throw_exception_from_error(HERE, this->m_platform_api->get_last_error());
-	}
-	
-	// [FOUND] Return all components
-	return Account{
-		{&sid[0], &sid[sid_len]}, 
-		{name.begin(), name.end()}, 
-		{&domain[0], &domain[domain_len]}
-	};
+	// Lookup account name
+	if (::LookupAccountSidW(origin, sid, name.Buffer, &name.Length, domain.Buffer, &domain.Length, &usage)) 
+		// [FOUND] Return matching account
+		return Account{
+			.Domain = domain.wstr(),
+			.Name = name.wstr(),
+			.Sid = {std::from_range, account}
+		};
+	else if (win::LastError err; err == win::LResult{ERROR_NONE_MAPPED})
+		// [NOT-FOUND] Account does not exist
+		return nullopt;
+	else
+		// [FAILED]
+		err.throwAlways("LookupAccountName() failed");
 }
-
+// ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ //
+#if 0
 // ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ //
 std::vector<std::byte>
 SecurityApi::make_descriptor() const

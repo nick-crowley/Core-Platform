@@ -42,6 +42,12 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::security 
 {
+	struct Account {
+		std::wstring            Domain;
+		std::wstring            Name;
+		std::vector<std::byte>  Sid;
+	};
+
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 	* @brief	Implements the high-level Security API
 	* 
@@ -54,6 +60,7 @@ namespace core::security
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 	private:
 		//using HandleOrPath = std::variant<filesystem::FilePath, filesystem::FileHandle, registry::RegistryHandle>;
+		using ConstByteSpan = std::span<std::byte const>;
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 	
@@ -162,21 +169,37 @@ namespace core::security
 		[[nodiscard]]
 		std::vector<std::byte>
 		get_path_security(filesystem::FilePath file, Information components) const;
-	
+#endif
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
-		* @brief		Implements ISecurityApi::lookup_account()
+		* @brief		Retrieves an account from its account name
+		*
+		* @param[in]	account		Account name
+		* @param[in]	system		[optional] Hostname of system upon which search should begin
+		*
+		* @returns		[optional] Account, if exists
+		*
+		* @throws		std::invalid_argument	Missing argument
+		* @throws		std::system_error		Operation failed
 		*/
 		std::optional<Account>
-		lookup_account(std::span<std::byte const>       sid,
-					   std::optional<std::wstring_view> system) const;
-	
+		lookupAccount(std::wstring_view                account,
+		              std::optional<std::wstring_view> system) const;
+		
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
-		* @brief		Implements ISecurityApi::lookup_account()
+		* @brief		Retrieves an account from its security identifier
+		*
+		* @param[in]	account		Account security identifier
+		* @param[in]	system		[optional] Hostname of system upon which search should begin
+		*
+		* @returns		[optional] Account, if exists
+		*
+		* @throws		std::invalid_argument	Missing argument
+		* @throws		std::system_error		Operation failed
 		*/
 		std::optional<Account>
-		lookup_account(std::wstring_view                account,
-					   std::optional<std::wstring_view> system) const;
-	
+		lookupAccount(ConstByteSpan                    account,
+		              std::optional<std::wstring_view> system) const;
+#if 0	
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 		* @brief		Implements ISecurityApi::make_descriptor()
 		*/
