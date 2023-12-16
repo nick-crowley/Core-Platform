@@ -126,7 +126,12 @@ namespace core::win
 		template <typename... Params>
 		[[noreturn]] void 
 		throwIfError(std::wstring_view, Params&&...) const = delete;
-
+		
+		std::wstring
+		wstr() const {
+			return cwiden(this->str());
+		}
+		
 		constexpr explicit 
 		operator bool() const noexcept {
 			return this->Value == ERROR_SUCCESS;
