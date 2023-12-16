@@ -109,6 +109,9 @@ namespace core
 		}
 		
 		void
+		createLogFile(std::string_view fileName);
+		
+		void
 		indent() {
 			++LogStream::currentDepth();
 		}

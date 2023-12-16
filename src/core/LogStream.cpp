@@ -25,7 +25,16 @@
 */
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "core/LogStream.h"
+#include "core/LogFile.h"
 using namespace core;
 
 LogStream constinit
 PlatformExport core::clog;
+
+void
+LogStream::createLogFile(std::string_view fileName) {
+	LogFile
+	static logfile{fileName};
+
+	this->attach(logfile);
+}
