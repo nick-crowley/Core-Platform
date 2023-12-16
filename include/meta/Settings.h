@@ -54,6 +54,13 @@ namespace core::meta
 	template <auto Name, typename... Params>
 	DataType_t<Name> constexpr
 	inline Settings = {};
+	
+	// Define type of well-known tags
+	template <>
+	struct DataType<program_name> : std::type_identity<std::string_view> {};
+
+	template <>
+	struct DataType<program_version> : std::type_identity<std::string_view> {};
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
