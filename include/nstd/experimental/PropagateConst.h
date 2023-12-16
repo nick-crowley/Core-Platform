@@ -168,6 +168,9 @@ class propagate_const {
 
   PROPAGATE_CONST_CONSTEXPR const element_type* get() const { return get_pointer(t_); }
 
+  // [Custom Addition] Add operator[] for pointer types
+  PROPAGATE_CONST_CONSTEXPR element_type const& operator[](size_t idx) const { return this->get()[idx]; }
+
   // [propagate_const.non_const_observers], non-const observers
   PROPAGATE_CONST_CONSTEXPR element_type* operator->() { return get(); }
 
@@ -182,6 +185,9 @@ class propagate_const {
 
   PROPAGATE_CONST_CONSTEXPR element_type* get() { return get_pointer(t_); }
   
+  // [Custom Addition] Add operator[] for pointer types
+  PROPAGATE_CONST_CONSTEXPR element_type& operator[](size_t idx) { return this->get()[idx]; }
+
   // [propagate_const.modifiers], modifiers
   PROPAGATE_CONST_CONSTEXPR void swap(propagate_const& pt) noexcept(
       noexcept(swap(declval<T&>(), declval<T&>()))) {

@@ -44,6 +44,16 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::security
 {
+	enum class Integrity {
+		Untrusted,
+		Low,
+		Medium,
+		MediumPlus,
+		High,
+		System,
+		Protected,
+	};
+
 	class Token 
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -58,7 +68,7 @@ namespace core::security
 		
 		auto const 
 		inline static makeLuidAttribute = [](TokenPrivilege const& in) -> ::LUID_AND_ATTRIBUTES {
-			return {in.LocalId, std::to_underlying(in.Flags)};
+			return {in.LocalId, in.Flags.value()};
 		};
 
 		auto const
@@ -100,6 +110,28 @@ namespace core::security
 		win::SharedToken 
 		handle() const {
 			return this->token;
+		}
+
+		Integrity
+		integrity() const {
+			auto const data = boost::reinterpret_pointer_cast<::TOKEN_MANDATORY_LABEL>(
+				this->api->tokenInformation(this->token, TokenProperty::IntegrityLevel)
+			);
+			ConstSidWrapper const sid{static_cast<::SID const*>(data->Label.Sid)};
+            if (DWORD level = sid.SubAuthority[sid.SubAuthorityCount - 1]; level < SECURITY_MANDATORY_LOW_RID)
+				return Integrity::Untrusted;
+			else if (level >= SECURITY_MANDATORY_LOW_RID && level < SECURITY_MANDATORY_MEDIUM_RID)
+				return Integrity::Low;
+            else if (level >= SECURITY_MANDATORY_MEDIUM_RID && level < SECURITY_MANDATORY_MEDIUM_PLUS_RID)
+				return Integrity::Medium;
+            else if (level >= SECURITY_MANDATORY_MEDIUM_PLUS_RID && level < SECURITY_MANDATORY_HIGH_RID)
+				return Integrity::MediumPlus;
+            else if (level >= SECURITY_MANDATORY_HIGH_RID && level < SECURITY_MANDATORY_SYSTEM_RID)
+				return Integrity::High;
+            else if (level >= SECURITY_MANDATORY_SYSTEM_RID && level < SECURITY_MANDATORY_PROTECTED_PROCESS_RID)
+				return Integrity::System;
+			else 
+				return Integrity::Protected;
 		}
 
 		bool
