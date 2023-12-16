@@ -103,8 +103,7 @@ namespace core
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void
-		attach(std::ostream& out)
-		{
+		attach(std::ostream& out) {
 			if (out)
 				this->outputStream = &out;
 		}
@@ -117,6 +116,12 @@ namespace core
 		void
 		outdent() {
 			--LogStream::currentDepth();
+		}
+		
+		LogStream&
+		operator+=(std::ostream& out) {
+			this->attach(out);
+			return *this;
 		}
 		
 		template <Severity Level>
