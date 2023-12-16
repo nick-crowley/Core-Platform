@@ -57,6 +57,9 @@ namespace core::meta
 	
 	// Define type of well-known tags
 	template <>
+	struct DataType<program_hive> : std::type_identity<std::wstring_view> {};
+
+	template <>
 	struct DataType<program_name> : std::type_identity<std::string_view> {};
 
 	template <>
