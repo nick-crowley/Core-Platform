@@ -47,8 +47,8 @@ namespace core::security
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		::LUID         LocalId;
-		PrivilegeFlag  Flags;
+		::LUID                       LocalId;
+		nstd::bitset<PrivilegeFlag>  Flags;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		TokenPrivilege(::LUID id, PrivilegeFlag f) : LocalId{id}, Flags{f}
@@ -81,6 +81,11 @@ namespace core::security
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		bool 
+		enabled() const {
+			return this->Flags.test(security::PrivilegeFlag::Enabled|security::PrivilegeFlag::EnabledByDefault);
+		}
+
 		std::string
 		str() const {
 			char name[64] {};	// Longest is 42-chars (@c SeDelegateSessionUserImpersonate...)
