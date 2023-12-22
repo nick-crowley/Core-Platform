@@ -44,7 +44,7 @@ namespace core::security
 	class TokenPrivilege
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
+		using type = TokenPrivilege;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		::LUID                       LocalId;
@@ -74,8 +74,7 @@ namespace core::security
 			NotDefaultConstructible,
 			IsCopyable,
 			IsMovable,
-			IsEqualityComparable,
-			NotSortable
+			IsEqualityComparable
 		);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
@@ -92,6 +91,14 @@ namespace core::security
 			::DWORD capacity = lengthof(name);
 			::LookupPrivilegeNameA(nullptr, const_cast<::LUID*>(&this->LocalId), name, &capacity);
 			return {name, name+capacity};
+		}
+
+		std::strong_ordering
+		operator<=>(type const& r) const {
+			if (auto const lhs = this->enabled(), rhs = r.enabled(); lhs != rhs)
+				return lhs ? std::strong_ordering::less : std::strong_ordering::greater;
+			else 
+				return this->str() <=> r.str();
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};
