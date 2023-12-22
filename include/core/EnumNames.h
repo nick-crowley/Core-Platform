@@ -204,6 +204,14 @@ namespace core
 		EnumName<E>{enumerator_name_v<Values>, Values}...
 	};	
 	
+
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief	Query number of enumerators possessed by an enumeration type
+	*/
+	template <nstd::Enumeration E>
+	size_t constexpr
+	enumerator_count_v = enumerator_dictionary_v<E>.size();
+	
 	
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 	* @brief	Retrieve enumerator string-representation at run-time
@@ -222,7 +230,6 @@ namespace core
 
 		return {};
 	}
-
 	
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 	* @brief	Query whether a value is a valid enumerator at run-time
@@ -316,7 +323,15 @@ namespace core::testing
 		nstd::enum_sequence<E2,E2::Zero,E2::One,E2::Two,E2::Six,E2::Twenty,
 			E2::v2_6,E2::v2_7,E2::v2_8,E2::v2_9,E2::v2_10,E2::v2_28,E2::v2_29,E2::v2_30,E2::v2_31>
 	>);
+	
+	//! @test	Verify @c core::enumerator_count_v is defined for an enumeration type
+	static_assert(enumerator_count_v<N1::E1> != 0);
 
+	//! @test	Verify @c core::enumerator_count_v correctly counts a single enumerator
+	static_assert(enumerator_count_v<N1::E1> == 1);
+	
+	//! @test	Verify @c core::enumerator_count_v correctly counts all enumerators
+	static_assert(enumerator_count_v<E2> == 14);
 	
 	enum class SignedEnum : int32_t { 
 		Zero,
