@@ -160,6 +160,16 @@ namespace core::security
 			return *data;
 		}
 
+		std::string
+		source() const {
+			auto const  static nonNull = [](char const& c) { return c != '\0'; };
+
+			auto const data = boost::reinterpret_pointer_cast<::TOKEN_SOURCE>(
+				this->api->tokenInformation(this->token, TokenProperty::Source)
+			);
+			return {std::from_range, data->SourceName | views::take_while(nonNull)};
+		}
+
 		Identifier
 		user() const {
 			auto const data = boost::reinterpret_pointer_cast<::SID_AND_ATTRIBUTES>(
