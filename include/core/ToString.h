@@ -212,6 +212,21 @@ namespace core
         return to_string(std::forward<T>(v));
     }
 }
+namespace std 
+{
+	template <nstd::Enumeration E>
+	struct formatter<E> {
+		auto constexpr
+		parse(format_parse_context& ctx) {
+            return ranges::find(ctx, '}');
+        }
+
+		auto 
+		format(E const& value, format_context& ctx) const {
+			return format_to(ctx.out(), "{}", core::to_string(value));
+		}
+	};
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::testing
 {
