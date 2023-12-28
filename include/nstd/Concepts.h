@@ -92,6 +92,10 @@ namespace nstd
 		static_cast<To>(f);
 	};
 	
+	//! @brief	Verify type is float, double, or long double
+	template <typename T>
+	concept FloatingPoint = std::floating_point<T>;
+
 	template <typename F>
 	concept Function = std::is_function_v<F>;
 
