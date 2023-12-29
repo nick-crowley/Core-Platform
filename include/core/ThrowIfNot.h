@@ -58,7 +58,7 @@
 namespace core::detail
 {
 	template <typename T>
-	decltype(auto)
+	decltype(auto) constexpr
 	ThrowIfImpl(T&& arg, bool const expr, gsl::czstring argName, gsl::czstring invariant, std::source_location loc = std::source_location::current())
 	{
 		if (expr)
@@ -68,7 +68,7 @@ namespace core::detail
 	}
 	
 	template <typename T>
-	decltype(auto)
+	decltype(auto) constexpr
 	ThrowIfNotImpl(T&& arg, bool const expr, gsl::czstring argName, gsl::czstring invariant, std::source_location loc = std::source_location::current())
 	{
 		if (!expr)
