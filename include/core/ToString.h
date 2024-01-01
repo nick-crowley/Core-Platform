@@ -214,16 +214,21 @@ namespace core
 }
 namespace std 
 {
-	template <nstd::Enumeration E>
-	struct formatter<E> {
+	template <nstd::Enumeration E, nstd::AnyOf<char,wchar_t> Char>
+	struct formatter<E,Char> {
 		auto constexpr
-		parse(format_parse_context& ctx) {
+		parse(basic_format_parse_context<Char>& ctx) {
             return ranges::find(ctx, '}');
         }
 
 		auto 
-		format(E const& value, format_context& ctx) const {
+		format(E const& value, format_context& ctx) const requires std::same_as<Char,char> {
 			return format_to(ctx.out(), "{}", core::to_string(value));
+		}
+        
+		auto 
+		format(E const& value, wformat_context& ctx) const requires std::same_as<Char,wchar_t> {
+			return format_to(ctx.out(), L"{}", core::cwiden(core::to_string(value)));
 		}
 	};
 }
