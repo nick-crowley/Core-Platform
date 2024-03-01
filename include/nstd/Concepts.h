@@ -98,6 +98,10 @@ namespace nstd
 
 	template <typename F>
 	concept Function = std::is_function_v<F>;
+	
+	//! @brief  Verify dereferenced type is convertible to @c U
+	template <typename T, typename U>
+	concept IndirectlyConvertibleTo = std::is_convertible_v<decltype(*std::declval<T>()), U>;
 
 	//! @brief	Verify type is non-bool, non-character, integral type (signed or unsigned)
 	template <typename T>
