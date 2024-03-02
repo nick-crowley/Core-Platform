@@ -56,6 +56,7 @@
 #include "nstd/experimental/finally.h"
 #include "nstd/TypeTraits.h"
 #include "nstd/Concepts.h"
+#include "nstd/Algorithm.h"
 #include "nstd/Bitset.h"
 #include "nstd/FormatString.h"
 #include "nstd/Functional.h"

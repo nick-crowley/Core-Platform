@@ -26,10 +26,8 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Preprocessor Directives o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #pragma once
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "library/core.platform.h"
-#include "security/PrivilegeFlag.h"
-#include "security/PrivilegeName.h"
-#include "win/Function.h"
+#include "library/core.Platform.h"
+#include "win/RegistryKey.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -39,60 +37,41 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-namespace core::security
+namespace core::win
 {
-	class TokenPrivilege
+	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
+	* @brief	Registry key containing application settings
+	*/
+	class AppRegistryKey : public RegistryKey
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
+	private:
+		using base = RegistryKey;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		::LUID                       LocalId;
-		nstd::bitset<PrivilegeFlag>  Flags;
+		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		TokenPrivilege(::LUID id, PrivilegeFlag f) : LocalId{id}, Flags{f}
+		//! @brief	Open existing key (identified by traits)
+		AppRegistryKey(KeyRight rights, SharedRegistryApi api = registryApi())
+			: base{CurrentUser, meta::Settings<program_hive>, rights, api}
 		{}
 
-		TokenPrivilege(gsl::cwzstring name, PrivilegeFlag f) 
-		  : LocalId{win::function<1>(::LookupPrivilegeValueW)(nullptr, ThrowIfEmpty(name))}, 
-			Flags{f}
+		//! @brief	Create new key (identified by traits)
+		AppRegistryKey(meta::create_new_t, KeyRight rights, SharedRegistryApi api = registryApi())
+			: base{create_new, CurrentUser, meta::Settings<program_hive>, rights, api}
 		{}
-		
-		TokenPrivilege(PrivilegeName name, PrivilegeFlag f)
-		  : LocalId{
-				win::function<1>(::LookupPrivilegeValueA)(
-					nullptr, ("Se" + as_string(ThrowIfUndefined(name)) + "Privilege").c_str()
-				)
-			},
-			Flags{f}
-		{}
-
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		satisfies(TokenPrivilege,
-			NotDefaultConstructible,
+		satisfies(AppRegistryKey,
 			IsCopyable,
 			IsMovable,
-			IsEqualityComparable,
+			NotEqualityComparable,
 			NotSortable
 		);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
+	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		bool 
-		enabled() const {
-			return this->Flags.test(security::PrivilegeFlag::Enabled|security::PrivilegeFlag::EnabledByDefault);
-		}
-
-		std::string
-		str() const {
-			char name[64] {};	// Longest is 42-chars (@c SeDelegateSessionUserImpersonate...)
-			::DWORD capacity = lengthof(name);
-			::LookupPrivilegeNameA(nullptr, const_cast<::LUID*>(&this->LocalId), name, &capacity);
-			return {name, name+capacity};
-		}
+	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};
 }

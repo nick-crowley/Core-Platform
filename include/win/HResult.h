@@ -104,6 +104,11 @@ namespace core::win
 				                   std::vformat(msg,std::make_format_args(args...))};
 		}
 		
+		std::wstring
+		wstr() const {
+			return cwiden(this->str());
+		}
+		
 		constexpr explicit 
 		operator bool() const noexcept {
 			return SUCCEEDED(this->Value);

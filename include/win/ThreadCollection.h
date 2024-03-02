@@ -70,7 +70,7 @@ namespace core::win
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		nstd::stop_token
-		getStopToken() const {
+		stopToken() const {
 			return this->IsCancelled;
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -80,13 +80,13 @@ namespace core::win
 			this->IsCancelled.signal();
 		}
 
-		void
+		bool
 		waitForAll(chrono::milliseconds timeout)
 		{	
 			auto constexpr 
 			static selectHandle = [](nstd::thread& t) { return t.native_handle(); };
 
-			win::waitForAll(this->Workers | views::transform(selectHandle), timeout);
+			return win::waitForAll(this->Workers | views::transform(selectHandle), timeout);
 		}
 
 		ThreadCollection& 

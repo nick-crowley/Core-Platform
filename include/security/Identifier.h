@@ -208,6 +208,12 @@ namespace core::security
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		//! @brief	Lookup matching account (if any)
+		std::optional<Account>
+		account() const {
+			return this->m_api->lookupAccount(this->bytes(), nullopt);
+		}
+	
 		//! @brief	Retrieve binary representation
 		std::span<std::byte const>
 		bytes() const {

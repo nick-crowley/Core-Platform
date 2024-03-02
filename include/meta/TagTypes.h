@@ -70,6 +70,9 @@ namespace core::meta
 	struct open_existing_t {} constexpr 
 	inline open_existing;
 	
+	struct program_hive_t {} constexpr 
+	inline program_hive;
+
 	struct program_name_t {} constexpr 
 	inline program_name;
 	
@@ -130,6 +133,9 @@ namespace core
 
 	auto constexpr 
 	inline open_existing = meta::open_existing;
+	
+	auto constexpr 
+	inline program_hive = meta::program_hive;
 	
 	auto constexpr 
 	inline program_name = meta::program_name;

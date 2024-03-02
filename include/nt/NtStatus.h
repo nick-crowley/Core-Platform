@@ -60,7 +60,12 @@ namespace core::nt
 										std::system_category(),
 										std::vformat(msg,std::make_format_args(args...)) + ". " + this->str()};
 		}
-
+		
+		std::wstring
+		wstr() const {
+			return cwiden(this->str());
+		}
+		
 		explicit
 		operator bool() const {
 			return this->m_value >= 0;

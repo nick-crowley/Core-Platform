@@ -56,6 +56,7 @@
 #include <new>
 #include <numeric>
 #include <optional>
+#include <random>
 #include <ranges>
 #include <regex>
 #if defined(__clang__) && !defined(__cpp_consteval)

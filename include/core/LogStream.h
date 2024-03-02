@@ -45,14 +45,7 @@ namespace core
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-namespace core::meta 
-{	
-	template <>
-	struct DataType<program_name> : std::type_identity<std::string_view> {};
 
-	template <>
-	struct DataType<program_version> : std::type_identity<std::string_view> {};
-}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core
 {
@@ -103,11 +96,13 @@ namespace core
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void
-		attach(std::ostream& out)
-		{
+		attach(std::ostream& out) {
 			if (out)
 				this->outputStream = &out;
 		}
+		
+		void
+		createLogFile(std::string_view fileName);
 		
 		void
 		indent() {
@@ -117,6 +112,12 @@ namespace core
 		void
 		outdent() {
 			--LogStream::currentDepth();
+		}
+		
+		LogStream&
+		operator+=(std::ostream& out) {
+			this->attach(out);
+			return *this;
 		}
 		
 		template <Severity Level>

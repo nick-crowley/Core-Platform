@@ -25,11 +25,11 @@
 */
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Preprocessor Directives o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #pragma once
+#ifndef CorePlatform_h_included
+#	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
+#endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "library/core.platform.h"
-#include "security/PrivilegeFlag.h"
-#include "security/PrivilegeName.h"
-#include "win/Function.h"
+#include "nstd/Concepts.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -39,63 +39,15 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-namespace core::security
+namespace nstd 
 {
-	class TokenPrivilege
-	{
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	template <typename Value, nstd::InputRangeConvertibleTo<Value> R>
+	bool 
+	contains(R&& input, Value const& v) {
+		return ranges::find(input, v) != ranges::end(input);
+	}
 
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		::LUID                       LocalId;
-		nstd::bitset<PrivilegeFlag>  Flags;
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		TokenPrivilege(::LUID id, PrivilegeFlag f) : LocalId{id}, Flags{f}
-		{}
-
-		TokenPrivilege(gsl::cwzstring name, PrivilegeFlag f) 
-		  : LocalId{win::function<1>(::LookupPrivilegeValueW)(nullptr, ThrowIfEmpty(name))}, 
-			Flags{f}
-		{}
-		
-		TokenPrivilege(PrivilegeName name, PrivilegeFlag f)
-		  : LocalId{
-				win::function<1>(::LookupPrivilegeValueA)(
-					nullptr, ("Se" + as_string(ThrowIfUndefined(name)) + "Privilege").c_str()
-				)
-			},
-			Flags{f}
-		{}
-
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		satisfies(TokenPrivilege,
-			NotDefaultConstructible,
-			IsCopyable,
-			IsMovable,
-			IsEqualityComparable,
-			NotSortable
-		);
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		bool 
-		enabled() const {
-			return this->Flags.test(security::PrivilegeFlag::Enabled|security::PrivilegeFlag::EnabledByDefault);
-		}
-
-		std::string
-		str() const {
-			char name[64] {};	// Longest is 42-chars (@c SeDelegateSessionUserImpersonate...)
-			::DWORD capacity = lengthof(name);
-			::LookupPrivilegeNameA(nullptr, const_cast<::LUID*>(&this->LocalId), name, &capacity);
-			return {name, name+capacity};
-		}
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	};
-}
+}      // namespace nstd
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
