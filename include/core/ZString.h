@@ -52,14 +52,14 @@ namespace core
 
 	public:
 		implicit constexpr
-		ZString(char_t const* str)
+		ZString(char_t const* str) noexcept
 		  : Text{str}, 
 		    Length{ZString::measure(str)}
 		{}
 
 	public:
 		size_t constexpr
-		static measure(char_t const* str) {
+		static measure(char_t const* str) noexcept {
 			if (!str)
 				return 0;
 
@@ -71,7 +71,7 @@ namespace core
 
 	public:
 		implicit constexpr
-		operator std::basic_string_view<char_t>() const {
+		operator std::basic_string_view<char_t>() const noexcept {
 			return {this->Text, this->Text+this->Length};
 		}
 	};
