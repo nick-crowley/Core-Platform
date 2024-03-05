@@ -62,6 +62,7 @@ namespace core
 
 	using invalid_argument = exception<std::invalid_argument>;
 	using logic_error = exception<std::logic_error>;
+	using range_error = exception<std::range_error>;
 	using runtime_error = exception<std::runtime_error>;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
