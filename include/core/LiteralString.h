@@ -92,8 +92,7 @@ namespace core
 		satisfies(LiteralString,
 			constexpr NotDefaultConstructible,
 			constexpr IsMovable noexcept,
-			constexpr IsDestructible noexcept,
-			constexpr IsEqualityComparable noexcept
+			constexpr IsDestructible noexcept
 		);
 	
 	private:
@@ -192,6 +191,26 @@ namespace core
 		constexpr implicit
 		operator std::basic_string_view<other_char_t>() const noexcept = delete;
 		
+		template <size_t N>
+		bool constexpr
+		operator==(LiteralString<Character,N> const& r) const noexcept {
+			return std::equal(this->begin(), this->end(), r.begin(), r.end());
+		}
+		
+		bool constexpr
+		operator==(std::basic_string_view<Character> sv) const noexcept {
+			return std::equal(this->begin(), this->end(), sv.begin(), sv.end());
+		}
+		
+		bool constexpr
+		operator==(gsl::basic_zstring<Character const> zs) const noexcept {
+			return *this == std::basic_string_view<Character>{zs};
+		}
+
+		template <size_t N>
+		bool constexpr
+		operator==(LiteralString<other_char_t,N> const& r) const noexcept = delete;
+
 	public:
 		void constexpr
 		swap(type& r) noexcept
@@ -250,8 +269,44 @@ namespace std
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::testing {
-	//! @test  Verify @c core::LiteralString addition and equality operators are correct
+	//! @test  Verify equality between @c core::LiteralString of same character type and equal length
+	static_assert(LiteralString{"abc"} == LiteralString{"abc"});
+	static_assert(!(LiteralString{"abc"} == LiteralString{"cba"}));
+	static_assert(LiteralString{"abc"} != LiteralString{"cba"});
+	static_assert(!(LiteralString{"abc"} != LiteralString{"abc"}));
+
+	//! @test  Verify equality between @c core::LiteralString of same character type and different length
+	static_assert(!(LiteralString{"abc"} == LiteralString{""}));
+	static_assert(!(LiteralString{""} == LiteralString{"abc"}));
+	static_assert(LiteralString{""} != LiteralString{"cba"});
+	static_assert(LiteralString{"abc"} != LiteralString{""});
+
+	//! @test  Verify equality between @c core::LiteralString and @c std::basic_string_view
+	static_assert(LiteralString{"abc"} == std::string_view{"abc"});
+	static_assert(LiteralString{"abc"} != std::string_view{"cba"});
+	static_assert(std::string_view{"abc"} == LiteralString{"abc"});
+	static_assert(std::string_view{"cba"} != LiteralString{"abc"});
+
+	//! @test  Verify equality between @c core::LiteralString and @c gsl::zstring
+	static_assert(LiteralString{"abc"} == "abc");
+	static_assert(LiteralString{"abc"} != "cba");
+	static_assert("abc" == LiteralString{"abc"});
+	static_assert("cba" != LiteralString{"abc"});
+
+	//! @test  Verify two empty @c core::LiteralString compare equal
+	static_assert(LiteralString{""} == LiteralString{""});
+
+	//! @test  Verify @c core::LiteralString equality is case sensitive
+	static_assert(LiteralString{"abc"} != LiteralString{"ABC"});
+
+	//! @test  Verify @c core::LiteralString string-concatentation
 	static_assert(LiteralString{"abc"} + LiteralString{"def"} == LiteralString{"abcdef"});
+	
+	//! @test  Verify @c core::LiteralString character-concatentation
+	static_assert(LiteralString{"abc"} + 'd' == LiteralString{"abcd"});
+	
+	//! @test  Verify @c core::LiteralString wide-character conversion
+	static_assert(LiteralString{"abc"}.wstr() == L"abc");
 	
 	//! @test  Verify @c core::LiteralString::size() returns 0 for empty strings
 	static_assert(LiteralString{""}.size() == 0);
