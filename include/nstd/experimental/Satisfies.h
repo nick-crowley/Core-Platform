@@ -95,6 +95,7 @@ namespace nstd
 // Custom concepts
 #define IsInterface                 protected: IsDefaultConstructible noexcept,                    \
 									public: IsPolymorphic
+#define GoogleMockObject            NotCopyable, NotMovable
 
 //! @brief	Expand 4-tuple: {prefix, class-name, postfix, enabled} with concept-name 'prefix concept(class-name) postfix enabled'
 #define _expandConceptDeclaration(r,state,conceptDecl)      \
