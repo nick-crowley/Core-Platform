@@ -135,7 +135,11 @@ namespace core
 	        std::regex const 
 	        static undesiredKeyword{R"((enum|struct|class|union) )"};
 	
-            return std::regex_replace(in, undesiredKeyword, "", match_not_null);
+            std::regex const 
+	        static undesiredQualifiers{R"(core::(com::|forms::|meta::|win::|data::)?(detail::|testing::)?)"};
+
+            auto tmp = std::regex_replace(in, undesiredKeyword, "", match_not_null);
+            return std::regex_replace(tmp, undesiredQualifiers, "", match_not_null);
         }
         // o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
