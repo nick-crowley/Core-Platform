@@ -253,6 +253,9 @@ namespace core::testing {
 	//! @test  Verify @c core::LiteralString addition and equality operators are correct
 	static_assert(LiteralString{"abc"} + LiteralString{"def"} == LiteralString{"abcdef"});
 	
+	//! @test  Verify @c core::LiteralString::size() returns 0 for empty strings
+	static_assert(LiteralString{""}.size() == 0);
+
 	//! @test  Verify @c core::LiteralString::size() returns length in characters
 	static_assert(LiteralString{"abc"}.size() == 3);
 
