@@ -218,6 +218,32 @@ namespace core
 		}
 	}
 }
+
+namespace std 
+{
+	template <size_t N, nstd::AnyOf<char,wchar_t> Char>
+	struct formatter<core::LiteralString<Char,N>, Char> {
+
+		auto constexpr
+		parse(basic_format_parse_context<Char>& ctx) {
+            return ranges::find(ctx, '}');
+        }
+
+		auto 
+		format(core::LiteralString<Char,N> const& value, format_context& ctx) const 
+			requires std::same_as<Char,char>
+		{
+			return format_to(ctx.out(), "{}", static_cast<string_view>(value));
+		}
+        
+		auto 
+		format(core::LiteralString<Char,N> const& value, wformat_context& ctx) const 
+			requires std::same_as<Char,wchar_t>
+		{
+			return format_to(ctx.out(), L"{}", static_cast<wstring_view>(value));
+		}
+	};
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -239,5 +265,9 @@ namespace core::testing {
 	//! @test  Verify @c core::operator""_str() produces a valid @c core::LiteralString
 	using namespace core::string_literals;
 	static_assert(LiteralString{L"abc"} == L"abc"_str);
+	
+	//! @test  Verify @c std::format() supports @c core::LiteralString
+	static_assert(requires { std::format("{}", LiteralString{"abc"}); });
+	static_assert(requires { std::format(L"{}", LiteralString{L"abc"}); });
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
