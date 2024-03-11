@@ -229,20 +229,6 @@ namespace core
 	//! @brief	Deduce from character-array if possible but permit construction from char-pointer
 	template <nstd::Character Character, size_t N>
 	LiteralString(Character const (&)[N]) -> LiteralString<Character,N>;
-
-	inline namespace literals
-	{
-		inline namespace string_literals
-		{
-			//! @brief	Produce literal string
-			template <ZString Buffer>
-			auto constexpr
-			operator ""_str()
-			{
-				return LiteralString<decltype(Buffer)::char_t, Buffer.Length+1>{Buffer.Text};
-			}
-		}
-	}
 }
 
 namespace std 
@@ -273,7 +259,22 @@ namespace std
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
+namespace core
+{
+	inline namespace literals
+	{
+		inline namespace string_literals
+		{
+			//! @brief	Produce literal string
+			template <ZString Buffer>
+			auto constexpr
+			operator ""_str()
+			{
+				return LiteralString<decltype(Buffer)::char_t, Buffer.Length+1>{Buffer.Text};
+			}
+		}
+	}
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::testing {
 	//! @test  Verify equality between @c core::LiteralString of same character type and equal length
