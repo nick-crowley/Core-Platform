@@ -228,11 +228,11 @@ namespace core
 		inline namespace string_literals
 		{
 			//! @brief	Produce literal string
-			template <ZString<wchar_t> Buffer>
+			template <ZString Buffer>
 			auto constexpr
 			operator ""_str()
 			{
-				return LiteralString<wchar_t,Buffer.Length+1>{Buffer.Text};
+				return LiteralString<decltype(Buffer)::char_t, Buffer.Length+1>{Buffer.Text};
 			}
 		}
 	}
@@ -322,6 +322,7 @@ namespace core::testing {
 	
 	//! @test  Verify @c core::operator""_str() produces a valid @c core::LiteralString
 	using namespace core::string_literals;
+	static_assert(LiteralString{"def"} == "def"_str);
 	static_assert(LiteralString{L"abc"} == L"abc"_str);
 	
 	//! @test  Verify @c std::format() supports @c core::LiteralString

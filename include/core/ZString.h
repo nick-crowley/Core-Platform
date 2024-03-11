@@ -44,6 +44,7 @@ namespace core
 	template <nstd::Character Character>
 	class ZString
 	{
+	public:
 		using char_t = Character;
 
 	public:
