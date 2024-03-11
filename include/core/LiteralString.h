@@ -51,6 +51,8 @@ namespace core
 		template <nstd::Character, size_t>
 		friend class LiteralString;
 
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	private:
 		using type = LiteralString<Character,Capacity>;
 		using char_t = Character;
 		using other_char_t = std::conditional_t<std::is_same_v<char_t,char>, wchar_t, char>;
@@ -66,9 +68,10 @@ namespace core
 		using size_type = size_t;
 		using value_type = Character;
 	
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		Character m_text[Capacity];
-
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		constexpr
 		LiteralString(Character const *str) noexcept 
@@ -88,7 +91,8 @@ namespace core
 			type{r}.swap(*this);
 			return *this;
 		}
-
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
 		satisfies(LiteralString,
 			constexpr NotDefaultConstructible,
 			constexpr IsMovable noexcept,
@@ -130,7 +134,9 @@ namespace core
 		  : m_text{lhs[Idx1]..., rhs[Idx2]..., '\0'}
 		{
 		}
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		const_iterator constexpr 
 		begin() const noexcept
@@ -210,7 +216,8 @@ namespace core
 		template <size_t N>
 		bool constexpr
 		operator==(LiteralString<other_char_t,N> const& r) const noexcept = delete;
-
+		
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void constexpr
 		swap(type& r) noexcept
