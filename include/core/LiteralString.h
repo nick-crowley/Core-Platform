@@ -70,7 +70,7 @@ namespace core
 	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		Character m_text[Capacity];
+		Character Text[Capacity];
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		constexpr
@@ -81,7 +81,7 @@ namespace core
 	
 		constexpr
 		LiteralString(type const& r) noexcept 
-		  : LiteralString{r.m_text, std::make_index_sequence<Capacity-1>{}}
+		  : LiteralString{r.Text, std::make_index_sequence<Capacity-1>{}}
 		{
 		}
 
@@ -117,21 +117,21 @@ namespace core
 		template <size_type... Idx>
 		constexpr
 		LiteralString(Character const *str, std::index_sequence<Idx...>) noexcept 
-		  : m_text{str[Idx]..., '\0'}
+		  : Text{str[Idx]..., '\0'}
 		{
 		}
 	
 		template <size_type... Idx>
 		constexpr
 		LiteralString(Character const *str, Character const c, std::index_sequence<Idx...>) noexcept 
-		  : m_text{str[Idx]..., c, '\0'}
+		  : Text{str[Idx]..., c, '\0'}
 		{
 		}
 	
 		template <size_type... Idx1, size_type... Idx2>
 		constexpr
 		LiteralString(Character const *lhs, std::index_sequence<Idx1...>, Character const *rhs, std::index_sequence<Idx2...>) noexcept 
-		  : m_text{lhs[Idx1]..., rhs[Idx2]..., '\0'}
+		  : Text{lhs[Idx1]..., rhs[Idx2]..., '\0'}
 		{
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -141,25 +141,25 @@ namespace core
 		const_iterator constexpr 
 		begin() const noexcept
 		{
-			return std::begin(this->m_text);
+			return std::begin(this->Text);
 		}
 
 		const_iterator constexpr 
 		end() const noexcept
 		{
-			return std::prev(std::end(this->m_text));
+			return std::prev(std::end(this->Text));
 		}
 
 		const_pointer constexpr 
 		c_str() const noexcept
 		{
-			return std::begin(this->m_text);
+			return std::begin(this->Text);
 		}
 
 		const_pointer constexpr 
 		data() const noexcept
 		{
-			return std::begin(this->m_text);
+			return std::begin(this->Text);
 		}
 
 		LiteralString<wchar_t,Capacity> constexpr
@@ -179,13 +179,13 @@ namespace core
 		auto constexpr
 		operator+(LiteralString<Character,N> const& r) const noexcept
 		{
-			return LiteralString<Character,Capacity+N-1>{this->m_text, r.m_text};
+			return LiteralString<Character,Capacity+N-1>{this->Text, r.Text};
 		}
 	
 		auto constexpr
 		operator+(Character const& c) const noexcept
 		{
-			return LiteralString<Character,Capacity+1>{this->m_text, c};
+			return LiteralString<Character,Capacity+1>{this->Text, c};
 		}
 
 		constexpr implicit
@@ -222,7 +222,7 @@ namespace core
 		void constexpr
 		swap(type& r) noexcept
 		{
-			std::swap(this->m_text, r.m_text);
+			std::swap(this->Text, r.Text);
 		}
 	};
 
