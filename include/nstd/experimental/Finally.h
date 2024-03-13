@@ -56,19 +56,19 @@ namespace nstd
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		std::function<void()> m_action;
+		std::function<void()> Action;
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		template <std::invocable<> Callable>
 		implicit 
-		FinalAction(Callable&& fx) : m_action{fx}
+		FinalAction(Callable&& fx) : Action{fx}
 		{
 			static_assert(std::is_nothrow_invocable_v<Callable>);
 		}
 
 		~FinalAction() noexcept {
-			this->m_action();
+			this->Action();
 		}
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
