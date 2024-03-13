@@ -50,17 +50,17 @@ namespace core::win
 		inline static npos;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		std::wstring_view  m_current;
-		std::wstring_view  m_source;
+		std::wstring_view  Current;
+		std::wstring_view  Source;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		ConstMultiStringIterator()
-		  : m_source{npos}
+		  : Source{npos}
 		{
 		}
 
 		ConstMultiStringIterator(std::wstring_view src)
-		  : m_source{src}
+		  : Source{src}
 		{
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -76,23 +76,23 @@ namespace core::win
 		bool 
 		equal(type const& other) const
 		{
-			return this->m_current == other.m_current;
+			return this->Current == other.Current;
 		}
 
 		std::wstring_view const& 
 		dereference() const 
 		{ 
-			return this->m_current; 
+			return this->Current; 
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		void
 		increment() 
 		{ 
-			if (this->m_current.front() == L'\0')
-				this->m_current = npos;
+			if (this->Current.front() == L'\0')
+				this->Current = npos;
 			else
-				this->m_current.remove_prefix(this->m_current.find(L'\0')+1);
+				this->Current.remove_prefix(this->Current.find(L'\0')+1);
 		}
 	};
 }
