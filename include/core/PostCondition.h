@@ -75,19 +75,19 @@ namespace nstd
 
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
-			std::function<void()> const m_action;
+			std::function<void()> const Action;
 			
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			template <std::invocable<> Callable>
 			implicit 
 			NormalExitSentry(Callable&& fx) 
-			  : m_action{fx}
+			  : Action{fx}
 			{}
 
 			~NormalExitSentry() noexcept(false) {
 				if (std::uncaught_exceptions() == 0)
-					this->m_action();
+					this->Action();
 			}
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
