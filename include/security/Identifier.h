@@ -149,8 +149,8 @@ namespace core::security
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		ByteBuffer        m_storage;      //!< Storage for var-length SID structure
-		SharedSecurityApi m_api;          //!< Security API implementation
+		ByteBuffer        Storage;      //!< Storage for var-length SID structure
+		SharedSecurityApi Api;          //!< Security API implementation
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:	
@@ -164,7 +164,7 @@ namespace core::security
 		*/
 		explicit
 		Identifier(std::span<std::byte const> bytes, SharedSecurityApi api = security_api())
-		  : m_storage{ThrowIfEmpty(bytes).begin(),bytes.end()}, m_api{ThrowIfEmpty(api)}
+		  : Storage{ThrowIfEmpty(bytes).begin(),bytes.end()}, Api{ThrowIfEmpty(api)}
 		{}
 	
 		/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
@@ -177,7 +177,7 @@ namespace core::security
 		*/
 		explicit
 		Identifier(std::vector<std::byte>&& bytes, SharedSecurityApi api = security_api())
-		  : m_storage{std::move(ThrowIfEmpty(bytes))}, m_api{ThrowIfEmpty(api)}
+		  : Storage{std::move(ThrowIfEmpty(bytes))}, Api{ThrowIfEmpty(api)}
 		{}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -211,37 +211,37 @@ namespace core::security
 		//! @brief	Lookup matching account (if any)
 		std::optional<Account>
 		account() const {
-			return this->m_api->lookupAccount(this->bytes(), nullopt);
+			return this->Api->lookupAccount(this->bytes(), nullopt);
 		}
 	
 		//! @brief	Retrieve binary representation
 		std::span<std::byte const>
 		bytes() const {
-			return this->m_storage;
+			return this->Storage;
 		}
 	
 		//! @brief	Compare identifier prefixes for equality
 		bool
 		equalPrefix(Identifier const& rhs) const {
-			return this->m_api->compareSidPrefix(this->bytes(), rhs.bytes());
+			return this->Api->compareSidPrefix(this->bytes(), rhs.bytes());
 		}
 
 		//! @brief	Generate string representation
 		std::wstring
 		wstr() const {
-			return this->m_api->sidToString(this->bytes());
+			return this->Api->sidToString(this->bytes());
 		}
 	
 		//! @brief	Identifier equality operator
 		bool
 		operator==(Identifier const& rhs) const {
-			return this->m_api->compareSid(this->bytes(), rhs.bytes());
+			return this->Api->compareSid(this->bytes(), rhs.bytes());
 		}
 
 		//! @brief	Identifier inequality operator
 		bool
 		operator!=(Identifier const& rhs) const {
-			return !this->m_api->compareSid(this->bytes(), rhs.bytes());
+			return !this->Api->compareSid(this->bytes(), rhs.bytes());
 		}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o

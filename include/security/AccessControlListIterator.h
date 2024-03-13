@@ -66,7 +66,7 @@ namespace core::security
 
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
-			MaybeConstAce*	m_position;
+			MaybeConstAce*	Position;
 	
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
@@ -78,7 +78,7 @@ namespace core::security
 			* @throws	std::invalid_argument	Missing argument
 			*/
 			explicit
-			AccessControlListIterator(MaybeConstAce* pos) : m_position(ThrowIfNull(pos))
+			AccessControlListIterator(MaybeConstAce* pos) : Position(ThrowIfNull(pos))
 			{}
 
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -111,7 +111,7 @@ namespace core::security
 			*/
 			MaybeConstAce&
 			dereference() const {
-				return *this->m_position;
+				return *this->Position;
 			}
 
 			/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
@@ -121,7 +121,7 @@ namespace core::security
 			*/
 			bool
 			equal(const type& r) const noexcept {
-				return this->m_position == r.m_position;
+				return this->Position == r.Position;
 			}
 
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -131,7 +131,7 @@ namespace core::security
 			*/
 			void
 			increment() {
-				this->m_position = AccessControlListIterator::next(this->m_position);
+				this->Position = AccessControlListIterator::next(this->Position);
 			}
 		};
 	}
