@@ -90,18 +90,18 @@ namespace core
 	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		value_type* m_object;
+		value_type* Object;
 	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	protected:
 		implicit
 		VarLengthStructure(value_type* instance) 
-			: m_object{ThrowIfNull(instance)}
+			: Object{ThrowIfNull(instance)}
 		{}
 
 		implicit
 		VarLengthStructure(std::span<std::byte> bytes)
-			: m_object{reinterpret_cast<value_type*>(ThrowIfEmpty(bytes).data())}
+			: Object{reinterpret_cast<value_type*>(ThrowIfEmpty(bytes).data())}
 		{}
 	
 		// Block construction from const values
@@ -126,7 +126,7 @@ namespace core
 		template <typename Self>
 		std::span<MaybeConstByte>
 		bytes(this Self&& derived) {
-			return { reinterpret_cast<MaybeConstByte*>(derived.m_object), derived.size() };
+			return { reinterpret_cast<MaybeConstByte*>(derived.Object), derived.size() };
 		}
 
 #if BUGGED
@@ -134,20 +134,20 @@ namespace core
 		template <typename Self, nstd::AnyOf<value_type,void> Output>
 		implicit 
 		operator nstd::mirror_cv_t<std::remove_reference_t<Self>,Output>*(this Self&& derived) {
-			return derived.m_object;
+			return derived.Object;
 		}
 #endif
 
 		implicit 
 		operator value_type const*() const {
-			return this->m_object;
+			return this->Object;
 		}
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		implicit
 		operator value_type*() {
-			return this->m_object;
+			return this->Object;
 		}
 	};
 
@@ -174,18 +174,18 @@ namespace core
 	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		value_type* m_object;
+		value_type* Object;
 	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	protected:
 		implicit
 		VarLengthStructure(value_type* instance)
-			: m_object{ThrowIfNull(instance)}
+			: Object{ThrowIfNull(instance)}
 		{}
 	
 		implicit
 		VarLengthStructure(std::span<std::byte const> bytes)
-			: m_object{reinterpret_cast<value_type*>(ThrowIfEmpty(bytes).data())}
+			: Object{reinterpret_cast<value_type*>(ThrowIfEmpty(bytes).data())}
 		{}
 	
 		// Block construction from non-const values
@@ -213,20 +213,20 @@ namespace core
 			requires { typename Self::mutable_type; }
 		{
 			using MutableSelf = typename std::remove_reference_t<Self>::mutable_type;
-			return MutableSelf{ const_cast<mutable_value_type*>(derived.m_object) };
+			return MutableSelf{ const_cast<mutable_value_type*>(derived.Object) };
 		}
 
 		//! @brief	Retrieve byte-representation of object
 		template <typename Self>
 		std::span<std::byte const>
 		bytes(this Self&& derived) {
-			return { reinterpret_cast<std::byte const*>(derived.m_object), derived.size() };
+			return { reinterpret_cast<std::byte const*>(derived.Object), derived.size() };
 		}
 
 		//! @brief	Implicit conversion to pointer-to-const
 		implicit
 		operator value_type*() const {
-			return this->m_object;
+			return this->Object;
 		}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
