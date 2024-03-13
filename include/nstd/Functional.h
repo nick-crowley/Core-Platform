@@ -53,6 +53,31 @@ namespace nstd
 	auto constexpr 
 	inline convert_to = [](auto&& arg) { return static_cast<Result>(arg); };
 
+
+	template <auto Value>
+	auto constexpr
+	equal_to_v = [](auto&& arg) constexpr { return arg == Value; };
+
+	template <auto Value>
+	auto constexpr
+	not_equal_to_v = [](auto&& arg) constexpr { return arg != Value; };
+	
+
+	auto constexpr
+	make_equal_to(auto&& value) {
+		return [value = std::forward<decltype(value)>(value)](auto&& v) { 
+			return v == value; 
+		};
+	}
+	
+	auto constexpr
+	make_not_equal_to(auto&& value) {
+		return [value = std::forward<decltype(value)>(value)](auto&& v) { 
+			return v == value; 
+		};
+	}
+
+
 	//! @brief	Non-standard function with better support for invoking methods
 	template <typename Signature>
 	class function 
