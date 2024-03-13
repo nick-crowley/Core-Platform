@@ -28,13 +28,13 @@
 using namespace core;
 
 win::RegistryKey::ConstRegistryValueProxy::ConstRegistryValueProxy(RegistryKey const& key, meta::use_default_t)
-  : m_key{&key}
+  : Owner{&key}
 {
 }
 
 win::RegistryKey::ConstRegistryValueProxy::ConstRegistryValueProxy(RegistryKey const& key, std::wstring_view name)
-  : m_key{&key},
-	m_valueName{name}
+  : Owner{&key},
+	ValueName{name}
 {
 }
 
@@ -62,7 +62,7 @@ win::RegistryKey::ConstRegistryValueProxy::as_wstrings() const {
 
 win::RegistryValue
 win::RegistryKey::ConstRegistryValueProxy::get() const {
-	return this->m_key->m_api->getValue(this->m_key->m_handle, this->m_valueName);
+	return this->Owner->Api->getValue(this->Owner->Handle, this->ValueName);
 }
 
 std::wstring
@@ -153,11 +153,11 @@ win::RegistryKey::RegistryValueProxy::operator=(RegistryValue value)
 void
 win::RegistryKey::RegistryValueProxy::remove()
 {
-	this->m_key->m_api->removeValue(this->m_key->m_handle, win::Unused<std::wstring_view>, this->m_valueName);
+	this->Owner->Api->removeValue(this->Owner->Handle, win::Unused<std::wstring_view>, this->ValueName);
 }
 
 void
 win::RegistryKey::RegistryValueProxy::set(RegistryValue value)
 {
-	this->m_key->m_api->setValue(this->m_key->m_handle, win::Unused<std::wstring_view>, this->m_valueName, value);
+	this->Owner->Api->setValue(this->Owner->Handle, win::Unused<std::wstring_view>, this->ValueName, value);
 }

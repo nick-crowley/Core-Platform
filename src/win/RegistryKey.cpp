@@ -28,40 +28,40 @@
 using namespace core;
 
 win::RegistryKey::RegistryKey(SharedRegistryKey handle, KeyRight rights, SharedRegistryApi api)
-  : m_api{ThrowIfEmpty(api)}, 
-    m_handle{handle}, 
-    m_rights{rights}
+  : Api{ThrowIfEmpty(api)}, 
+    Handle{handle}, 
+    Rights{rights}
 {
 }
 
 win::RegistryKey::RegistryKey(SharedRegistryKey parent, std::wstring_view child, KeyRight rights, SharedRegistryApi api)
-  : m_api{api}, 
-    m_handle{ThrowIfEmpty(api)->openKey(parent, child, rights)}, 
-    m_rights{rights}
+  : Api{api}, 
+    Handle{ThrowIfEmpty(api)->openKey(parent, child, rights)}, 
+    Rights{rights}
 {
 }
 
 win::RegistryKey::RegistryKey(meta::create_new_t, SharedRegistryKey parent, std::wstring_view child, KeyRight rights, SharedRegistryApi api)
-  : m_api{api}, 
-    m_handle{ThrowIfEmpty(api)->createKey(parent, child, rights)}, 
-    m_rights{rights}
+  : Api{api}, 
+    Handle{ThrowIfEmpty(api)->createKey(parent, child, rights)}, 
+    Rights{rights}
 {
 }
 
 win::RegistryKey
 win::RegistryKey::subkey(std::wstring_view child, std::optional<KeyRight> rights) const
 {
-	return RegistryKey{this->m_handle, ThrowIfEmpty(child), rights.value_or(this->m_rights)};
+	return RegistryKey{this->Handle, ThrowIfEmpty(child), rights.value_or(this->Rights)};
 }
 
 void
 win::RegistryKey::removeKey(std::wstring_view child)
 {
-	this->m_api->removeKey(this->m_handle, ThrowIfEmpty(child));
+	this->Api->removeKey(this->Handle, ThrowIfEmpty(child));
 }
 
 win::RegistryKey
 win::RegistryKey::subkey(meta::create_new_t, std::wstring_view child, std::optional<KeyRight> rights)
 {
-	return RegistryKey{create_new, this->m_handle, ThrowIfEmpty(child), rights.value_or(this->m_rights)};
+	return RegistryKey{create_new, this->Handle, ThrowIfEmpty(child), rights.value_or(this->Rights)};
 }

@@ -65,8 +65,8 @@ namespace core::win
 			
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		protected:
-			RegistryKey const* m_key;
-			std::wstring_view m_valueName;
+			RegistryKey const* Owner;
+			std::wstring_view  ValueName;
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			ConstRegistryValueProxy(RegistryKey const& key, meta::use_default_t);
@@ -189,9 +189,9 @@ namespace core::win
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		SharedRegistryApi m_api;
-		SharedRegistryKey m_handle;
-		KeyRight m_rights;
+		SharedRegistryApi Api;
+		SharedRegistryKey Handle;
+		KeyRight          Rights;
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
@@ -206,17 +206,17 @@ namespace core::win
 		
 		//! @brief	Open existing key
 		RegistryKey(RegistryKey const& key, KeyRight rights, SharedRegistryApi api = registryApi())
-		  : RegistryKey{key.m_handle, rights, api}
+		  : RegistryKey{key.Handle, rights, api}
 		{}
 
 		//! @brief	Open child of existing key
 		RegistryKey(RegistryKey const& parent, std::wstring_view child, KeyRight rights, SharedRegistryApi api = registryApi())
-		  : RegistryKey{parent.m_handle, child, rights, api}
+		  : RegistryKey{parent.Handle, child, rights, api}
 		{}
 
 		//! @brief	Create child of key
 		RegistryKey(meta::create_new_t, RegistryKey const& parent, std::wstring_view child, KeyRight rights, SharedRegistryApi api = registryApi())
-		  : RegistryKey{meta::create_new, parent.m_handle, child, rights, api}
+		  : RegistryKey{meta::create_new, parent.Handle, child, rights, api}
 		{}
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
