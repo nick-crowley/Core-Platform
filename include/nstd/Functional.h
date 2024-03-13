@@ -104,14 +104,14 @@ namespace nstd
 			virtual operator()(Parameters...) const abstract;
 		};
 
-		enum class CallType { Object, Function, Method };
+		enum class CallCategory { Object, Function, Method };
 
 		struct Callable : public ICallable
 		{
-			CallType  m_type;
+			CallCategory  Category;
 
 			explicit
-			Callable(CallType t) : m_type{t}
+			Callable(CallCategory t) : Category{t}
 			{}
 
 			bool
@@ -124,26 +124,26 @@ namespace nstd
 			using base = Callable;
 
 		private:
-			CallableTarget  m_object;
+			CallableTarget  Object;
 
 		public:
 			explicit
 			FunctionObject(CallableTarget&& fx) 
-			  : Callable{CallType::Object}, 
-				m_object{std::move(fx)}
+			  : Callable{CallCategory::Object}, 
+				Object{std::move(fx)}
 			{}
 		
 		public:
 			result_t
 			operator()(Parameters... args) const override
 			{
-				return this->m_object(std::forward<Parameters>(args)...);
+				return this->Object(std::forward<Parameters>(args)...);
 			}
 
 			bool
 			operator==(Callable const& r) const override
 			{
-				if (this->m_type != r.m_type)
+				if (this->Category != r.Category)
 					return false;
 
 				throw std::runtime_error("Function objects are incomparable");
@@ -156,65 +156,65 @@ namespace nstd
 			using signature_t = Result(*)(Parameters...);
 
 		private:
-			signature_t  m_address;
+			signature_t  Address;
 
 		public:
 			explicit
 			FunctionPointer(signature_t pfx) 
-			  : Callable{CallType::Function}, 
-				m_address{pfx}
+			  : Callable{CallCategory::Function}, 
+				Address{pfx}
 			{}
 
 		public:
 			result_t
 			operator()(Parameters... args) const override
 			{
-				return (*this->m_address)(std::forward<Parameters>(args)...);
+				return (*this->Address)(std::forward<Parameters>(args)...);
 			}
 
 			bool
 			operator==(Callable const& r) const override
 			{
-				return this->m_type == r.m_type
-					&& this->m_address == static_cast<FunctionPointer const&>(r).m_address;
+				return this->Category == r.Category
+					&& this->Address == static_cast<FunctionPointer const&>(r).Address;
 			}
 		};
 
-		template <typename Object>
+		template <typename Class>
 		class MethodPointer : public Callable
 		{
-			using signature_t = Result (Object::*)(Parameters...);
-			using const_signature_t = Result (Object::*)(Parameters...) const;
+			using signature_t = Result (Class::*)(Parameters...);
+			using const_signature_t = Result (Class::*)(Parameters...) const;
 			using MaybeConstSignature = std::variant<signature_t, const_signature_t>;
 
-			Object*             m_object;
-			MaybeConstSignature m_method;
+			Class*              Object;
+			MaybeConstSignature Method;
 
 		public:
-			MethodPointer(Object& obj, signature_t method) 
-			  : Callable{CallType::Method}, m_object{&obj}, m_method{method}
+			MethodPointer(Class& obj, signature_t method) 
+			  : Callable{CallCategory::Method}, Object{&obj}, Method{method}
 			{}
 		
-			MethodPointer(Object& obj, const_signature_t method) 
-			  : Callable{CallType::Method}, m_object{&obj}, m_method{method}
+			MethodPointer(Class& obj, const_signature_t method) 
+			  : Callable{CallCategory::Method}, Object{&obj}, Method{method}
 			{}
 		
 		private:
 			result_t
 			operator()(Parameters... args) const override
 			{
-				if (std::holds_alternative<signature_t>(this->m_method))
-					return (this->m_object->*std::get<signature_t>(this->m_method))(std::forward<Parameters>(args)...);
+				if (std::holds_alternative<signature_t>(this->Method))
+					return (this->Object->*std::get<signature_t>(this->Method))(std::forward<Parameters>(args)...);
 				else
-					return (this->m_object->*std::get<const_signature_t>(this->m_method))(std::forward<Parameters>(args)...);
+					return (this->Object->*std::get<const_signature_t>(this->Method))(std::forward<Parameters>(args)...);
 			}
 
 			bool
 			operator==(Callable const& r) const override
 			{
-				return this->m_type == r.m_type
-					&& this->m_object == static_cast<MethodPointer const&>(r).m_object
-					&& this->m_method == static_cast<MethodPointer const&>(r).m_method;
+				return this->Category == r.Category
+					&& this->Object == static_cast<MethodPointer const&>(r).Object
+					&& this->Method == static_cast<MethodPointer const&>(r).Method;
 			}
 		};
 
@@ -223,14 +223,14 @@ namespace nstd
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		std::shared_ptr<Callable>  m_callable;
+		std::shared_ptr<Callable>  Instance;
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		//! Construct from function pointer
 		implicit
 		function(result_t (*fx)(Parameters...))
-		  : m_callable{std::make_shared<FunctionPointer>(fx)}
+		  : Instance{std::make_shared<FunctionPointer>(fx)}
 		{}
 
 		//! Construct from non-const method
@@ -238,7 +238,7 @@ namespace nstd
 			requires std::is_class_v<Object>
 		implicit
 		function(Object& obj, result_t (Object::*method)(Parameters...))
-		  : m_callable{std::make_shared<MethodPointer<Object>>(obj,method)}
+		  : Instance{std::make_shared<MethodPointer<Object>>(obj,method)}
 		{}
 
 		//! Construct from const method
@@ -246,7 +246,7 @@ namespace nstd
 			requires std::is_class_v<Object>
 		implicit
 		function(Object& obj, result_t (Object::*method)(Parameters...) const)
-		  : m_callable{std::make_shared<MethodPointer<Object>>(obj,method)}
+		  : Instance{std::make_shared<MethodPointer<Object>>(obj,method)}
 		{}
 	
 		//! Construct from function-object
@@ -254,7 +254,7 @@ namespace nstd
 			requires (std::is_class_v<CallableTarget> && std::is_invocable_v<CallableTarget,Parameters...>)
 		implicit 
 		function(CallableTarget&& t)
-		  : m_callable{std::make_shared<FunctionObject<CallableTarget>>(std::move(t))}
+		  : Instance{std::make_shared<FunctionObject<CallableTarget>>(std::move(t))}
 		{}
 	
 		//! Prevent accidental construction from const-object to a non-const method
@@ -283,8 +283,8 @@ namespace nstd
 		result_type
 		invoke(Parameters... args) const 
 		{
-			Expects(this->m_callable != nullptr);	//FIXME: Replace with core invariant validation macro
-			return (*this->m_callable)(std::forward<Parameters>(args)...);
+			Expects(this->Instance != nullptr);	//FIXME: Replace with core invariant validation macro
+			return (*this->Instance)(std::forward<Parameters>(args)...);
 		}
 
 		result_type 
@@ -296,10 +296,10 @@ namespace nstd
 		bool
 		operator==(type const& r) const
 		{
-			if (!this->m_callable || !r.m_callable)
-				return !this->m_callable && !r.m_callable;
+			if (!this->Instance || !r.Instance)
+				return !this->Instance && !r.Instance;
 
-			return *this->m_callable == *r.m_callable;
+			return *this->Instance == *r.Instance;
 		}
 	
 		template <typename Other> bool operator==(function<Other> const&) const = delete;
