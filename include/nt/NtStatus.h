@@ -19,26 +19,26 @@ namespace core::nt
 	*/
 	class NtStatus
 	{
-		::NTSTATUS m_value;
+		::NTSTATUS Value;
 
 	public:
 		implicit
 		NtStatus(::NTSTATUS value, std::source_location loc = std::source_location::current()) 
-		  : m_value{value}
+		  : Value{value}
 		{
 		}
 		
 	public:
 		std::string
 		str() const {
-			return detail::formatMessage(this->m_value);
+			return detail::formatMessage(this->Value);
 		}
 		
 		[[noreturn]] 
 		void 
 		throwAlways() const {
 			// BUG: this will result in the wrong error category
-			throw std::system_error{this->m_value, std::system_category(), this->str()};
+			throw std::system_error{this->Value, std::system_category(), this->str()};
 		}
 		
 		template <typename... Params> 
@@ -46,7 +46,7 @@ namespace core::nt
 		void 
 		throwAlways(std::string_view msg, Params&&... args) const {
 			// BUG: this will result in the wrong error category
-			throw std::system_error{this->m_value, 
+			throw std::system_error{this->Value, 
 			                        std::system_category(),
 			                        std::vformat(msg,std::make_format_args(args...)) + ". " + this->str()};
 		}
@@ -54,9 +54,9 @@ namespace core::nt
 		template <typename... Params>
 		void 
 		throwIfError(std::string_view msg, Params&&... args) const {
-			if (this->m_value < 0)
+			if (this->Value < 0)
 				// BUG: this will result in the wrong error category
-				throw std::system_error{this->m_value, 
+				throw std::system_error{this->Value, 
 										std::system_category(),
 										std::vformat(msg,std::make_format_args(args...)) + ". " + this->str()};
 		}
@@ -68,12 +68,12 @@ namespace core::nt
 		
 		explicit
 		operator bool() const {
-			return this->m_value >= 0;
+			return this->Value >= 0;
 		}
 
 		implicit 
 		operator ::NTSTATUS() const {
-			return this->m_value;
+			return this->Value;
 		}
 	};
 
@@ -83,12 +83,12 @@ namespace core::nt
 	*/
 	class ThrowingNtStatus
 	{
-		::NTSTATUS m_value;
+		::NTSTATUS Value;
 
 	public:
 		implicit
 		ThrowingNtStatus(::NTSTATUS value, std::source_location loc = std::source_location::current()) 
-		  : m_value{value}
+		  : Value{value}
 		{
 			if (value < 0)
 				throw win::system_error{value};	// BUG: this will result in the wrong error category
@@ -97,17 +97,17 @@ namespace core::nt
 	public:
 		std::string
 		str() const {
-			return detail::formatMessage(this->m_value);
+			return detail::formatMessage(this->Value);
 		}
 
 		explicit 
 		operator bool() const {
-			return this->m_value >= 0;
+			return this->Value >= 0;
 		}
 
 		implicit
 		operator ::NTSTATUS() const {
-			return this->m_value;
+			return this->Value;
 		}
 	};
 }
