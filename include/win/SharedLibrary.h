@@ -49,15 +49,15 @@ namespace core::win
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		SharedModule m_module;
+		SharedModule  Handle;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		SharedLibrary(std::string_view) = delete;
 
 		SharedLibrary(std::wstring_view path) 
-		  : m_module{::LoadLibraryW(ThrowIfEmpty(path).data())}
+		  : Handle{::LoadLibraryW(ThrowIfEmpty(path).data())}
 		{
-			if (!this->m_module)
+			if (!this->Handle)
 				LastError{}.throwAlways("LoadLibrary() failed");
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -80,7 +80,7 @@ namespace core::win
 		loadFunction(std::string_view name) const
 		{
 			using proc_signature_t = nstd::add_function_pointer_t<Signature>;
-			if (auto* const pfx = reinterpret_cast<proc_signature_t>(::GetProcAddress(*this->m_module, name.data())); !pfx)
+			if (auto* const pfx = reinterpret_cast<proc_signature_t>(::GetProcAddress(*this->Handle, name.data())); !pfx)
 				LastError{}.throwAlways("GetProcAddress() failed");
 			else
 				return pfx;
