@@ -49,6 +49,10 @@ namespace core::filesystem
 	private:
 		using type = FileStream;           //!< Aliases our specialization
 		using base = IStream<std::byte>;   //!< Aliases our base
+
+	public:
+		using CreateBehaviour = FileSystemApi::CreateBehaviour;
+		using enum FileSystemApi::CreateBehaviour;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		SharedFile           Handle;
@@ -112,6 +116,30 @@ namespace core::filesystem
 		           nstd::bitset<FileAttribute>  attributes = FileAttribute::Normal,
 		           SharedFileSystemApi          api = filesystemApi()
 		) : Handle{ThrowIfEmpty(api)->createFile(location, FileSystemApi::CreateNew, rights, sharing, attributes)},
+			Api{ThrowIfEmpty(api)}
+		{
+		}
+		
+		/*!
+		* @brief  Create/open/truncate new file (or handle to device)
+		*
+		* @param[in] exists     Behaviour when file already exists
+		* @param[in] location   Name of the file (or device) to be created
+		* @param[in] rights     [optional] Requested access for (the handle to) the file/device
+		* @param[in] sharing    [optional] Requested sharing mode of the file/device
+		* @param[in] attributes [optional] Attributes to apply upon creation
+		* @param[in] api        [optional] Implementation of filesystem API (or mock)
+		* 
+		* @throws  std::invalid_argument  Missing argument
+		* @throws  std::system_error      Operation failed
+		*/
+		FileStream(CreateBehaviour              exists,
+		           path                         location, 
+		           nstd::bitset<win::FileRight> rights = win::StandardRight::Read|win::StandardRight::Write,
+		           nstd::bitset<FileShare>      sharing = FileShare::DenyAll,
+		           nstd::bitset<FileAttribute>  attributes = FileAttribute::Normal,
+		           SharedFileSystemApi          api = filesystemApi()
+		) : Handle{ThrowIfEmpty(api)->createFile(location, exists, rights, sharing, attributes)},
 			Api{ThrowIfEmpty(api)}
 		{
 		}
