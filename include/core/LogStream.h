@@ -42,6 +42,25 @@ namespace core
 	LogStream constinit
     extern PlatformExport clog;
 }
+
+namespace nstd
+{
+	template <typename Elem, typename Traits>
+	std::basic_ostream<Elem,Traits>&
+	grey(std::basic_ostream<Elem,Traits>&);
+
+	template <typename Elem, typename Traits>
+	std::basic_ostream<Elem,Traits>&
+	blue(std::basic_ostream<Elem,Traits>&);
+	
+	template <typename Elem, typename Traits>
+	std::basic_ostream<Elem,Traits>&
+	orange(std::basic_ostream<Elem,Traits>&);
+
+	template <typename Elem, typename Traits>
+	std::basic_ostream<Elem,Traits>&
+	red(std::basic_ostream<Elem,Traits>&);
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -166,12 +185,20 @@ namespace core
 		void
 		write(Severity sev, std::string_view str) 
 		{
+			switch (sev) {
+			case Severity::Heading:
+			case Severity::Important: *this->outputStream << nstd::blue;   break;
+			case Severity::Failure:   *this->outputStream << nstd::red;    break;
+			case Severity::Verbose:   *this->outputStream << nstd::grey;   break;
+			case Severity::Warning:   *this->outputStream << nstd::orange; break;
+			}
 			*this->outputStream << std::format("[{:%H:%M:%OS}]", chrono::system_clock::now())
-			                    << " P-" << std::setw(4) << std::left << ::GetCurrentProcessId() 
+			                    << " P-" << std::setw(4) << std::left << ::GetCurrentProcessId()
 			                    << " T-" << std::setw(4) << std::left << std::this_thread::get_id()
 			                    << " "   << std::setw(9) << std::left << as_string(sev)
 			                    << " : " << nstd::repeat(LogStream::PaddingChars, LogStream::currentDepth()) << str
-			                    << std::endl;
+			                    << "\n";
+			this->outputStream->flush();
 		}
 		
 		void
