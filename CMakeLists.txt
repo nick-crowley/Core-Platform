@@ -272,6 +272,60 @@ add_dependencies(appCorePlatform
 	dllCorePlatform
 )
 
+##############################################################
+#     													     #
+#     _________                            .__               #
+#     \_   ___ \  ____   ____   __________ |  |   ____       #
+#     /    \  \/ /  _ \ /    \ /  ___/  _ \|  | _/ __ \      #
+#     \     \___(  <_> )   |  \\___ (  <_> )  |_\  ___/      #
+#      \______  /\____/|___|  /____  >____/|____/\___  >     #
+#             \/            \/     \/                \/      #
+#     													     #
+##############################################################
+message("appConsole: Generating console sample")
+
+# Project: appConsole
+add_executable(appConsole
+	"${PROJECT_SAMPLE_FOLDER}appConsole.cpp"
+)
+
+# Include folders
+target_include_directories(appConsole BEFORE
+    PRIVATE
+	${PROJECT_SAMPLE_FOLDER} 
+	${PROJECT_RESOURCE_FOLDER} 
+    PUBLIC
+    ${PROJECT_INCLUDE_FOLDER}
+)
+	
+# Set linker dependencies
+target_link_libraries(appConsole
+	libCorePlatform
+)
+
+# Set compiler & linker flags
+set_target_properties(appConsole PROPERTIES
+					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS}"
+					  LINK_FLAGS "${GLOBAL_LINKER_OPTIONS} /SUBSYSTEM:CONSOLE"
+					  OUTPUT_NAME "appConsole"
+					  FOLDER "Samples"
+)
+
+# Link dependencies statically
+target_compile_definitions(appConsole
+	PRIVATE ${PROJECT_STATIC_MACRO}
+)
+
+# Link CRT statically
+target_compile_options(appConsole
+	PRIVATE $<$<CONFIG:Release>:/MT>
+	PRIVATE $<$<CONFIG:Debug>:/MTd>
+)
+
+# Set project dependencies
+add_dependencies(appConsole
+	libCorePlatform
+)
 
 ##############################################################
 #         _________                  .__              		 #
