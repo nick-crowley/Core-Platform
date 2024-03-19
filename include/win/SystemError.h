@@ -67,9 +67,7 @@ namespace core::win
 		template <typename... Params>
 		system_error(::LRESULT code, std::string_view msg, Params&&... args)
 		  : base{static_cast<int>(code), std::system_category()},
-			CustomMessageBugFix{
-			  std::format("{}: {}", std::vformat(msg,std::make_format_args(args...)), detail::formatMessage(code))
-			}
+			CustomMessageBugFix{std::vformat(msg,std::make_format_args(args...)) + ": " + detail::formatMessage(code)}
 		{
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
