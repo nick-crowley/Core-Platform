@@ -144,6 +144,7 @@ add_library(libCorePlatform STATIC
 	${PROJECT_SOURCE_FILES} 
 	${PROJECT_SOURCE_CC_FILES} 
 	${PROJECT_INCLUDE_FILES} 
+	${PROJECT_EXTRA_FOLDER}Core-Platform.natvis
 )
 
 # Include folders
@@ -186,6 +187,7 @@ add_library(dllCorePlatform SHARED
 	${PROJECT_SOURCE_FILES} 
 	${PROJECT_SOURCE_CC_FILES} 
 	${PROJECT_INCLUDE_FILES} 
+	${PROJECT_EXTRA_FOLDER}Core-Platform.natvis
 )
 
 # Include folders
@@ -515,6 +517,7 @@ add_dependencies(exePlatformTests
 file(GLOB_RECURSE PROJECT_EXTRA_FILES
     "${PROJECT_EXTRA_FOLDER}*.h"
     "${PROJECT_EXTRA_FOLDER}*.cpp"
+    "${PROJECT_EXTRA_FOLDER}*.natvis"
     )
 
 # Sample code
