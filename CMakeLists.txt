@@ -226,7 +226,7 @@ target_compile_options(dllCorePlatform
 #    |____| \___  >____  > |__|   \____|__  /   __/|   __/   #
 #               \/     \/                 \/|__|   |__|      #
 ##############################################################
-message("appService: Generating legacy dev-test sample")
+message("appCorePlatform: Generating legacy dev-test sample")
 
 # Project: appCorePlatform
 add_executable(appCorePlatform
