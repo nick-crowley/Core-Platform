@@ -30,11 +30,14 @@ using namespace core;
 std::string 
 win::detail::formatMessage(::LRESULT err)
 {
-	std::string msg(128,'\0');
-	msg.resize(
-		::FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, nullptr, win::DWord{err}, NULL, msg.data(), win::DWord{msg.capacity()}, nullptr)
-	);
-	if (auto lastChar = msg.find_last_not_of("\r\n\t "); lastChar != std::string::npos)
-		msg.erase(++lastChar);
-	return msg;
+	std::string msg(256,'\0');
+	if (auto const n = ::FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, nullptr, win::DWord{err}, NULL, msg.data(), win::DWord{msg.capacity()}, nullptr); !n)
+		return std::format("{:#x}", err);
+	else {
+		// Trim the string of unwanted trailing characters
+		msg.resize(n);
+		if (auto lastChar = msg.find_last_not_of("\r\n\t "); lastChar != std::string::npos)
+			msg.erase(++lastChar);
+		return msg;
+	}
 }
