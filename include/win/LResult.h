@@ -112,7 +112,7 @@ namespace core::win
 		void 
 		throwIfError(std::string_view msg) const {
 			if (this->Value != ERROR_SUCCESS)
-				throw system_error{this->Value};
+				throw system_error{this->Value, msg};
 		}
 
 		template <typename... Params>
