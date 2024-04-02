@@ -219,7 +219,7 @@ namespace core
 		if (!meta::Settings<program_name>.empty() && !meta::Settings<program_version>.empty()) 
 			clog << Heading{"{} (Ver: {})", meta::Settings<program_name>, meta::Settings<program_version>};
 
-		else if (!meta::Settings<program_version>.empty()) 
+		else if (!meta::Settings<program_name>.empty()) 
 			clog << Heading{meta::Settings<program_name>};
 
 		clog << Verbose{"Built using _WIN32_WINNT = v{}.{}", HIBYTE(_WIN32_WINNT), LOBYTE(_WIN32_WINNT)};
