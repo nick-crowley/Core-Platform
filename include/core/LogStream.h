@@ -205,9 +205,9 @@ namespace core
 		{
 			*this->outputStream << LogStream::entryColour(sev) << nstd::fontsize{9u}
 			                    << std::format("[{:%H:%M:%OS}]", chrono::system_clock::now())
+			                    << " S-" << std::to_underlying(sev)
 			                    << " P-" << std::setw(4) << std::left << ::GetCurrentProcessId()
 			                    << " T-" << std::setw(4) << std::left << std::this_thread::get_id()
-			                    << " S-" << std::to_underlying(sev)
 			                    << nstd::fontsize{11u}
 			                    << " : " << nstd::repeat(LogStream::PaddingChars, LogStream::currentDepth())
 			                    << str << "\n";
