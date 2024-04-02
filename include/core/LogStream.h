@@ -45,19 +45,19 @@ namespace core
 
 namespace nstd
 {
-	template <typename Elem, typename Traits>
+	template <typename Elem, typename Traits = std::char_traits<Elem>>
 	std::basic_ostream<Elem,Traits>&
 	grey(std::basic_ostream<Elem,Traits>&);
 
-	template <typename Elem, typename Traits>
+	template <typename Elem, typename Traits = std::char_traits<Elem>>
 	std::basic_ostream<Elem,Traits>&
 	blue(std::basic_ostream<Elem,Traits>&);
 	
-	template <typename Elem, typename Traits>
+	template <typename Elem, typename Traits = std::char_traits<Elem>>
 	std::basic_ostream<Elem,Traits>&
 	orange(std::basic_ostream<Elem,Traits>&);
 
-	template <typename Elem, typename Traits>
+	template <typename Elem, typename Traits = std::char_traits<Elem>>
 	std::basic_ostream<Elem,Traits>&
 	red(std::basic_ostream<Elem,Traits>&);
 }
