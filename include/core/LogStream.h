@@ -71,8 +71,12 @@ namespace core
 	class PlatformExport LogStream
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	private:
         using ThreadIdCollection = std::unordered_map<std::thread::id,int>;
 
+        char constexpr
+        inline static PaddingChars[] = "\xe2\x95\x91\x20"; // UTF-8 encoded "║ "
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
     private:
         ThreadIdCollection
         inline static CallDepth;
@@ -80,14 +84,6 @@ namespace core
         std::recursive_mutex
         inline static IsWriting;
 		
-        char constexpr
-#ifdef SUPPORT_UTF8_LOGFILE
-        inline static PaddingChars[] = "\xe2\x95\x91\x20"; // UTF-8 encoded "║ "
-#else
-        inline static PaddingChars[] = "| ";
-#endif
-        
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		std::ostream* outputStream = nullptr;
 		
@@ -162,11 +158,15 @@ namespace core
 			std::lock_guard lock{LogStream::IsWriting};
 			if (auto const* str = std::get_if<std::string>(&entry.Text)) {
 				this->write(Severity::Important, *str);
-				this->write(Severity::Important, std::string(str->length(), '-'));
+				std::stringstream underline;
+				underline << nstd::repeat{"\xe2\x95\x90", str->length()};
+				this->write(Severity::Important, underline.str());
 			}
 			else if (auto const* wstr = std::get_if<std::wstring>(&entry.Text)) {
 				this->write(Severity::Important, *wstr);
-				this->write(Severity::Important, std::string(wstr->length(), '-'));
+				std::wstringstream underline;
+				underline << nstd::repeat{"\xe2\x95\x90", wstr->length()};
+				this->write(Severity::Important, underline.str());
 			}
 			return *this;
 		}

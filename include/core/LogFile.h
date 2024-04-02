@@ -123,26 +123,58 @@ namespace core::detail
 		{
 			for (streamsize idx = 0; idx < n; ++idx) {
 				// Translate special characters into RTF equivalents
-				switch (str[idx]) {
+				std::make_unsigned_t<Elem> const chr = str[idx];
+				switch (chr) {
 				case '{':
 				case '}':
 				case '\\':
 					this->overflow('\\');
-					break;
+					this->overflow(chr);
+					continue;
 
 				case '\n':
-					for (char const ch : R"(\line)" | views::take(5))
-						this->overflow(ch);
+					for (char const c : R"(\line)" | views::take(5))
+						this->overflow(c);
 					this->overflow('\n');
 					continue;
 
 				case '\t':
-					for (char const ch : R"(\tab)" | views::take(4))
-						this->overflow(ch);
+					for (char const c : R"(\tab)" | views::take(4))
+						this->overflow(c);
+					continue;
+
+				default:
+					if (chr >= 194)
+						break;
+
+					this->overflow(chr);
 					continue;
 				}
 
-				this->overflow(str[idx]);
+				auto const* const bytes = reinterpret_cast<std::make_unsigned_t<Elem> const*>(&str[idx]);
+				int_type codepoint{};
+
+				// [UTF8 2-byte sequence] Codepoints 128 to 2,047
+				if (chr <= 223) {
+					codepoint = (bytes[0] - 194) * 64 + (bytes[1] - 128);
+					++idx;
+				}
+				// [UTF8 3-byte sequence] Codepoints 2,048 to 65,535
+				else if (chr <= 239) {
+					codepoint = (bytes[0] - 224) * 4096 + (bytes[1] - 128) * 64 + (bytes[2] - 128);
+					idx += 2;
+				}
+				// [UTF8 4-byte sequence] Codepoints 65,536 to 1,114,111
+				else {
+					codepoint = (bytes[0] - 240) * 262'144 + (bytes[1] - 128) * 4096 + (bytes[2] - 128) * 64 + (bytes[3] - 128);
+					idx += 3;
+				}
+				
+				char utf8[12] { R"(\u)" };
+				::_itoa(codepoint, &utf8[2], 10);
+				for (char const* c = utf8; *c; ++c)
+					this->overflow(*c);
+				this->overflow('?');
 			}
 			return n;
 		}
