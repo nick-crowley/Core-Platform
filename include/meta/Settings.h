@@ -64,6 +64,15 @@ namespace core::meta
 
 	template <>
 	struct DataType<program_version> : std::type_identity<std::string_view> {};
+
+	// Define most primitive program meta-data as mutable because it's difficult to specialize before first use
+	template <>
+	std::string_view /*mutable*/
+	inline Settings<program_name> {};
+
+	template <>
+	std::string_view /*mutable*/
+	inline Settings<program_version> {};
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 

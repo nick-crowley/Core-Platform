@@ -212,9 +212,8 @@ namespace core
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core
 {
-	template <meta::lazy_t = lazy>
 	void
-	startupBanner() 
+	inline startupBanner()
 	{
 		if (!meta::Settings<program_name>.empty() && !meta::Settings<program_version>.empty()) 
 			clog << Heading{"{} (Ver: {})", meta::Settings<program_name>, meta::Settings<program_version>};

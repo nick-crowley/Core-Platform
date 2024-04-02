@@ -28,10 +28,6 @@
 #include "core/LogFile.h"
 using namespace core;
 
-// Define program meta-data
-//metadata std::string_view meta::Settings<program_name> = "Console app demo";
-//metadata std::string_view meta::Settings<program_version> = "1.0";
-
 //! @brief Sample console program
 int16_t
 intern run(std::string_view cmdLine) 
@@ -51,8 +47,12 @@ catch (std::exception const& e) {
 int 
 main(int argc, char* argv[])
 {
-	auto const concatenate = [](std::string r, std::string arg) { 
-		return r + " " + arg; 
-	};
-	return run(std::accumulate(&argv[0], &argv[argc], std::string{}, concatenate));
+	// Define program meta-data
+	using namespace std::string_view_literals;
+	meta::Settings<program_name> = "Console app demo"sv;
+	meta::Settings<program_version> = "1.0"sv;
+
+	// Reconstruct command line
+	auto const concatenateWithSpace = [](std::string r, std::string arg) { return r + " " + arg; };
+	return ::run(std::accumulate(&argv[0], &argv[argc], std::string{}, concatenateWithSpace));
 }
