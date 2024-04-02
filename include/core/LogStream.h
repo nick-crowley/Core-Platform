@@ -86,7 +86,6 @@ namespace core
 		
 	private:
 		std::ostream* outputStream = nullptr;
-		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -98,14 +97,24 @@ namespace core
 			NotEqualityComparable,
 			NotSortable
 		);
-
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
         nstd::return_t<int&>
         static currentDepth() {
             return LogStream::CallDepth[std::this_thread::get_id()];
         }
-		
+
+		auto
+		static entryColour(Severity sev) {
+			switch (sev) {
+			case Severity::Heading:
+			case Severity::Important: return nstd::blue<char>;
+			case Severity::Failure:   return nstd::red<char>;
+			case Severity::Warning:   return nstd::orange<char>;
+			case Severity::Verbose:   return nstd::grey<char>;
+			default:                  std::unreachable();
+			}
+		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -185,19 +194,13 @@ namespace core
 		void
 		write(Severity sev, std::string_view str) 
 		{
-			switch (sev) {
-			case Severity::Heading:
-			case Severity::Important: *this->outputStream << nstd::blue;   break;
-			case Severity::Failure:   *this->outputStream << nstd::red;    break;
-			case Severity::Verbose:   *this->outputStream << nstd::grey;   break;
-			case Severity::Warning:   *this->outputStream << nstd::orange; break;
-			}
-			*this->outputStream << std::format("[{:%H:%M:%OS}]", chrono::system_clock::now())
+			*this->outputStream << LogStream::entryColour(sev)
+			                    << std::format("[{:%H:%M:%OS}]", chrono::system_clock::now())
 			                    << " P-" << std::setw(4) << std::left << ::GetCurrentProcessId()
 			                    << " T-" << std::setw(4) << std::left << std::this_thread::get_id()
 			                    << " "   << std::setw(9) << std::left << as_string(sev)
-			                    << " : " << nstd::repeat(LogStream::PaddingChars, LogStream::currentDepth()) << str
-			                    << "\n";
+			                    << " : " << nstd::repeat(LogStream::PaddingChars, LogStream::currentDepth())
+			                    << str << "\n";
 			this->outputStream->flush();
 		}
 		
