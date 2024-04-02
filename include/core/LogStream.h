@@ -45,6 +45,11 @@ namespace core
 
 namespace nstd
 {
+	class fontsize {
+	public:
+		unsigned Height;
+	};
+
 	template <typename Elem, typename Traits = std::char_traits<Elem>>
 	std::basic_ostream<Elem,Traits>&
 	grey(std::basic_ostream<Elem,Traits>&);
@@ -60,6 +65,10 @@ namespace nstd
 	template <typename Elem, typename Traits = std::char_traits<Elem>>
 	std::basic_ostream<Elem,Traits>&
 	red(std::basic_ostream<Elem,Traits>&);
+
+	template <typename Elem, typename Traits = std::char_traits<Elem>>
+	return_t<std::basic_ostream<Elem,Traits>&>
+	operator<<(std::basic_ostream<Elem,Traits>& os, fontsize f);
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
@@ -194,11 +203,12 @@ namespace core
 		void
 		write(Severity sev, std::string_view str) 
 		{
-			*this->outputStream << LogStream::entryColour(sev)
+			*this->outputStream << LogStream::entryColour(sev) << nstd::fontsize{9u}
 			                    << std::format("[{:%H:%M:%OS}]", chrono::system_clock::now())
 			                    << " P-" << std::setw(4) << std::left << ::GetCurrentProcessId()
 			                    << " T-" << std::setw(4) << std::left << std::this_thread::get_id()
-			                    << " "   << std::setw(9) << std::left << as_string(sev)
+			                    << " S-" << std::to_underlying(sev)
+			                    << nstd::fontsize{11u}
 			                    << " : " << nstd::repeat(LogStream::PaddingChars, LogStream::currentDepth())
 			                    << str << "\n";
 			this->outputStream->flush();

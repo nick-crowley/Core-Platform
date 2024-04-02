@@ -256,7 +256,13 @@ namespace core
 			if (auto const entry = ranges::find(LogFile::ColourTable, c); entry != LogFile::ColourTable.cend())
 				this->write(R"(\cf{})", entry - LogFile::ColourTable.cbegin());
 		}
-
+		
+		void 
+		fontSize(unsigned pts)
+		{
+			this->write(R"(\fs{})", pts * 2);
+		}
+		
 	protected:
 		void 
 		codePage(unsigned cp)
@@ -281,12 +287,6 @@ namespace core
 		defaultFont(unsigned idxFont)
 		{
 			this->write(R"(\deff{})", idxFont);
-		}
-		
-		void 
-		fontSize(unsigned pts)
-		{
-			this->write(R"(\fs{})", pts * 2);
 		}
 		
 		template <nstd::InputRangeConvertibleTo<std::string_view> FontNameCollection>
@@ -363,6 +363,14 @@ namespace core
 
 namespace nstd
 {
+	template <typename Elem, typename Traits>
+	return_t<std::basic_ostream<Elem,Traits>&>
+	operator<<(std::basic_ostream<Elem,Traits>& os, fontsize f) {
+		if (auto* logStream = dynamic_cast<core::LogFile*>(&os); logStream) 
+			logStream->fontSize(f.Height);
+		return os;
+	}
+
 	template <typename Elem, typename Traits>
 	std::basic_ostream<Elem,Traits>&
 	grey(std::basic_ostream<Elem,Traits>& os) {
