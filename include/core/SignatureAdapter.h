@@ -410,6 +410,33 @@ namespace core::detail
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::detail 
 {
+	//! @brief	Wrapper for @c std::is_default_constructible
+	metafunc is_default_constructible {
+		template <typename T>
+		metafunc apply : std::is_default_constructible<T>
+		{};
+	};
+
+
+	//! @brief	Retrieve function signature return type sequence
+	template <meta::FunctionSignature Signature>
+	metafunc SignatureReturnTypes : std::type_identity<meta::undefined_t> {};
+	
+	template <typename... ReturnTypes, typename Idx, typename ParamTuple>
+	struct SignatureReturnTypes< 
+		FunctionSignature<nstd::indexed_tuple<std::tuple<ReturnTypes...>, Idx>, ParamTuple>
+	> : std::type_identity<mpl::vector<ReturnTypes...>> {};
+
+	template <meta::FunctionSignature Signature>
+	using SignatureReturnTypes_t = typename SignatureReturnTypes<Signature>::type;
+
+
+	//! @brief	Query whether every element of an adapted function signature is <e>default constructible</e>
+	template <meta::FunctionSignature Signature>
+	bool constexpr
+	ValidResultsTuple_v = mpl::count_if_v<SignatureReturnTypes_t<Signature>, is_default_constructible> == mpl::size_v<SignatureReturnTypes_t<Signature>>;
+	
+
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 	* @brief	Construct signature adapter for callable target
 	*
@@ -418,7 +445,8 @@ namespace core::detail
 	* 
 	* @param	fx	Callable target
 	*/
-	template <unsigned NumResults, nstd::CallableTarget CallableTarget> 
+	template <unsigned NumResults, nstd::CallableTarget CallableTarget>
+		requires ValidResultsTuple_v<AdaptedSignature_t<NumResults,DeduceSignature_t<CallableTarget>>>
 	SignatureAdapter<CallableTarget, AdaptedSignature_t<NumResults,DeduceSignature_t<CallableTarget>>> constexpr 
 	adaptSignature(CallableTarget fx) noexcept 
 	{
@@ -531,7 +559,57 @@ namespace core::detail::testing {
 		FunctionSignature<nstd::empty_indexed_tuple_t, nstd::make_indexed_tuple_t<int,long>>
 	>);
 #pragma endregion
+
+#pragma region core::detail::ValidResultsTuple Unit Tests
 	
+	//! @test  Verify @c ValidResultsTuple_v detects @c unsigned is default constructible
+	static_assert(mpl::count_if_v<mpl::vector<void>, is_default_constructible> == 0);
+	static_assert(mpl::count_if_v<mpl::vector<int>, is_default_constructible> == 1);
+	static_assert(mpl::count_if_v<mpl::vector<void, int>, is_default_constructible> == 1);
+	static_assert(mpl::count_if_v<mpl::vector<int, int>, is_default_constructible> == 2);
+	static_assert(mpl::count_if_v<mpl::vector<void, void>, is_default_constructible> == 0);
+
+	//! @test  Verify @c ValidResultsTuple_v detects @c unsigned is default constructible
+	static_assert(ValidResultsTuple_v<
+		FunctionSignature<nstd::unary_indexed_tuple_t<unsigned>, nstd::empty_indexed_tuple_t>
+	>);
+
+	//! @test  Verify @c ValidResultsTuple_v detects @c void is @e not default constructible
+	static_assert(!ValidResultsTuple_v<
+		FunctionSignature<nstd::unary_indexed_tuple_t<void>, nstd::empty_indexed_tuple_t>
+	>);
+	
+	//! @test  Verify @c ValidResultsTuple_v detects @c void* is default constructible
+	static_assert(ValidResultsTuple_v<
+		FunctionSignature<nstd::unary_indexed_tuple_t<void*>, nstd::empty_indexed_tuple_t>
+	>);
+
+	//! @test  Verify @c ValidResultsTuple_v detects a single type which is not default constructible amongst many that are
+	static_assert(!ValidResultsTuple_v<
+		FunctionSignature<nstd::make_indexed_tuple_t<int, void, bool>, nstd::empty_indexed_tuple_t>
+	>);
+
+	//! @test  Verify @c ValidResultsTuple_v detects a single type which is not default constructible amongst many that are
+	static_assert(!ValidResultsTuple_v<
+		FunctionSignature<nstd::make_indexed_tuple_t<void, int, bool>, nstd::empty_indexed_tuple_t>
+	>);
+
+	//! @test  Verify @c ValidResultsTuple_v detects a single type which is not default constructible amongst many that are
+	static_assert(!ValidResultsTuple_v<
+		FunctionSignature<nstd::make_indexed_tuple_t<int, bool, void>, nstd::empty_indexed_tuple_t>
+	>);
+
+	//! @test  Verify @c ValidResultsTuple_v detects when all types are default constructible
+	static_assert(ValidResultsTuple_v<
+		FunctionSignature<nstd::make_indexed_tuple_t<int, bool>, nstd::empty_indexed_tuple_t>
+	>);
+	
+	//! @test  Verify @c ValidResultsTuple_v detects when no types are default constructible
+	static_assert(!ValidResultsTuple_v<
+		FunctionSignature<nstd::make_indexed_tuple_t<void, void>, nstd::empty_indexed_tuple_t>
+	>);
+#pragma endregion
+
 #pragma region core::detail::AdaptedSignature Unit Tests
 	// Test: Pre-existing return type, if present, is replaced with void
 	static_assert(std::is_same_v<
