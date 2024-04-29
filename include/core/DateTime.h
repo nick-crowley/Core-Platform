@@ -129,7 +129,7 @@ namespace core
 			// Assemble string representation by formatting calendar time
 			std::string buffer(size_t{256}, '\0');
 			if (auto const length = std::strftime(&buffer[0], buffer.length(), format.data(), std::gmtime(&this->Epoch)); !length) 
-				ThrowInvalidArg(format, ("Unable to parse " + std::string{format.begin(),format.end()}));
+				ThrowInvalidArg(format, "Unable to parse '{}'", format);
 			else {
 				buffer.resize(length);
 				return buffer;

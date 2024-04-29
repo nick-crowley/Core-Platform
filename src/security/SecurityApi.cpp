@@ -253,7 +253,7 @@ SecurityApi::lookupAccount(ConstByteSpan                    account,
                            std::optional<std::wstring_view> system) const
 {
 	ThrowIfEmpty(account);
-	ThrowIfNot(system, !system || !system->empty());
+	ThrowIf(system, system && system->empty());
 
 	wchar_t const*           origin = system ? system->data() : nullptr;
 	CountedStringBuffer<128> name{.Length = 128};
