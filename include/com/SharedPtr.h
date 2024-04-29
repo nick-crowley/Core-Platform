@@ -30,6 +30,7 @@
 #include "com/Guid.h"
 #include "com/Function.h"
 #include "com/ComApi.h"
+#include "win/HResult.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -84,8 +85,13 @@ namespace core::com
 		explicit
 		shared_ptr(shared_ptr<Other> const& r) noexcept 
 		{
-			if (r.Object)
-				r.Object->QueryInterface(__uuidof(Interface), std::out_ptr<Interface*>(this->Object));
+			if (r.Object) {
+				if (win::HResult hr = r.Object->QueryInterface(__uuidof(Interface), std::out_ptr<Interface*>(this->Object)); hr == E_NOINTERFACE)
+					hr.throwAlways("{} interface not supported", core::unqualified_class_name_v<Other>);
+				else
+					hr.throwIfError("QueryInterface() failed");
+
+			}
 		}
 
 		~shared_ptr() noexcept
