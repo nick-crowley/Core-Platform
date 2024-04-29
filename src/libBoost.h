@@ -36,6 +36,15 @@
 #	endif
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+#include <boost/mpl/remove_if.hpp>
+#include <boost/mpl/begin.hpp>
+#include <boost/mpl/end.hpp>
+#include <boost/mpl/contains.hpp>
+#include <boost/mpl/count_if.hpp>
+#include <boost/mpl/empty.hpp>
+#include <boost/mpl/front.hpp>
+#include <boost/mpl/vector.hpp>
+#include <boost/mpl/size.hpp>
 #include <boost/preprocessor/arithmetic/add.hpp>
 #include <boost/preprocessor/facilities/va_opt.hpp>
 #include <boost/preprocessor/list/adt.hpp>
@@ -60,7 +69,7 @@
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/pointer_cast.hpp>
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
+namespace mpl = boost::mpl;
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -68,7 +77,28 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace boost::mpl
+{
+	template <typename Sequence, typename UnaryPredicate>
+	using count_if_t = typename count_if<Sequence,UnaryPredicate>::type;
+	
+	template <typename Sequence, typename UnaryPredicate>
+	auto constexpr
+	count_if_v = count_if_t<Sequence,UnaryPredicate>::value;
 
+	template <typename Sequence>
+	using front_t = typename front<Sequence>::type;
+
+	template <typename Sequence, typename UnaryPredicate>
+	using remove_if_t = typename remove_if<Sequence,UnaryPredicate>::type;
+
+	template <typename Sequence, typename Value>
+	using contains_t = typename contains<Sequence,Value>::type;
+	
+	template <typename Sequence>
+	auto constexpr
+	size_v = size<Sequence>::value;
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
