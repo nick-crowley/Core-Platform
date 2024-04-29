@@ -31,6 +31,8 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Platform.h"
 #include "core/LogEntry.h"
+#include "com/SharedPtr.h"
+#include "win/SharedLibrary.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -242,27 +244,17 @@ namespace core
 	::HRESULT
 	inline appendSymbolPath(std::string_view path) 
 	{
-		auto const libDbgEng = ::LoadLibraryExW(L"dbgeng.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
-		if (!libDbgEng)
-			return E_NOINTERFACE;
+		win::SharedLibrary const libDbgEng{L"dbgeng.dll", win::SharedLibrary::SearchSystem32};
+		auto* const debugCreate = libDbgEng.loadFunction<decltype(::DebugCreate)>("DebugCreate");
 		
-		// Deliberately not calling CoInitialize[Ex]. DbgEng.h API works fine without it.
-		// COM initialization may have undesired interference with user's code.
-		::HRESULT hr = E_FAIL;
-		if (auto* const debugCreate = reinterpret_cast<decltype(&::DebugCreate)>(::GetProcAddress(libDbgEng, "DebugCreate")); debugCreate) {
-			::IDebugClient*  dbgClient{};
-			if (hr = debugCreate(IID_IDebugClient, std::out_ptr(dbgClient)); SUCCEEDED(hr)) {
-				::IDebugSymbols* dbgSymbols{};
-				if (hr = dbgClient->QueryInterface(IID_IDebugSymbols, std::out_ptr(dbgSymbols)); SUCCEEDED(hr)) {
-					hr = dbgSymbols->AppendSymbolPath(".");
-					dbgSymbols->Release();
-				}
-				dbgClient->Release();
-			}
-		}
-
-		::FreeLibrary(libDbgEng);
-		return hr;
+		// Note from CRT: 
+		//   "Deliberately not calling CoInitialize[Ex]. 
+		//    <DbgEng.h> API works fine without it.
+		//    COM initialization may have undesired interference with user's code."
+		com::shared_ptr<IDebugSymbols> debugSymbols;
+		win::HResult hr = debugCreate(IID_IDebugClient, std::out_ptr(debugSymbols));
+		hr.throwIfError("DebugCreate() failed");
+		return debugSymbols->AppendSymbolPath(".");
 	}
 
 	void
