@@ -381,6 +381,12 @@ namespace core::security {
 		}
 	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
+		//! @brief  Convert to security descriptor pointer
+		operator implicit
+		::SECURITY_DESCRIPTOR*() {
+			return reinterpret_cast<::SECURITY_DESCRIPTOR*>(this->storage.data());
+		}
 	};
 
 }      // namespace core::security
