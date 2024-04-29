@@ -72,22 +72,23 @@ namespace nstd {
 	/* ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` */ /*!
 	* @brief	Repeatedly inserts a value [without any delimiter]
 	*/
-	template <OutputStreamCompatible WritableValue>
+	template <OutputStreamCompatible WritableValue, nstd::Integer Integer>
 	class repeat {
-		using type = repeat<WritableValue>;
+		using type = repeat<WritableValue,Integer>;
 
 	private:
 		WritableValue Value;
-		uint32_t      Count;
+		Integer       Count;
 
 	public:
-		repeat(WritableValue val, uint32_t num) : Value{val}, Count{num}
+		repeat(WritableValue val, Integer num) : Value{val}, Count{num}
 		{}
 
 	public:
-		return_t<std::ostream&>
-		friend operator<<(std::ostream& os, type const& rep) {
-			for (uint32_t idx = 0; idx < rep.Count; ++idx)
+		template <typename E, typename T>
+		return_t<std::basic_ostream<E,T>&>
+		friend operator<<(std::basic_ostream<E,T>& os, type const& rep) {
+			for (Integer idx{}; idx < rep.Count; ++idx)
 				os << rep.Value;
 			return os;
 		}
