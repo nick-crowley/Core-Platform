@@ -58,14 +58,16 @@ namespace core::win
 	
 	template <unsigned NumResults = 0, typename... Parameters>
 	auto constexpr 
-	function(::BOOL (__stdcall *fx)(Parameters...)) noexcept
+	function(::BOOL (__stdcall *fx)(Parameters...), char const* name = nullptr, std::source_location loc = std::source_location::current()) noexcept
 	{	
-		auto const callable = [fx](Parameters... args) -> ::BOOL
+		auto const callable = [=](Parameters... args) -> ::BOOL
 		{
-			if (::BOOL r = (*fx)(std::forward<Parameters>(args)...); r == FALSE)
-				LastError{}.throwAlways("Delegate failed");
-			else
+			if (::BOOL r = (*fx)(std::forward<Parameters>(args)...); r != FALSE)
 				return r;
+			else if (name != nullptr)
+				LastError{}.throwAlways("{}() failed", name);
+			else
+				LastError{}.throwAlways("Delegate failed in {}", loc.function_name());
 		};
 
 		return core::detail::adaptSignature<NumResults>(std::move(callable));

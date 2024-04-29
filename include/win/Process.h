@@ -384,7 +384,7 @@ namespace core::win
 
 		security::Token
 		token(TokenRight rights) const {
-			auto const openProcessToken = function<1>(::OpenProcessToken);
+			auto const openProcessToken = function<1>(::OpenProcessToken, "OpenProcessToken");
 
 			SharedToken tokenHandle{openProcessToken(*this->Handle, std::to_underlying(rights))};
 			return security::Token{tokenHandle};
