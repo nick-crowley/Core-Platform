@@ -1,5 +1,5 @@
-﻿/* o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o */ /*!
-* @copyright	Copyright (c) 2023, Nick Crowley. All rights reserved.
+/* o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o */ /*!
+* @copyright	Copyright (c) 2024, Nick Crowley. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are permitted
 * provided that the following conditions are met:
@@ -24,30 +24,26 @@
 * the projects which contain it.
 */
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "nstd/Coroutine.h"
-#include "nstd/Future.h"
-#include "core/FunctionLogging.h"
-#include "core/LogFile.h"
-#include "core/LogStream.h"
-#include "win/ServiceController.h"
-#include "win/ThreadCollection.h"
-// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Source Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "core/CharacterConversion.cpp"
-#include "core/DebugStream.cpp"
-#include "core/LogStream.cpp"
-#include "core/ToString.cpp"
-#include "com/ComApi.cpp"
-#include "com/Guid.cpp"
-#include "com/KnownGuidCollection.cpp"
-#include "nt/NtStatus.cpp"
-#include "security/SecurityApi.cpp"
-#include "win/Concurrency.cpp"
-#include "win/LResult.cpp"
-#include "win/HResult.cpp"
-#include "win/Module.cpp"
-#include "win/Process.cpp"
-#include "win/RegistryApi.cpp"
-#include "win/RegistryKey.cpp"
-#include "win/RegistryValueProxy.cpp"
-#include "win/ResourceId.cpp"
-#include "win/ServiceManager.cpp"
+#include "com/ComApi.h"
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+using namespace core;
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Variables o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Local Variables o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Construction & Destruction o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Copy & Move Semantics o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Static Methods o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Instance Methods & Operators o=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Non-member Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+com::SharedComApi
+com::com_api() {
+	return std::make_shared<ComApi>();
+}
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

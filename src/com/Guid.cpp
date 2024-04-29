@@ -23,54 +23,74 @@
 * and should not be interpreted as representing official policies, either expressed or implied, of
 * the projects which contain it.
 */
-// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Preprocessor Directives o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#pragma once
-
-#ifndef NOMINMAX
-#	error Core-Platform requires NOMINMAX be defined
-#endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
-// Including SDKDDKVer.h defines the highest available Windows platform.
-// If you wish to build your application for a previous Windows platform, include WinSDKVer.h and
-// set the _WIN32_WINNT macro to the platform you wish to support before including SDKDDKVer.h.
-#include <SDKDDKVer.h>
-#include <Windows.h>
-
-#include <ntsecapi.h>
-#include <sddl.h>			// SID functions
-#include <Aclapi.h>         // ACL functions
-
-#if _WIN32_WINNT <= _WIN32_WINNT_WIN7
-	// @remarks  Windows 7 and earlier store process functions in psapi.lib instead of kernel32.lib
-	// @see https://learn.microsoft.com/en-us/windows/win32/api/psapi/nf-psapi-enumprocesses
-	#define PSAPI_VERSION 1
-	#pragma comment(lib, "psapi")
-#endif
-#include <psapi.h>          // Process functions
-
-#include <shlwapi.h>        // Filepath functions
-#include <WinINet.h>        // WinINet error codes
-#include <WinHTTP.h>        // WinHTTP error codes
-
-#include <Objbase.h>        // COM functions
-#include <oaidl.h>          // VARIANT
-#include <ocidl.h>          // Several COM interfaces (eg. IClassFactory2)
-#if SUPPORT_ATL_STRING
-#	include <atlstr.h>
-#endif
+#include "com/Guid.h"
+#include "com/Function.h"
+#include "com/KnownGuidCollection.h"
+#include "nstd/Functional.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+using namespace core;
 
-// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Variables o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
-// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Local Variables o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace
+{
+	auto constexpr 
+	coCreateGuid = com::function<1>(::CoCreateGuid);
 
-// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+	auto constexpr 
+	clsIdFromProgId = com::function<1>(::CLSIDFromProgID);
+}
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Construction & Destruction o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
-// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Copy & Move Semantics o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
-// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Static Methods o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+com::Guid 
+com::Guid::fromProgId(std::wstring_view str)
+{
+	return Guid{ clsIdFromProgId(str.data()) };
+}
+
+com::Guid
+com::Guid::generate()
+{
+	return Guid{ coCreateGuid() };
+}
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Instance Methods & Operators o=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Non-member Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+std::string
+com::to_string(Guid const& g)
+{
+	return ::to_string(g.Value);
+}
+
+std::wstring
+com::to_wstring(Guid const& g)
+{
+	return ::to_wstring(g.Value);
+}
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
+std::string 
+to_string(::GUID const& g)
+{
+	if (com::KnownGuids.contains(g)) 
+		return std::string{com::KnownGuids[g]};
+
+	return cnarrow(com::Guid::Stringifier::wstr(g));
+}
+
+std::wstring 
+to_wstring(::GUID const& g)
+{
+	if (com::KnownGuids.contains(g)) 
+		return cwiden(com::KnownGuids[g]);
+
+	return com::Guid::Stringifier::wstr(g);
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

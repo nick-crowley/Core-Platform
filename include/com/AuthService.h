@@ -1,5 +1,5 @@
 /* o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o */ /*!
-* @copyright	Copyright (c) 2023, Nick Crowley. All rights reserved.
+* @copyright	Copyright (c) 2024, Nick Crowley. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are permitted
 * provided that the following conditions are met:
@@ -25,40 +25,8 @@
 */
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Preprocessor Directives o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #pragma once
-
-#ifndef NOMINMAX
-#	error Core-Platform requires NOMINMAX be defined
-#endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
-// Including SDKDDKVer.h defines the highest available Windows platform.
-// If you wish to build your application for a previous Windows platform, include WinSDKVer.h and
-// set the _WIN32_WINNT macro to the platform you wish to support before including SDKDDKVer.h.
-#include <SDKDDKVer.h>
-#include <Windows.h>
-
-#include <ntsecapi.h>
-#include <sddl.h>			// SID functions
-#include <Aclapi.h>         // ACL functions
-
-#if _WIN32_WINNT <= _WIN32_WINNT_WIN7
-	// @remarks  Windows 7 and earlier store process functions in psapi.lib instead of kernel32.lib
-	// @see https://learn.microsoft.com/en-us/windows/win32/api/psapi/nf-psapi-enumprocesses
-	#define PSAPI_VERSION 1
-	#pragma comment(lib, "psapi")
-#endif
-#include <psapi.h>          // Process functions
-
-#include <shlwapi.h>        // Filepath functions
-#include <WinINet.h>        // WinINet error codes
-#include <WinHTTP.h>        // WinHTTP error codes
-
-#include <Objbase.h>        // COM functions
-#include <oaidl.h>          // VARIANT
-#include <ocidl.h>          // Several COM interfaces (eg. IClassFactory2)
-#if SUPPORT_ATL_STRING
-#	include <atlstr.h>
-#endif
+#include "library/core.Platform.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -66,7 +34,28 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
+namespace core::com
+{
+	enum class AuthService : ::DWORD
+	{
+		None       = RPC_C_AUTHN_NONE,          //!< No authentication.
+		DCEPrivate = RPC_C_AUTHN_DCE_PRIVATE,   //!< DCE private key authentication.
+		DCEPublic  = RPC_C_AUTHN_DCE_PUBLIC,    //!< DCE public key authentication.
+		DECPublic  = RPC_C_AUTHN_DEC_PUBLIC,    //!< DEC public key authentication. Reserved for future use.
+		Negotiate  = RPC_C_AUTHN_GSS_NEGOTIATE, //!< Snego security support provider.
+		WinNT      = RPC_C_AUTHN_WINNT,         //!< NTLM security support provider
+		SChannel   = RPC_C_AUTHN_GSS_SCHANNEL,  //!< Schannel security support provider. This authentication service supports SSL 2.0, SSL 3.0, TLS, and PCT.
+		Kerberos   = RPC_C_AUTHN_GSS_KERBEROS,  //!< Kerberos security support provider.
+		DPS        = RPC_C_AUTHN_DPA,           //!< DPA security support provider.
+		MSN        = RPC_C_AUTHN_MSN,           //!< MSN security support provider.
+		Kernel     = RPC_C_AUTHN_KERNEL,        //!< Kernel security support provider.
+		Digest     = RPC_C_AUTHN_DIGEST,        //!< Digest security support provider.
+		NEGOExt    = RPC_C_AUTHN_NEGO_EXTENDER, //!< NEGO extender security support provider.
+		PKU2U      = RPC_C_AUTHN_PKU2U,         //!< PKU2U security support provider.
+		MQ         = RPC_C_AUTHN_MQ,            //!< MQ security support provider.
+		Default    = RPC_C_AUTHN_DEFAULT,       //!< System default authentication service (uses its normal security blanket negotiation algorithm to pick).
+	};
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

@@ -1,5 +1,5 @@
 /* o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o */ /*!
-* @copyright	Copyright (c) 2023, Nick Crowley. All rights reserved.
+* @copyright	Copyright (c) 2024, Nick Crowley. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are permitted
 * provided that the following conditions are met:
@@ -25,40 +25,8 @@
 */
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Preprocessor Directives o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #pragma once
-
-#ifndef NOMINMAX
-#	error Core-Platform requires NOMINMAX be defined
-#endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
-// Including SDKDDKVer.h defines the highest available Windows platform.
-// If you wish to build your application for a previous Windows platform, include WinSDKVer.h and
-// set the _WIN32_WINNT macro to the platform you wish to support before including SDKDDKVer.h.
-#include <SDKDDKVer.h>
-#include <Windows.h>
-
-#include <ntsecapi.h>
-#include <sddl.h>			// SID functions
-#include <Aclapi.h>         // ACL functions
-
-#if _WIN32_WINNT <= _WIN32_WINNT_WIN7
-	// @remarks  Windows 7 and earlier store process functions in psapi.lib instead of kernel32.lib
-	// @see https://learn.microsoft.com/en-us/windows/win32/api/psapi/nf-psapi-enumprocesses
-	#define PSAPI_VERSION 1
-	#pragma comment(lib, "psapi")
-#endif
-#include <psapi.h>          // Process functions
-
-#include <shlwapi.h>        // Filepath functions
-#include <WinINet.h>        // WinINet error codes
-#include <WinHTTP.h>        // WinHTTP error codes
-
-#include <Objbase.h>        // COM functions
-#include <oaidl.h>          // VARIANT
-#include <ocidl.h>          // Several COM interfaces (eg. IClassFactory2)
-#if SUPPORT_ATL_STRING
-#	include <atlstr.h>
-#endif
+#include "library/core.Platform.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -66,7 +34,19 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
+namespace core::com
+{
+	enum class AuthLevel : ::DWORD
+	{
+		Default   = RPC_C_AUTHN_LEVEL_DEFAULT,       //!< Choose the authentication level using negotiation algorithm
+		None      = RPC_C_AUTHN_LEVEL_NONE,          //!< Performs no authentication.
+		Connect   = RPC_C_AUTHN_LEVEL_CONNECT,       //!< Authenticates client only when the it establishes a relationship with the server.
+		Call      = RPC_C_AUTHN_LEVEL_CALL,          //!< Authenticates client at the beginning of each remote procedure call.
+		Packet    = RPC_C_AUTHN_LEVEL_PKT,           //!< Authenticates all data received is from the expected client.
+		Integrity = RPC_C_AUTHN_LEVEL_PKT_INTEGRITY, //!< Authenticates and verifies that none of the data transferred has been modified.
+		Privacy   = RPC_C_AUTHN_LEVEL_PKT_PRIVACY,   //!< Authenticates all previous levels and encrypts the argument value of each remote procedure call.
+	};
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

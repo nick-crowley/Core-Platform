@@ -44,6 +44,12 @@
 
 #include "../../src/library/PlatformExport.h"
 
+#ifdef COMAPI
+#	error COMAPI macro is already in use
+#else
+#	define COMAPI __stdcall
+#endif
+
 #include "nstd/experimental/abstract.h"
 #include "nstd/experimental/implicit.h"
 #include "nstd/experimental/intern.h"
@@ -99,6 +105,7 @@
 #include "nt/NtStatus.h"
 #include "win/ApiHelpers.h"
 #include "win/Boolean.h"
+#include "win/Concepts.h"
 #include "win/LResult.h"
 #include "win/HResult.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
