@@ -315,6 +315,20 @@ namespace core::win
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		};
 
+		//! @brief Properties of newly created process
+		class PlatformExport ProcessInfo 
+		{
+		public:
+			SharedProcess Handle;
+			SharedThread  Thread;
+			uint32_t      ProcessId;
+			uint32_t      ThreadId;
+
+			ProcessInfo(SharedProcess p, SharedThread t, uint32_t pid, uint32_t tid)
+			  : Handle{std::move(p)}, Thread{std::move(t)}, ProcessId{pid}, ThreadId{tid}
+			{}
+		};
+
 	public:
 		ExistingProcessCollection const
 		static ExistingProcesses;
@@ -350,6 +364,16 @@ namespace core::win
 			else
 				return Process{handle};
 		}
+
+		ProcessInfo
+		static spawn(filesystem::path app, std::optional<std::wstring_view> cmdline = nullopt) {
+			return Process::spawnImpl(false, app, cmdline);
+		}
+
+		ProcessInfo
+		static spawn(meta::inherits_t, filesystem::path app, std::optional<std::wstring_view> cmdline = nullopt) {
+			return Process::spawnImpl(true, app, cmdline);
+		}
 	
 	private:
 		SharedProcess
@@ -358,6 +382,18 @@ namespace core::win
 			return SharedProcess{::OpenProcess(std::to_underlying(rights), Boolean{inheritance.has_value()}, pid)};
 		}
 		
+		ProcessInfo
+		static spawnImpl(bool inheritance, filesystem::path app, std::optional<std::wstring_view> cmdline = nullopt) {
+			::STARTUPINFO startup{};
+			::PROCESS_INFORMATION info{};
+			wchar_t* _cmdline = const_cast<wchar_t*>(cmdline.value_or(std::wstring_view{}).data());
+			if (!::CreateProcessW(app.native().c_str(), _cmdline, Unsecured, Unsecured, Boolean{inheritance}, Unused<DWORD>, Unused<void*>, Unused<wchar_t const*>, &startup, &info)) 
+				LastError{}.throwIfError("CreateProcessW() failed");
+			
+			return ProcessInfo{
+				SharedProcess{info.hProcess}, SharedThread{info.hThread}, (uint32_t)info.dwProcessId, (uint32_t)info.dwThreadId
+			};
+		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		uint32_t
