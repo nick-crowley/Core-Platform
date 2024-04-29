@@ -52,6 +52,7 @@
 #include <shlwapi.h>        // Filepath functions
 #include <WinINet.h>        // WinINet error codes
 #include <WinHTTP.h>        // WinHTTP error codes
+#include <DbgEng.h>         // 
 
 #include <Objbase.h>        // COM functions
 #include <oaidl.h>          // VARIANT

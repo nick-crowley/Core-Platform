@@ -239,6 +239,32 @@ namespace core
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core
 {
+	::HRESULT
+	inline appendSymbolPath(std::string_view path) 
+	{
+		auto const libDbgEng = ::LoadLibraryExW(L"dbgeng.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
+		if (!libDbgEng)
+			return E_NOINTERFACE;
+		
+		// Deliberately not calling CoInitialize[Ex]. DbgEng.h API works fine without it.
+		// COM initialization may have undesired interference with user's code.
+		::HRESULT hr = E_FAIL;
+		if (auto* const debugCreate = reinterpret_cast<decltype(&::DebugCreate)>(::GetProcAddress(libDbgEng, "DebugCreate")); debugCreate) {
+			::IDebugClient*  dbgClient{};
+			if (hr = debugCreate(IID_IDebugClient, std::out_ptr(dbgClient)); SUCCEEDED(hr)) {
+				::IDebugSymbols* dbgSymbols{};
+				if (hr = dbgClient->QueryInterface(IID_IDebugSymbols, std::out_ptr(dbgSymbols)); SUCCEEDED(hr)) {
+					hr = dbgSymbols->AppendSymbolPath(".");
+					dbgSymbols->Release();
+				}
+				dbgClient->Release();
+			}
+		}
+
+		::FreeLibrary(libDbgEng);
+		return hr;
+	}
+
 	void
 	inline startupBanner()
 	{
