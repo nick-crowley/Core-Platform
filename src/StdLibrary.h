@@ -66,6 +66,7 @@
 #else
 #	include <source_location>
 #endif
+#include <stacktrace>
 #include <stdexcept>
 #include <thread>
 #include <type_traits>

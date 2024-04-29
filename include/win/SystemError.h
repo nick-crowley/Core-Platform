@@ -47,11 +47,13 @@ namespace core::win::detail
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::win
 {
-	class system_error : public std::system_error
+	class system_error : public std::system_error, 
+	                     public std::stacktrace
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		using base = std::system_error;
+		using trace = std::stacktrace;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		std::string CustomMessageBugFix;
@@ -60,6 +62,7 @@ namespace core::win
 		explicit
 		system_error(::LRESULT code)
 		  : base{static_cast<int>(code), std::system_category()}, 
+		    trace{std::stacktrace::current(1)},
 		    CustomMessageBugFix{detail::formatMessage(code)}
 		{
 		}
@@ -67,6 +70,7 @@ namespace core::win
 		template <typename... Params>
 		system_error(::LRESULT code, std::string_view msg, Params&&... args)
 		  : base{static_cast<int>(code), std::system_category()},
+		    trace{std::stacktrace::current(1)},
 			CustomMessageBugFix{std::vformat(msg,std::make_format_args(args...)) + ": " + detail::formatMessage(code)}
 		{
 		}

@@ -44,19 +44,23 @@
 namespace core
 {
 	template <std::derived_from<std::exception> BaseException>
-	class exception : public BaseException
+	class exception : public BaseException, 
+	                  public std::stacktrace
 	{
 		using base = BaseException;
+		using trace = std::stacktrace;
 
 	public:
 		exception(std::string_view msg)
-			: base{msg.data()}
+		  : base{msg.data()}, 
+		    trace{std::stacktrace::current(1)}
 		{}
 
 		template <typename... Params>
 			requires nstd::AtLeastOneType<Params...>
 		exception(std::string_view msg, Params&&... args)
-			: base{std::vformat(msg,std::make_format_args(args...))}
+		  : base{std::vformat(msg,std::make_format_args(args...))}, 
+		    trace{std::stacktrace::current(1)}
 		{}
 	};
 

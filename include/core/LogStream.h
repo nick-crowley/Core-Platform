@@ -124,6 +124,17 @@ namespace core
 			default:                  std::unreachable();
 			}
 		}
+		
+        std::string
+        static prettyStackTrace(std::stacktrace const& trace)
+        {
+	        using enum std::regex_constants::match_flag_type;
+
+            std::regex const 
+	        static stripModulesAndOffsets{R"(^(\d+>\s+)[A-Za-z0-9_]+!([a-zA-Z0-9_<>:]+)\+0x[A-Ea-e0-9]+)"};
+
+            return std::regex_replace(std::to_string(trace), stripModulesAndOffsets, R"($1$2())", match_not_null);
+        }
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -195,7 +206,10 @@ namespace core
 				return *this;
 
 			std::lock_guard lock{LogStream::IsWriting};
-			this->write(Severity::Failure, e.what());
+			if (auto* trace = dynamic_cast<std::stacktrace const*>(&e); !trace)
+				this->write(Severity::Failure, e.what());
+			else 
+				this->write(Severity::Failure, std::format("{}\n{}", e.what(), LogStream::prettyStackTrace(*trace)));
 			return *this;
 		}
 		
