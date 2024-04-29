@@ -25,19 +25,18 @@
 */
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Platform.h"
+#include "win/BuiltInErrorCodes.h"
 using namespace core;
 
 std::string 
 win::detail::formatMessage(::LRESULT err)
 {
-	std::string msg(256,'\0');
-	if (auto const n = ::FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, nullptr, win::DWord{err}, NULL, msg.data(), win::DWord{msg.capacity()}, nullptr); !n)
+	auto const matchByCode = [err](ErrorCodeName const& e) {
+		return err == e.Code;
+	};
+
+	if (auto cn = ranges::find_if(win::ErrorCodeNames, matchByCode); cn != win::ErrorCodeNames.cend())
+		return std::string{cn->Name};
+	else
 		return std::format("{:#x}", err);
-	else {
-		// Trim the string of unwanted trailing characters
-		msg.resize(n);
-		if (auto lastChar = msg.find_last_not_of("\r\n\t "); lastChar != std::string::npos)
-			msg.erase(++lastChar);
-		return msg;
-	}
 }

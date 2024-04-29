@@ -50,6 +50,8 @@
 #include <psapi.h>          // Process functions
 
 #include <shlwapi.h>        // Filepath functions
+#include <WinINet.h>        // WinINet error codes
+#include <WinHTTP.h>        // WinHTTP error codes
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
