@@ -74,10 +74,8 @@ namespace core::win
 		SharedModule  Handle;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		SharedLibrary(std::string_view) = delete;
-
-		SharedLibrary(std::wstring_view path, LoadLibraryFlags flags = LoadLibraryFlags::None) 
-		  : Handle{::LoadLibraryExW(ThrowIfEmpty(path).data(), nullptr, std::to_underlying(flags))}
+		SharedLibrary(filesystem::path path, LoadLibraryFlags flags = LoadLibraryFlags::None) 
+		  : Handle{::LoadLibraryExW(ThrowIfEmpty(path).native().c_str(), nullptr, std::to_underlying(flags))}
 		{
 			if (!this->Handle)
 				LastError{}.throwAlways("LoadLibraryExW() failed");
@@ -94,7 +92,11 @@ namespace core::win
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
+	public:
+		SharedModule
+		handle() const noexcept {
+			return this->Handle;
+		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		template <nstd::Function Signature, size_t NumResultParameters = 0>

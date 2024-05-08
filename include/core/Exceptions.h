@@ -29,9 +29,8 @@
 #	error Including this header directly may cause a circular dependency; include <corePlatform.h> directly
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "nstd/FormatString.h"
-#include "nstd/SourceLocation.h"
-
+#include "nstd/Concepts.h"
+#include "nstd/SystemError.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -68,6 +67,48 @@ namespace core
 	using logic_error = exception<std::logic_error>;
 	using range_error = exception<std::range_error>;
 	using runtime_error = exception<std::runtime_error>;
+
+	//! @brief @c std::system_error with stack-trace and optional formatted message
+	class system_error : public std::system_error, 
+	                     public std::stacktrace
+	{
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	private:
+		using base = std::system_error;
+		using trace = std::stacktrace;
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+		
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
+		template <nstd::ExplicitlyConvertible<int> Integer>
+		system_error(Integer condition, std::error_category const& category)
+		  : base{static_cast<int>(condition), category}, 
+		    trace{std::stacktrace::current(1)}
+		{
+		}
+		
+		template <nstd::ExplicitlyConvertible<int> Integer>
+		system_error(Integer condition, std::error_category const& category, std::string_view msg)
+		  : base{static_cast<int>(condition), category, msg.data()},
+		    trace{std::stacktrace::current(1)}
+		{
+		}
+
+		template <nstd::ExplicitlyConvertible<int> Integer, typename... Params>
+			requires nstd::AtLeastOneType<Params...>
+		system_error(Integer condition, std::error_category const& category, std::string_view msg, Params&&... args)
+		  : base{static_cast<int>(condition), category, std::vformat(msg, std::make_format_args(args...))},
+		    trace{std::stacktrace::current(1)}
+		{
+		}
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+		
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	};
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 

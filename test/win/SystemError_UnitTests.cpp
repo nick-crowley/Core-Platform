@@ -48,7 +48,7 @@ TEST(SystemError, Code_ReturnsCodeProvidedAtConstruction)
 {
 	//! @test	Verify @c code() returns correct error code
 	EXPECT_EQ(
-		win::system_error{ERROR_ACCESS_DENIED}.code().value(),
+		core::system_error(ERROR_ACCESS_DENIED, nstd::system_category{}).code().value(),
 		ERROR_ACCESS_DENIED
 	);
 }
@@ -57,14 +57,14 @@ TEST(SystemError, What_ReturnsCustomMessageAndStringifiedCode)
 {
 	//! @test	Verify custom message can be prepended to error message
 	EXPECT_STREQ(
-		win::system_error(ERROR_ACCESS_DENIED, "custom message").what(),
-		"custom message: Access is denied."
+		core::system_error(ERROR_ACCESS_DENIED, nstd::system_category{}, "custom message").what(),
+		"custom message: ERROR_ACCESS_DENIED"
 	);
 
 	//! @test	Verify custom message with formatting arguments can be prepended to error message
 	EXPECT_STREQ(
-		win::system_error(ERROR_ACCESS_DENIED, "formatted {}", "abc").what(),
-		"formatted abc: Access is denied."
+		core::system_error(ERROR_ACCESS_DENIED, nstd::system_category{}, "formatted {}", "abc").what(),
+		"formatted abc: ERROR_ACCESS_DENIED"
 	);
 }
 
@@ -72,8 +72,8 @@ TEST(SystemError, What_ReturnsStringifiedCode)
 {
 	//! @test	Verify @c what() returns correct error message
 	EXPECT_STREQ(
-		win::system_error{ERROR_ACCESS_DENIED}.what(),
-		"Access is denied."
+		core::system_error(ERROR_ACCESS_DENIED, nstd::system_category{}).what(),
+		"ERROR_ACCESS_DENIED"
 	);
 }
 

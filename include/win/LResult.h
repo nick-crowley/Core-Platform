@@ -30,16 +30,11 @@
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "nstd/experimental/implicit.h"
-#include "win/SystemError.h"
-#include "../../src/library/PlatformExport.h"
+#include "nstd/SystemError.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-namespace core::win::detail
-{
-	std::string 
-	PlatformExport formatMessage(::LRESULT err);
-}
+
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -90,19 +85,19 @@ namespace core::win
 
 		std::string 
 		str() const {
-			return detail::formatMessage(this->Value);
+			return nstd::system_category{}.message(static_cast<int>(this->Value));
 		}
 		
 		[[noreturn]] void 
 		throwAlways(std::string_view msg) const {
-			throw system_error{this->Value, msg};
+			throw system_error{this->Value, nstd::system_category{}, msg};
 		}
 		
 		template <typename... Params>
 			requires nstd::AtLeastOneType<Params...>
 		[[noreturn]] void 
 		throwAlways(std::string_view msg, Params&&... args) const {
-			throw system_error{this->Value, std::vformat(msg,std::make_format_args(args...))};
+			throw system_error{this->Value, nstd::system_category{}, msg, std::forward<Params>(args)...};
 		}
 
 		template <typename... Params>
@@ -112,7 +107,7 @@ namespace core::win
 		void 
 		throwIfError(std::string_view msg) const {
 			if (this->Value != ERROR_SUCCESS)
-				throw system_error{this->Value, msg};
+				throw system_error{this->Value, nstd::system_category{}, msg};
 		}
 
 		template <typename... Params>
@@ -120,7 +115,7 @@ namespace core::win
 		void 
 		throwIfError(std::string_view msg, Params&&... args) const {
 			if (this->Value != ERROR_SUCCESS)
-				throw system_error{this->Value, std::vformat(msg,std::make_format_args(args...))};
+				throw system_error{this->Value, nstd::system_category{}, msg, std::forward<Params>(args)...};
 		}
 
 		template <typename... Params>
@@ -196,7 +191,7 @@ namespace core::win
 		  : Value{val}
 		{
 			if (val != ERROR_SUCCESS)
-				throw system_error{val};
+				throw system_error{val, nstd::system_category{}};
 		}
 		
 		template <nstd::AnyArithmeticExcept<long,::LRESULT> T>

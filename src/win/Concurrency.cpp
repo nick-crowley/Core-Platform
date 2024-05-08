@@ -47,5 +47,5 @@ win::detail::waitForMultipleObjects(std::span<::HANDLE> handles, WaitStrategy st
         return handles[result-WAIT_ABANDONED_0];
     }
     else 
-        throw system_error{result, "Wait on {} handles failed", handles.size()};
+        throw system_error{result, nstd::system_category{}, "Wait on {} handles failed", handles.size()};
 }

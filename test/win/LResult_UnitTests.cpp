@@ -48,8 +48,14 @@ TEST(LResult, Str_ReturnsCorrectMessage)
 {
 	//! @test	Verify error codes are stringified as expected
 	EXPECT_EQ(
+		win::LResult{ERROR_SUCCESS}.str(),
+		"ERROR_SUCCESS"
+	);
+
+	//! @test	Verify error codes are stringified as expected
+	EXPECT_EQ(
 		win::LResult{ERROR_ACCESS_DENIED}.str(),
-		"Access is denied."
+		"ERROR_ACCESS_DENIED"
 	);
 }
 
@@ -58,7 +64,7 @@ TEST(LResult, ThrowAlways_ThrowsForSuccessCode)
 	//! @test	Verify @c throwAlways() throws even for success codes
 	EXPECT_THROW(
 		win::LResult{ERROR_SUCCESS}.throwAlways(""),
-		win::system_error
+		core::system_error
 	);
 }
 
@@ -67,7 +73,7 @@ TEST(LResult, ThrowAlways_ThrowsForFailureCode)
 	//! @test	Verify @c throwAlways() throws for failure codes
 	EXPECT_THROW(
 		win::LResult{ERROR_ACCESS_DENIED}.throwAlways(""),
-		win::system_error
+		core::system_error
 	);
 }
 
@@ -84,7 +90,7 @@ TEST(LResult, throwIfError_ThrowsForFailureCode)
 	//! @test	Verify @c throwIfError() throws for failure codes
 	EXPECT_THROW(
 		win::LResult{ERROR_ACCESS_DENIED}.throwIfError("message"),
-		win::system_error
+		core::system_error
 	);
 }
 

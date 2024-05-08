@@ -28,7 +28,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Platform.h"
 #include "core/ToHexString.h"
-#include "win/SystemError.h"
+#include "nstd/SystemError.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -82,26 +82,26 @@ namespace core::win
 		}
 
 		std::string
-		str() const;
+		str() const {
+			return nstd::hresult_category{}.message(static_cast<int>(this->Value));
+		}
 		
 		[[noreturn]] void 
 		throwAlways() const {
-			throw system_error{this->Value};
+			throw system_error{this->Value, nstd::hresult_category{}};
 		}
 		
 		template <typename... Params>
 		[[noreturn]] void 
 		throwAlways(std::string_view msg, Params&&... args) const {
-			throw system_error{this->Value, 
-			                   std::vformat(msg,std::make_format_args(args...))};
+			throw system_error{this->Value, nstd::hresult_category{}, msg, std::forward<Params>(args)...};
 		}
 		
 		template <typename... Params>
 		void 
 		throwIfError(std::string_view msg, Params&&... args) const {
 			if (FAILED(this->Value))
-				throw system_error{this->Value, 
-				                   std::vformat(msg,std::make_format_args(args...))};
+				throw system_error{this->Value, nstd::hresult_category{}, msg, std::forward<Params>(args)...};
 		}
 		
 		std::wstring
@@ -145,7 +145,7 @@ namespace core::win
 		  : Value{val}
 		{
 			if (FAILED(val))
-				throw system_error{val, HResult{val}.str()};
+				throw system_error{val, nstd::hresult_category{}};
 		}
 		
 		template <nstd::AnyArithmeticExcept<long,::HRESULT> T>

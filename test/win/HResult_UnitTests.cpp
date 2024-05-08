@@ -48,6 +48,12 @@ TEST(HResult, Str_CommonCodesStringified)
 {
 	//! @test	Verify well-known error codes are stringified
 	EXPECT_EQ(
+		win::HResult{S_OK}.str(),
+		"S_OK"
+	);
+	
+	//! @test	Verify well-known error codes are stringified
+	EXPECT_EQ(
 		win::HResult{E_ACCESSDENIED}.str(),
 		"E_ACCESSDENIED"
 	);
@@ -55,10 +61,10 @@ TEST(HResult, Str_CommonCodesStringified)
 
 TEST(HResult, Str_UnCommonCodesInHex) 
 {
-	//! @test	Verify uncommon error codes are represented in hex
+	//! @test	Verify uncommon error codes are represented by message (without unwanted whitespace) with code parenthesised in hex
 	EXPECT_EQ(
 		win::HResult{E_HDAUDIO_CONNECTION_LIST_NOT_SUPPORTED}.str(),
-		"0x80660003"
+		"HD Audio widget does not support the connection list parameter. (0x80660003)"
 	);
 }
 
@@ -67,7 +73,7 @@ TEST(HResult, ThrowAlways_ThrowsForSuccessCode)
 	//! @test	Verify @c throwAlways() throws even for success codes
 	EXPECT_THROW(
 		win::HResult{S_OK}.throwAlways(),
-		win::system_error
+		core::system_error
 	);
 }
 
@@ -76,7 +82,7 @@ TEST(HResult, ThrowAlways_ThrowsForFailureCode)
 	//! @test	Verify @c throwAlways() throws for failure codes
 	EXPECT_THROW(
 		win::HResult{E_ACCESSDENIED}.throwAlways(),
-		win::system_error
+		core::system_error
 	);
 }
 
@@ -93,7 +99,7 @@ TEST(HResult, throwIfError_ThrowsForFailureCode)
 	//! @test	Verify @c throwIfError() throws for failure codes
 	EXPECT_THROW(
 		win::HResult{E_ACCESSDENIED}.throwIfError("message"),
-		win::system_error
+		core::system_error
 	);
 }
 

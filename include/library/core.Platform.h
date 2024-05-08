@@ -76,6 +76,7 @@
 #include "nstd/SourceLocation.h"
 #include "nstd/StringView.h"
 #include "nstd/String.h"
+#include "nstd/SystemError.h"
 #include "nstd/Tuple.h"
 #include "nstd/Utility.h"
 
